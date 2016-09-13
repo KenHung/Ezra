@@ -14,14 +14,17 @@ while ((match = bibleRef.exec(bodyHtml)) !== null) {
   console.log(match);
 }
 
-var xhr = new XMLHttpRequest();
-xhr.onreadystatechange = function () {
-  if (xhr.readyState == 4) {
-    // JSON.parse does not evaluate the attacker's scripts.
-    var resp = JSON.parse(xhr.responseText);
-    console.log(resp.status);
-    console.log(resp.record_count);
-  }
+function getVerses(book, chap, verses) {
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function () {
+    if (xhr.status == 200) {
+      var resp = JSON.parse(xhr.responseText);
+      if (resp.status === 'success') {
+        console.log(resp.record[0]);
+      }
+    }
+  };
+  xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + book + '&chap=' + chap + '&sec=' + verses, true);
+  xhr.send();
 }
-xhr.open("GET", 'http://bible.fhl.net/json/ab.php', true);
-xhr.send();
+getVerses('約', 3, 16);
