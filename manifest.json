@@ -14,7 +14,7 @@
         "<all_urls>"
       ],
       "js": [
-        "myscript.js"
+        "injectLinks.js"
       ]
     }
   ],
