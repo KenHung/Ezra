@@ -84,3 +84,29 @@ function toAbbr(book) {
     lastAbbr = curAbbr;
     return curAbbr;
 }
+
+var chiNumVal = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+var chiExpVal = { 十: 10, 廿: 20, 卅: 30, 百: 100 };
+var chiNum = Object.keys(chiNumVal);
+var chiExp = Object.keys(chiExpVal);
+
+function toChap(num) {
+  if (!isNaN(num)) {
+    return +num;
+  }
+  else {
+    var acc = [];
+    for (var n in num) {
+      if (chiNum.indexOf(n) >= 0) {
+        acc.push(chiNumVal[n]);
+      }
+      else if (chiExp.indexOf(n) >= 0) {
+        if (acc.length === 0) {
+          acc.push(1);
+          acc[acc.length - 1] *= chiExpVal[n];
+        }
+      }
+    }
+    return acc.reduce((a, b) => a + b);
+  }
+}
