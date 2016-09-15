@@ -1,9 +1,9 @@
 var bodyHtml = document.body.innerHTML;
 var bibleBooks = books.concat(abbrs).join('|');
-var bibleRef = new RegExp('(' + bibleBooks + '|，) ?([一二三四五六七八九十廿卅]+|\\d+)[ :：︰]?([\\d-─,、 ]+)', 'g');
+var bibleRef = new RegExp('(' + bibleBooks + '|，) ?([零一二三四五六七八九十廿卅]+|\\d+)[ :：︰]?([\\d-─,、 ]+)', 'g');
 var match;
 while ((match = bibleRef.exec(bodyHtml)) !== null) {
-  console.log(match);
+  console.log(match[0] + toAbbr(match[1]));
 }
 
 function getVerses(book, chap, verses) {

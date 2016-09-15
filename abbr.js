@@ -74,3 +74,13 @@ var abbr = {
 
 var books = Object.keys(abbr);
 var abbrs = books.map(function (book) { return abbr[book]; });
+
+var lastAbbr;
+function toAbbr(book) {
+    var curAbbr = abbr[book];
+    if (curAbbr === undefined) {
+        curAbbr = abbrs.indexOf(book) >= 0 ? book : lastAbbr;
+    }
+    lastAbbr = curAbbr;
+    return curAbbr;
+}
