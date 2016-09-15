@@ -14,6 +14,7 @@
         "<all_urls>"
       ],
       "js": [
+        "abbr.js",
         "injectLinks.js"
       ]
     }

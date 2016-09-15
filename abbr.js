@@ -71,3 +71,6 @@ var abbr = {
     約翰三書: '約三',
     啓示錄: '啟'
 };
+
+var books = Object.keys(abbr);
+var abbrs = books.map(function (book) { return abbr[book]; });
