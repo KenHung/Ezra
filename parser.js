@@ -69,7 +69,8 @@ var abbr = {
   約翰一書: '約一',
   約翰二書: '約二',
   約翰三書: '約三',
-  啓示錄: '啟'
+  啓示錄: '啟',
+  啓: '啟'
 };
 
 var books = Object.keys(abbr);
@@ -110,4 +111,10 @@ function toChap(num) {
     }
     return acc.reduce((a, b) => a + b);
   }
+}
+
+function toVers(vers) {
+  return vers.replace('─', '-')
+             .replace('、', ',')
+             .replace(' ', '');
 }

@@ -1,3 +1,8 @@
+QUnit.test("toAbbr test", function (assert) {
+    assert.strictEqual(toAbbr('啓'), '啟');
+    assert.strictEqual(toAbbr('啓示錄'), '啟');
+});
+
 QUnit.test("toChap test", function (assert) {
     assert.strictEqual(toChap('1948'), 1948);
     assert.strictEqual(toChap('七'), 7);
