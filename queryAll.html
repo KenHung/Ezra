@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>經文引用批量速查</title>
+</head>
+
+<body>
+    <p>輸入包含經文引用的文字：</p>
+    <textarea id="input" style="width: 500px; height: 250px;">一、由于亞當犯罪的結果，人生來就在罪中，在靈性上是已經死了的人；因此，他們要成為神的兒女，進入神的國，必須由聖靈重生。
+(1)當亞當被放在伊甸園中的時候，神警告他不可吃分別善惡樹上的果子，若吃了必遭受屬靈的死亡。創2︰16、17。
+(2)亞當違背了神的話，吃了禁果(創3︰1─7)；結果把屬靈的死亡帶給他自己和人類。羅5︰12；弗2︰1─3；西2︰13。
+(3)大衛承認他以及全人類都生在罪中。詩51︰5，58︰3。
+(4)因為人生在罪中，在靈性上已經死了，所以耶穌教訓人必須重生才能進神的國。約3︰5─7。</textarea>
+    <button onclick="updateVersesList()">輸入</button>
+    <ul id="bibleTextList">
+    </ul>
+    <script src="parser.js"></script>
+    <script src="queryAll.js"></script>
+    <script>
+        updateVersesList();
+    </script>
+</body>
+
+</html>
