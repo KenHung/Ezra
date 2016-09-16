@@ -114,7 +114,7 @@ function toChap(num) {
 }
 
 function toVers(vers) {
-  return vers.replace('─', '-')
-             .replace('、', ',')
-             .replace(' ', '');
+  return vers.replace(/─/g, '-')
+             .replace(/、/g, ',')
+             .replace(/ /g, '');
 }

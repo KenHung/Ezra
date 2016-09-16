@@ -13,3 +13,10 @@ QUnit.test("toChap test", function (assert) {
     assert.strictEqual(toChap('一百零五'), 105);
     assert.strictEqual(toChap('一百三十六'), 136);
 });
+
+QUnit.test("toVers test", function (assert) {
+    assert.strictEqual(toVers('1 - 4'), '1-4');
+    assert.strictEqual(toVers('1─4'), '1-4');
+    assert.strictEqual(toVers('12、25'), '12,25');
+    assert.strictEqual(toVers('12、25、30'), '12,25,30');
+});
