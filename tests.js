@@ -1,4 +1,5 @@
 QUnit.test("toChap test", function (assert) {
+    assert.strictEqual(toChap('1948'), 1948);
     assert.strictEqual(toChap('七'), 7);
     assert.strictEqual(toChap('十二'), 12);
     assert.strictEqual(toChap('廿四'), 24);
