@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh-hant">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="bibleTooltip.js"></script>
 </head>
+
 <body>
-    <p>找出網頁出現的聖經章節，然後根據章節找出相應經文。暫時只顯示和合本經文。</p>
-    <p>請把鼠標放在旁邊：
-        <a href="#" title="太初有道，道與神同在，道就是神。(約 1:1)">
+	<p>找出網頁出現的聖經章節，然後根據章節找出相應經文。暫時只顯示和合本經文。</p>
+	<p>請把鼠標放在旁邊：
+		<a href="#" title="太初有道，道與神同在，道就是神。(約 1:1)">
             約 1:1
         </a>
-    </p>
-    <p>如果出現多節，就會一次過顯示：
-        <a href="#"
-           title="太初有道，道與神同在，道就是神。這道太初與神同在。萬物是藉著他造的；凡被造的，沒有一樣不是藉著他造的。生命在他裡頭，這生命就是人的光。光照在黑暗裡，黑暗卻不接受光。(約 1:1-5)">
+	</p>
+	<p>如果出現多節，就會一次過顯示：
+		<a href="#" title="太初有道，道與神同在，道就是神。這道太初與神同在。萬物是藉著他造的；凡被造的，沒有一樣不是藉著他造的。生命在他裡頭，這生命就是人的光。光照在黑暗裡，黑暗卻不接受光。(約 1:1-5)">
             約 1:1-5
         </a>
-    </p>
-    <p>如果出現多節而不連續，中間就會省略：
-        <a href="#"
-           title="太初有道，道與神同在，道就是神。⋯⋯有一個人，是從神那裡差來的，名叫約翰。(約 1:1,6)">
+	</p>
+	<p>如果出現多節而不連續，中間就會省略：
+		<a href="#" title="太初有道，道與神同在，道就是神。⋯⋯有一個人，是從神那裡差來的，名叫約翰。(約 1:1,6)">
             約 1:1,6
         </a>
-    </p>
-    <p>支持聖經66卷書，由創世記到啟示錄，也支持簡寫，如：創，啟。</p>
- </body>
+	</p>
+	<p>支持聖經66卷書，由創世記到啟示錄，也支持簡寫，如：創，啟。</p>
+</body>
+
 </html>
