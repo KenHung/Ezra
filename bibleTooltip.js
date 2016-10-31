@@ -1,4 +1,7 @@
 $(document).tooltip({
+  content: function () {
+    return $(this).prop('title');
+  },
   open: function (event, ui) {
     if (typeof (event.originalEvent) === 'undefined') {
       return false;
