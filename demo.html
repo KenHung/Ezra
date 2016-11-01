@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-hant">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Demo</title>
+</head>
+
+<body>
+	<p>找出網頁出現的聖經章節，然後根據章節找出相應經文。暫時只顯示和合本經文。</p>
+	<p>請把鼠標放在旁邊：約 1:1</p>
+	<p>如果出現多節，就會一次過顯示：約 1:1-5</p>
+	<p>如果出現多節而不連續，中間就會省略：約 1:1,6</p>
+	<p>如果有很多很多經文，也會一次過顯示：約 1:1-20</p>
+	<p>支持聖經66卷書，由創世記到啟示錄，也支持簡寫，如：創，啟。</p>
+</body>
+
+<link rel="stylesheet" type="text/css" href="footer.css" />
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="bibleTooltip.js"></script>
+<script src="parser.js"></script>
+<script src="injectLinks.js"></script>
+
+</html>

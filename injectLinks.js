@@ -1,8 +1,9 @@
-var bodyHtml = document.body.innerHTML;
 var bibleBooks = books.concat(abbrs).join('|');
 var chineseNums = chiNum.concat(chiExp).join();
 var bibleRef = new RegExp('(' + bibleBooks + '|，) ?([' + chineseNums + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)', 'g');
-var match;
+var htmlWithLinks = $('body').html().replace(bibleRef, "<a href='#' title='載入中... ($1 $2:$3)'>$&</a>");
+$('body').html(htmlWithLinks);
+
 while ((match = bibleRef.exec(bodyHtml)) !== null) {
   console.log(match[0] + toAbbr(match[1]) + toChap(match[2]));
 }
