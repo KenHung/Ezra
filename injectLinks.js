@@ -1,11 +1,41 @@
 var bibleBooks = books.concat(abbrs).join('|');
 var chineseNums = chiNum.concat(chiExp).join();
 var bibleRef = new RegExp('(' + bibleBooks + '|，) ?([' + chineseNums + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)', 'g');
-var htmlWithLinks = $('body').html().replace(bibleRef, "<a href='#' title='載入中... ($1 $2:$3)'>$&</a>");
-$('body').html(htmlWithLinks);
 
-while ((match = bibleRef.exec(bodyHtml)) !== null) {
-  console.log(match[0] + toAbbr(match[1]) + toChap(match[2]));
+var bodyTextNodes = getTextNodesIn(document.body);
+for (var i = 0; i < bodyTextNodes.length; i++) {
+  var ezraNodes = createNodes(
+    bodyTextNodes[i].nodeValue.replace(bibleRef, "<a href='#' title='載入中... ($1 $2:$3)'>$&</a>"));
+  replaceWithNodes(bodyTextNodes[i], ezraNodes);
+}
+
+function getTextNodesIn(node, includeWhitespaceNodes) {
+    var textNodes = [];
+    function getTextNodes(node) {
+        if (node.nodeType == 3) {
+          textNodes.push(node);
+        } else {
+            for (var i = 0; i < node.childNodes.length; i++) {
+                getTextNodes(node.childNodes[i]);
+            }
+        }
+    }
+    getTextNodes(node);
+    return textNodes;
+}
+
+function createNodes(html) {
+  // assuming html containing only text nodes and anchor, so it is safe to put it in div
+  var dummy = document.createElement('div');
+  dummy.innerHTML = html;
+  return dummy.childNodes;
+}
+
+function replaceWithNodes(oldNode, newNodes) {
+  for (var i = newNodes.length - 1; i > 0; i--) {
+    oldNode.parentNode.insertBefore(newNodes[i], oldNode.nextSibling);
+  }
+  oldNode.parentNode.replaceChild(newNodes[0], oldNode);
 }
 
 function getVerses(book, chap, verses) {
@@ -21,4 +51,3 @@ function getVerses(book, chap, verses) {
   xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + book + '&chap=' + chap + '&sec=' + verses, true);
   xhr.send();
 }
-getVerses('約', 3, 16);
