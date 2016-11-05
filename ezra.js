@@ -71,11 +71,20 @@ function BibleRef(abbr, chap, vers) {
     xhr.onload = function () {
       if (xhr.status == 200) {
         var resp = JSON.parse(xhr.responseText);
-        if (resp.status === 'success') {
-          var versesText = resp.record.map(r => r.bible_text).join('');
-          var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
-          callback(versesText + refText);
+        try {
+          if (resp.status === 'success') {
+            var versesText = resp.record.map(r => r.bible_text).join('');
+            var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
+            callback(versesText + refText);
+          } else {
+            callback('未能查訽經文: FHL response text = ' + xhr.responseText);
+          }
         }
+        catch (err) {
+          callback('未能查訽經文: ' + err);
+        }
+      } else {
+        callback('未能查訽經文: XHR status = ' + xhr.status);
       }
     };
     xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
@@ -93,6 +102,13 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
   var lastAbbr;
 
   this.regexPattern = '(' + bibleBooks + '|，) ?([' + chineseNums + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)';
+  this.readRef = function (ref) {
+    var match = new RegExp(this.regexPattern).exec(ref);
+    return new BibleRef(
+      this.readAbbr(match[1]),
+      this.readChap(match[2]),
+      this.readVers(match[3]));
+  }
   this.readAbbr = function (book) {
     var curAbbr = abbr[book];
     if (curAbbr === undefined) {
@@ -127,11 +143,4 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
       .replace(/、/g, ',')
       .replace(/ /g, '');
   };
-  this.readRef = function (ref) {
-    var match = new RegExp(this.regexPattern).exec(ref);
-    return new BibleRef(
-      this.readAbbr(match[1]),
-      this.readChap(match[2]),
-      this.readVers(match[3]));
-  }
 }
