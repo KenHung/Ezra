@@ -19,7 +19,7 @@ $(document).tooltip({
     $('div.ui-tooltip').not('#' + $id).remove();
 
     getVersesText($(ui.tooltip).text(), function(text) {
-      console.log(text);
+      $(ui.tooltip).text(text);
     })
   },
   close: function (event, ui) {
