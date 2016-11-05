@@ -1,4 +1,4 @@
-var abbr = {
+var BIBLE_ABBR = {
   創世記: '創',
   出埃及記: '出',
   利未記: '利',
@@ -73,48 +73,5 @@ var abbr = {
   啓: '啟'
 };
 
-var books = Object.keys(abbr);
-var abbrs = books.map(function (book) { return abbr[book]; });
-
-var lastAbbr;
-function toAbbr(book) {
-  var curAbbr = abbr[book];
-  if (curAbbr === undefined) {
-    curAbbr = abbrs.indexOf(book) >= 0 ? book : lastAbbr;
-  }
-  lastAbbr = curAbbr;
-  return curAbbr;
-}
-
-var chiNumVal = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
-var chiExpVal = { 十: 10, 廿: 20, 卅: 30, 百: 100 };
-var chiNum = Object.keys(chiNumVal);
-var chiExp = Object.keys(chiExpVal);
-
-function toChap(num) {
-  if (!isNaN(num)) {
-    return +num;
-  }
-  else {
-    var acc = [];
-    for (var i in num) {
-      var n = num[i];
-      if (chiNum.indexOf(n) >= 0) {
-        acc.push(chiNumVal[n]);
-      }
-      else if (chiExp.indexOf(n) >= 0) {
-        if (acc.length === 0) {
-          acc.push(1);
-        }
-        acc[acc.length - 1] *= chiExpVal[n];
-      }
-    }
-    return acc.reduce((a, b) => a + b);
-  }
-}
-
-function toVers(vers) {
-  return vers.replace(/─/g, '-')
-             .replace(/、/g, ',')
-             .replace(/ /g, '');
-}
+var CHINESE_NUM_VAL = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+var CHINESE_EXP_VAL = { 十: 10, 廿: 20, 卅: 30, 百: 100 };
