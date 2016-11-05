@@ -4,15 +4,12 @@ var bibleRef = new RegExp('(' + bibleBooks + '|，) ?([' + chineseNums + ']+|\\d
 
 var bodyTextNodes = getTextNodesIn(document.body);
 for (var i = 0; i < bodyTextNodes.length; i++) {
-  var ezraNodes = createNodes(
-    bodyTextNodes[i].nodeValue.replace(bibleRef, "<a href='#' title='載入中... ($1 $2:$3)'>$&</a>"));
+  var ezraHtml = bodyTextNodes[i].nodeValue.replace(bibleRef, "<a href='#' title='$1:$2:$3'>$&</a>");
+  var ezraNodes = createNodes(ezraHtml);
   replaceWithNodes(bodyTextNodes[i], ezraNodes);
 }
 
 $(document).tooltip({
-  content: function () {
-    return $(this).prop('title');
-  },
   open: function (event, ui) {
     if (typeof (event.originalEvent) === 'undefined') {
       return false;
@@ -20,6 +17,10 @@ $(document).tooltip({
     // close any lingering tooltips
     var $id = $(ui.tooltip).attr('id');
     $('div.ui-tooltip').not('#' + $id).remove();
+
+    getVersesText($(ui.tooltip).text(), function(text) {
+      console.log(text);
+    })
   },
   close: function (event, ui) {
     // keep tooltip open on hover
@@ -33,22 +34,22 @@ $(document).tooltip({
         });
       }
     );
-  }
+  },
 });
 
 function getTextNodesIn(node, includeWhitespaceNodes) {
-    var textNodes = [];
-    function getTextNodes(node) {
-        if (node.nodeType == 3) {
-          textNodes.push(node);
-        } else {
-            for (var i = 0; i < node.childNodes.length; i++) {
-                getTextNodes(node.childNodes[i]);
-            }
-        }
+  var textNodes = [];
+  function getTextNodes(node) {
+    if (node.nodeType == 3) {
+      textNodes.push(node);
+    } else {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        getTextNodes(node.childNodes[i]);
+      }
     }
-    getTextNodes(node);
-    return textNodes;
+  }
+  getTextNodes(node);
+  return textNodes;
 }
 
 function createNodes(html) {
@@ -65,16 +66,22 @@ function replaceWithNodes(oldNode, newNodes) {
   oldNode.parentNode.replaceChild(newNodes[0], oldNode);
 }
 
-function getVerses(book, chap, verses) {
+function getVersesText(versesRef, callback) {
+  var refData = versesRef.split(':');
+  var abbr = refData[0];
+  var chap = refData[1];
+  var verses = refData[2];
   var xhr = new XMLHttpRequest();
   xhr.onload = function () {
     if (xhr.status == 200) {
       var resp = JSON.parse(xhr.responseText);
       if (resp.status === 'success') {
-        console.log(resp.record[0]);
+        var versesText = resp.record.map(r => r.bible_text).join('');
+        var versesRef = '(' + abbr + ' ' + chap + ':' + verses + ')';
+        callback(versesText + versesRef);
       }
     }
   };
-  xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + book + '&chap=' + chap + '&sec=' + verses, true);
+  xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + verses, true);
   xhr.send();
 }
