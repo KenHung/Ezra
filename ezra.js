@@ -84,7 +84,7 @@ function BibleRef(text, refReader) {
     };
     xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
     xhr.send();
-  }
+  };
 }
 
 function BibleRefReader(abbr, chiNumVal, chiExpVal) {
@@ -103,7 +103,7 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
     }
     lastAbbr = curAbbr;
     return curAbbr;
-  }
+  };
   this.toChap = function (num) {
     if (!isNaN(num)) {
       return +num;
@@ -124,11 +124,11 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
       }
       return acc.reduce((a, b) => a + b);
     }
-  }
+  };
   this.toVers = function (vers) {
     return vers.replace(/─/g, '-')
       .replace(/、/g, ',')
       .replace(/ /g, '');
-  }
+  };
   this.pattern = '(' + bibleBooks + '|，) ?([' + chineseNums + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)';
 }
