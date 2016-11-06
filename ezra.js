@@ -36,62 +36,6 @@ $(document).tooltip({
   },
 });
 
-function getTextNodesIn(node, includeWhitespaceNodes) {
-  var textNodes = [];
-  function getTextNodes(node) {
-    if (node.nodeType == 3) {
-      textNodes.push(node);
-    } else {
-      for (var i = 0; i < node.childNodes.length; i++) {
-        getTextNodes(node.childNodes[i]);
-      }
-    }
-  }
-  getTextNodes(node);
-  return textNodes;
-}
-
-function createNodes(html) {
-  // assuming html containing only text nodes and anchor, so it is safe to put it in div
-  var dummy = document.createElement('div');
-  dummy.innerHTML = html;
-  return dummy.childNodes;
-}
-
-function replaceWithNodes(oldNode, newNodes) {
-  for (var i = newNodes.length - 1; i > 0; i--) {
-    oldNode.parentNode.insertBefore(newNodes[i], oldNode.nextSibling);
-  }
-  oldNode.parentNode.replaceChild(newNodes[0], oldNode);
-}
-
-function BibleRef(abbr, chap, vers) {
-  this.getBibleText = function (callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-      if (xhr.status == 200) {
-        var resp = JSON.parse(xhr.responseText);
-        try {
-          if (resp.status === 'success') {
-            var versesText = resp.record.map(r => r.bible_text).join('');
-            var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
-            callback(versesText + refText);
-          } else {
-            callback('未能查訽經文: FHL response text = ' + xhr.responseText);
-          }
-        }
-        catch (err) {
-          callback('未能查訽經文: ' + err);
-        }
-      } else {
-        callback('未能查訽經文: XHR status = ' + xhr.status);
-      }
-    };
-    xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
-    xhr.send();
-  };
-}
-
 function BibleRefReader(abbr, chiNumVal, chiExpVal) {
   var books = Object.keys(abbr);
   var abbrs = books.map(function (book) { return abbr[book]; });
@@ -143,4 +87,60 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
       .replace(/、/g, ',')
       .replace(/ /g, '');
   };
+}
+
+function BibleRef(abbr, chap, vers) {
+  this.getBibleText = function (callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      if (xhr.status == 200) {
+        var resp = JSON.parse(xhr.responseText);
+        try {
+          if (resp.status === 'success') {
+            var versesText = resp.record.map(r => r.bible_text).join('');
+            var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
+            callback(versesText + refText);
+          } else {
+            callback('未能查訽經文: FHL response text = ' + xhr.responseText);
+          }
+        }
+        catch (err) {
+          callback('未能查訽經文: ' + err);
+        }
+      } else {
+        callback('未能查訽經文: XHR status = ' + xhr.status);
+      }
+    };
+    xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
+    xhr.send();
+  };
+}
+
+function getTextNodesIn(node, includeWhitespaceNodes) {
+  var textNodes = [];
+  function getTextNodes(node) {
+    if (node.nodeType == 3) {
+      textNodes.push(node);
+    } else {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        getTextNodes(node.childNodes[i]);
+      }
+    }
+  }
+  getTextNodes(node);
+  return textNodes;
+}
+
+function createNodes(html) {
+  // assuming html containing only text nodes and anchor, so it is safe to put it in div
+  var dummy = document.createElement('div');
+  dummy.innerHTML = html;
+  return dummy.childNodes;
+}
+
+function replaceWithNodes(oldNode, newNodes) {
+  for (var i = newNodes.length - 1; i > 0; i--) {
+    oldNode.parentNode.insertBefore(newNodes[i], oldNode.nextSibling);
+  }
+  oldNode.parentNode.replaceChild(newNodes[0], oldNode);
 }
