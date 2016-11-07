@@ -98,7 +98,16 @@ function BibleRef(abbr, chap, vers) {
         var resp = JSON.parse(xhr.responseText);
         try {
           if (resp.status === 'success') {
-            var versesText = resp.record.map(r => r.bible_text).join('');
+            var versesText = '';
+            var lastSec = 0;
+            for (var i = 0; i < resp.record.length; i++) {
+              var record = resp.record[i];
+              if (i > 0 && record.sec > lastSec + 1) {
+                versesText += '⋯⋯';
+              }
+              lastSec = record.sec;
+              versesText += record.bible_text;
+            }
             var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
             callback(versesText + refText);
           } else {
