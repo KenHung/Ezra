@@ -18,8 +18,8 @@ $(document).tooltip({
       return false;
     }
     // close any lingering tooltips
-    var $id = $(ui.tooltip).attr('id');
-    $('div.ui-tooltip').not('#' + $id).remove();
+    var thisTooltip = '#' + $(ui.tooltip).attr('id');
+    $('div.ui-tooltip').not(thisTooltip).remove();
 
     var ref = bibleRefReader.readRef($(ui.tooltip).text());
     ref.getBibleText(function (bibleText) {
