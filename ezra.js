@@ -98,8 +98,21 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
   };
 }
 
+BibleRef.versesCache = {};
 function BibleRef(abbr, chap, vers) {
+  var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
   this.getBibleText = function (callback) {
+    var cache = BibleRef.versesCache;
+    if (cache.hasOwnProperty(refText)) {
+      callback(cache[refText]);
+    } else {
+      getBibleTextFromFHL(function (text) {
+        cache[refText] = text;
+        callback(text);
+      }, callback);
+    }
+  };
+  var getBibleTextFromFHL = function (success, fail) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if (xhr.status == 200) {
@@ -116,17 +129,16 @@ function BibleRef(abbr, chap, vers) {
               lastSec = record.sec;
               versesText += record.bible_text;
             }
-            var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
-            callback(versesText + refText);
+            success(versesText + refText);
           } else {
-            callback('未能查訽經文: FHL response text = ' + xhr.responseText);
+            fail('未能查訽經文: FHL response text = ' + xhr.responseText);
           }
         }
         catch (err) {
-          callback('未能查訽經文: ' + err);
+          fail('未能查訽經文: ' + err);
         }
       } else {
-        callback('未能查訽經文: XHR status = ' + xhr.status);
+        fail('未能查訽經文: XHR status = ' + xhr.status);
       }
     };
     xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
