@@ -115,30 +115,27 @@ function BibleRef(abbr, chap, vers) {
   var getBibleTextFromFHL = function (success, fail) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
-      if (xhr.status == 200) {
-        var resp = JSON.parse(xhr.responseText);
-        try {
-          if (resp.status === 'success') {
-            var versesText = '';
-            var lastSec = 0;
-            for (var i = 0; i < resp.record.length; i++) {
-              var record = resp.record[i];
-              if (i > 0 && record.sec > lastSec + 1) {
-                versesText += '⋯⋯';
-              }
-              lastSec = record.sec;
-              versesText += record.bible_text;
-            }
-            success(versesText + refText);
-          } else {
-            fail('未能查訽經文: FHL response text = ' + xhr.responseText);
-          }
-        }
-        catch (err) {
-          fail('未能查訽經文: ' + err);
-        }
-      } else {
+      if (xhr.status !== 200) {
         fail('未能查訽經文: XHR status = ' + xhr.status);
+      }
+      try {
+        var resp = JSON.parse(xhr.responseText);
+        if (resp.status !== 'success') {
+          fail('未能查訽經文: FHL response text = ' + xhr.responseText);
+        }
+        var versesText = '';
+        var lastSec = 0;
+        for (var i = 0; i < resp.record.length; i++) {
+          var record = resp.record[i];
+          if (i > 0 && record.sec > lastSec + 1) {
+            versesText += '⋯⋯';
+          }
+          lastSec = record.sec;
+          versesText += record.bible_text;
+        }
+        success(versesText + refText);
+      } catch (err) {
+        fail('未能查訽經文: ' + err);
       }
     };
     xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
