@@ -68,15 +68,16 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
     else {
       var acc = [];
       for (var i in num) {
-        var n = num[i];
-        if (chiNum.indexOf(n) >= 0) {
-          acc.push(chiNumVal[n]);
-        }
-        else if (chiExp.indexOf(n) >= 0) {
-          if (acc.length === 0) {
-            acc.push(1);
+        if (num.hasOwnProperty(i)) {
+          var n = num[i];
+          if (chiNum.indexOf(n) >= 0) {
+            acc.push(chiNumVal[n]);
+          } else if (chiExp.indexOf(n) >= 0) {
+            if (acc.length === 0) {
+              acc.push(1);
+            }
+            acc[acc.length - 1] *= chiExpVal[n];
           }
-          acc[acc.length - 1] *= chiExpVal[n];
         }
       }
       return acc.reduce((a, b) => a + b);
