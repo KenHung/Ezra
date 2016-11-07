@@ -1,4 +1,4 @@
-var bibleRefReader = new BibleRefReader(BIBLE_ABBR, CHINESE_NUM_VAL, CHINESE_EXP_VAL);
+var bibleRefReader = new BibleRefReader(BIBLE_ABBR);
 var bodyTextNodes = getTextNodesIn(document.body);
 for (var i = 0; i < bodyTextNodes.length; i++) {
   if (bodyTextNodes[i].parentNode.nodeName !== 'A') {
@@ -44,21 +44,19 @@ $(document).tooltip({
   },
 });
 
-function BibleRefReader(abbr, chiNumVal, chiExpVal) {
+function BibleRefReader(abbr) {
   var books = Object.keys(abbr);
   var abbrs = books.map(function (book) { return abbr[book]; });
   var bibleBooks = books.concat(abbrs).join('|');
-  var chiNum = Object.keys(chiNumVal);
-  var chiExp = Object.keys(chiExpVal);
-  var chineseNums = chiNum.concat(chiExp).join();
+  var chiNumParser = new ChineseNumberParser();
   var lastAbbr = '';
 
-  this.regexPattern = '(' + bibleBooks + '|，) ?([' + chineseNums + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)';
+  this.regexPattern = '(' + bibleBooks + '|，) ?([' + chiNumParser.supportedChars + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)';
   this.readRef = function (ref) {
     var match = new RegExp(this.regexPattern).exec(ref);
     return new BibleRef(
       this.readAbbr(match[1]),
-      this.readChap(match[2]),
+      chiNumParser.parse(match[2]),
       this.readVers(match[3]));
   }
   this.readAbbr = function (book) {
@@ -69,7 +67,20 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
     lastAbbr = curAbbr;
     return curAbbr;
   };
-  this.readChap = function (num) {
+  this.readVers = function (vers) {
+    return vers.replace(/─/g, '-')
+      .replace(/、/g, ',')
+      .replace(/ /g, '');
+  };
+}
+
+function ChineseNumberParser() {
+  var numVal = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+  var expVal = { 十: 10, 廿: 20, 卅: 30, 百: 100 };
+  var nums = Object.keys(numVal);
+  var exps = Object.keys(expVal);
+  this.supportedChars = nums.concat(exps).join();
+  this.parse = function (num) {
     if (!isNaN(num)) {
       return +num;
     }
@@ -78,23 +89,18 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
       for (var i in num) {
         if (num.hasOwnProperty(i)) {
           var n = num[i];
-          if (chiNum.indexOf(n) >= 0) {
-            acc.push(chiNumVal[n]);
-          } else if (chiExp.indexOf(n) >= 0) {
+          if (nums.indexOf(n) >= 0) {
+            acc.push(numVal[n]);
+          } else if (exps.indexOf(n) >= 0) {
             if (acc.length === 0) {
               acc.push(1);
             }
-            acc[acc.length - 1] *= chiExpVal[n];
+            acc[acc.length - 1] *= expVal[n];
           }
         }
       }
       return acc.reduce((a, b) => a + b);
     }
-  };
-  this.readVers = function (vers) {
-    return vers.replace(/─/g, '-')
-      .replace(/、/g, ',')
-      .replace(/ /g, '');
   };
 }
 
