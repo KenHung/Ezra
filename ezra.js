@@ -22,8 +22,11 @@ $(document).tooltip({
     $('div.ui-tooltip').not('#' + $id).remove();
 
     var ref = bibleRefReader.readRef($(ui.tooltip).text());
-    ref.getBibleText(function (text) {
-      $(ui.tooltip).text(text);
+    ref.getBibleText(function (bibleText) {
+      $(ui.tooltip).html(
+        bibleText
+        + "<div class='bibleRefSeperator'></div>"
+        + "<div class='bibleRefFooter'><a href='#'>關於</a></div>");
     });
   },
   close: function (event, ui) {
@@ -48,7 +51,7 @@ function BibleRefReader(abbr, chiNumVal, chiExpVal) {
   var chiNum = Object.keys(chiNumVal);
   var chiExp = Object.keys(chiExpVal);
   var chineseNums = chiNum.concat(chiExp).join();
-  var lastAbbr;
+  var lastAbbr = '';
 
   this.regexPattern = '(' + bibleBooks + '|，) ?([' + chineseNums + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)';
   this.readRef = function (ref) {
