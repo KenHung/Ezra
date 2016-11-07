@@ -4,7 +4,10 @@ for (var i = 0; i < bodyTextNodes.length; i++) {
   var linkifiedHtml = bodyTextNodes[i].nodeValue.replace(
     new RegExp(bibleRefReader.regexPattern, 'g'), "<a href='#' title='載入中...($&)'>$&</a>");
   var linkifiedNodes = createNodes(linkifiedHtml);
-  replaceWithNodes(bodyTextNodes[i], linkifiedNodes);
+  var linksCreated = linkifiedNodes.length > 1;
+  if (linksCreated) {
+    replaceWithNodes(bodyTextNodes[i], linkifiedNodes);
+  }
 }
 
 $(document).tooltip({
