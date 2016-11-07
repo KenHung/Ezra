@@ -1,12 +1,14 @@
 var bibleRefReader = new BibleRefReader(BIBLE_ABBR, CHINESE_NUM_VAL, CHINESE_EXP_VAL);
 var bodyTextNodes = getTextNodesIn(document.body);
 for (var i = 0; i < bodyTextNodes.length; i++) {
-  var linkifiedHtml = bodyTextNodes[i].nodeValue.replace(
-    new RegExp(bibleRefReader.regexPattern, 'g'), "<a href='#' title='載入中...($&)'>$&</a>");
-  var linkifiedNodes = createNodes(linkifiedHtml);
-  var linksCreated = linkifiedNodes.length > 1;
-  if (linksCreated) {
-    replaceWithNodes(bodyTextNodes[i], linkifiedNodes);
+  if (bodyTextNodes[i].parentNode.nodeName !== 'A') {
+    var linkifiedHtml = bodyTextNodes[i].nodeValue.replace(
+      new RegExp(bibleRefReader.regexPattern, 'g'), "<a href='#' title='載入中...($&)'>$&</a>");
+    var linkifiedNodes = createNodes(linkifiedHtml);
+    var linksCreated = linkifiedNodes.length > 1;
+    if (linksCreated) {
+      replaceWithNodes(bodyTextNodes[i], linkifiedNodes);
+    }
   }
 }
 
