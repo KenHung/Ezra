@@ -46,11 +46,15 @@
     });
   };
 
+  // added for unit testing
+  ezraLinkifier._BibleRefReader = BibleRefReader;
+  ezraLinkifier._ChineseNumParser = ChineseNumParser;
+
   function BibleRefReader(abbr) {
     var books = Object.keys(abbr);
     var abbrs = books.map(function (book) { return abbr[book]; });
     var bibleBooks = books.concat(abbrs).join('|');
-    var chiNumParser = new ChineseNumberParser();
+    var chiNumParser = new ChineseNumParser();
     var lastAbbr = '';
 
     this.regexPattern = '(' + bibleBooks + '|，) ?([' + chiNumParser.supportedChars + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)';
@@ -76,7 +80,7 @@
     };
   }
 
-  function ChineseNumberParser() {
+  function ChineseNumParser() {
     var numVal = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
     var expVal = { 十: 10, 廿: 20, 卅: 30, 百: 100 };
     var nums = Object.keys(numVal);
@@ -113,10 +117,10 @@
     }
   }
 
-  BibleRef.versesCache = {};
   function BibleRef(abbr, chap, vers) {
     var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
     this.getBibleText = function (callback) {
+      BibleRef.versesCache = BibleRef.versesCache || {};
       var cache = BibleRef.versesCache;
       if (cache.hasOwnProperty(refText)) {
         callback(cache[refText]);
