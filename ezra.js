@@ -99,9 +99,16 @@ function ChineseNumberParser() {
           }
         }
       }
-      return acc.reduce((a, b) => a + b);
+      return sumOf(acc);
     }
   };
+  var sumOf = function(nums) {
+    var sum = 0;
+    for (var i = 0; i < nums.length; i++) {
+      sum += nums[i];     
+    }
+    return sum;
+  }
 }
 
 BibleRef.versesCache = {};
