@@ -1,6 +1,5 @@
-# QuickVersesQuery
-The purpose of this project is to create a Chinese Reftagger: which can turn Chinese Bible reference in web pages into hover-preview.
+Ezra是中文的[Reftagger](https://reftagger.com/)。Ezra能夠找出網頁中的所有聖經依據，如:約 1:2;弗 2:1，然後顯示經文。當光標移到經文依據時，Ezra就會顯示相應的經文。尤其適合信仰告白，因為每句都是充滿一串串的經文依據。
 
-This project is inspired by Reftagger: https://reftagger.com/. As a Chinese Christian, I would like to have something similiar in Chinese. Such that I can query the bible verses quickly, especially when viewing creeds, which are full of references.
+特別鳴謝「信望愛信仰與聖經資源中心」提供了[聖經JSON API](https://bible.fhl.net/json/)。
 
-This project is in initial phase. The regular expression for searching Traditional Chinese Bible references is completed. Also, the search results can be passed to query the verses by JSON API in https://bible.fhl.net.
+本服務正進行封閉測試，有興趣使用的人士請與我聯絡。
