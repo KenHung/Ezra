@@ -1,6 +1,6 @@
 (function (ezraLinkifier, $, undefined) {
   ezraLinkifier.linkify = function (element) {
-    var bibleRefReader = new BibleRefReader(BIBLE_ABBR);
+    var bibleRefReader = new BibleRefReader(this._abbr);
     var textNodes = getTextNodesIn(element);
     for (var i = 0; i < textNodes.length; i++) {
       if (textNodes[i].parentNode.nodeName !== 'A') {

@@ -1,4 +1,4 @@
-var bibleRefReader = new ezraLinkifier._BibleRefReader(BIBLE_ABBR);
+var bibleRefReader = new ezraLinkifier._BibleRefReader(ezraLinkifier._abbr);
 var chineseNumParser = new ezraLinkifier._ChineseNumParser();
 
 QUnit.test("BibleRefReader.readAbbr", function (assert) {
