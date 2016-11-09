@@ -5,7 +5,7 @@
     for (var i = 0; i < textNodes.length; i++) {
       if (textNodes[i].parentNode.nodeName !== 'A') {
         var linkifiedHtml = textNodes[i].nodeValue.replace(
-          new RegExp(bibleRefReader.regexPattern, 'g'), "<a href='#' title='載入中...($&)'>$&</a>");
+          new RegExp(bibleRefReader.regexPattern, 'g'), '<a href="#" title="載入中...($&)">$&</a>');
         var linkifiedNodes = createNodes(linkifiedHtml);
         var linksCreated = linkifiedNodes.length > 1;
         if (linksCreated) {
@@ -26,8 +26,8 @@
         ref.getBibleText(function (bibleText) {
           $(ui.tooltip).html(
             bibleText
-            + "<div class='bibleRefSeperator'></div>"
-            + "<div class='bibleRefFooter'><a href='#'>關於</a></div>");
+            + '<div class="bibleRefSeperator"></div>'
+            + '<div class="bibleRefFooter"><a href="#">關於</a></div>');
         });
       },
       close: function (event, ui) {
