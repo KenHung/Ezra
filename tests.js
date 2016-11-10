@@ -25,3 +25,20 @@ QUnit.test("BibleRefReader.toVers", function (assert) {
     assert.strictEqual(bibleRefReader.readVers('12、25'), '12,25');
     assert.strictEqual(bibleRefReader.readVers('12、25、30'), '12,25,30');
 });
+
+QUnit.test("BibleRefReader.readRef", function (assert) {
+    function refTest(ref, abbr, chap, vers) {
+        var bibleRef = bibleRefReader.readRef(ref);
+        var actual = bibleRef.abbr + ' ' + bibleRef.chap + ':' + bibleRef.vers;
+        var expected = abbr + ' ' + chap + ':' + vers;
+        assert.strictEqual(actual, expected);
+    }
+    refTest('出七16', '出', 7, '16');
+    refTest('利未記 7:14', '利', 7, '14');
+    refTest('猶3, 6', '猶', 1, '3,6');
+    refTest('約一1:14', '約一', 1, '14');
+    refTest('約一14', '約', 1, '14');
+    refTest('創24：7，12，27，52', '創', 24, '7,12,27,52');
+    refTest('西1 ： 16 ， 20', '西', 1, '16,20');
+    refTest('啟19:10；20:8，9', '啟', 19, '10');
+});

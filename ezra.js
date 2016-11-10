@@ -118,6 +118,9 @@
   }
 
   function BibleRef(abbr, chap, vers) {
+    this.abbr = abbr;
+    this.chap = chap;
+    this.vers = vers;    
     var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
     this.getBibleText = function (callback) {
       BibleRef.versesCache = BibleRef.versesCache || {};
