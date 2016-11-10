@@ -2,33 +2,37 @@
 <html lang="zh-hant">
 
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8" name="viewport" content="width=device-width">
 	<title>Demo</title>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
+	<link rel="stylesheet" type="text/css" href="ezra-style.css" />
 </head>
 
 <body>
-	<p>找出網頁出現的聖經章節，然後根據章節找出相應經文。暫時只顯示和合本經文。</p>
-	<p>請把鼠標放在旁邊：約 1:1</p>
-	<p>如果出現多節，就會一次過顯示：約 1:1-5</p>
-	<p>如果出現多節而不連續，中間就會省略：約 1:1,6</p>
-	<p>如果有很多很多經文，也會一次過顯示：約 1:1-20</p>
-	<p>不同格式也照樣顯示：
-問4：神是怎樣的神？
- 答：神是靈：祂的本性，智慧，權能，聖潔，公義，恩慈，誠實，都是無限無量，無始無終，永無改變的。(約四24，出三14，詩一四七5，啟四8，啟十五4，出卅四6-7，伯十一7，詩九十2，雅一17)
-《韋斯敏斯德小要理問答》
-	</p>
-	<a href="#">現有連結將不會被取消 約 1:1</a>
-	<p>支持聖經66卷書，由創世記到啟示錄，也支持簡寫，如：創，啟。</p>
-</body>
+	<div id="demo">
+		<p>找出網頁出現的聖經章節，然後根據章節找出相應經文。暫時只顯示和合本經文。</p>
+		<p>請把鼠標放在旁邊：約 1:1</p>
+		<p>如果出現多節，就會一次過顯示：約 1:1-5</p>
+		<p>如果出現多節而不連續，中間就會省略：約 1:1,6</p>
+		<p>如果有很多很多經文，也會一次過顯示：約 1:1-20</p>
+		<p>不同格式也照樣顯示： </p>
+		<p>問4：神是怎樣的神？ 答：神是靈：祂的本性，智慧，權能，聖潔，公義，恩慈，誠實，都是無限無量，無始無終，永無改變的。(約四24，出三14，詩一四七5，啟四8，啟十五4，出卅四6-7，伯十一7，詩九十2，雅一17) 《韋斯敏斯德小要理問答》</p>
+		<a href="#">現有連結將不會被取消 約 1:1</a>
+		<p>支持聖經66卷書，由創世記到啟示錄，也支持簡寫，如：創，啟。</p>
+	</div>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 
-<link rel="stylesheet" type="text/css" href="ezra-style.css" />
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="ezra-zh.js"></script>
-<script src="ezra.js"></script>
-<script>
-ezraLinkifier.linkify(document.body);
-</script>
+	<script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="ezra-zh.js"></script>
+	<script src="ezra.js"></script>
+	<script>
+	ezraLinkifier.linkify(document.getElementById("demo"));
+	</script>
+	<script src="tests.js"></script>
+</body>
 
 </html>
