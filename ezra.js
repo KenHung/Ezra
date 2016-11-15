@@ -4,11 +4,10 @@
     var textNodes = getTextNodesIn(element);
     for (var i = 0; i < textNodes.length; i++) {
       if (textNodes[i].parentNode.nodeName !== 'A') {
-        var linkifiedHtml = textNodes[i].nodeValue.replace(
-          new RegExp(bibleRefReader.regexPattern, 'g'), '<a href="#" title="載入中...($&)" class="bibleRefLink">$&</a>');
-        var linkifiedNodes = createNodes(linkifiedHtml);
-        var linksCreated = linkifiedNodes.length > 1;
-        if (linksCreated) {
+        var linkifiedHtml = bibleRefReader.createBibleRefs(textNodes[i].nodeValue).linkifiedHtml;
+        var linkified = linkifiedHtml.length > textNodes[i].nodeValue.length;
+        if (linkified) {
+          var linkifiedNodes = createNodes(linkifiedHtml);
           replaceWithNodes(textNodes[i], linkifiedNodes);
         }
       }
@@ -50,22 +49,33 @@
   ezraLinkifier._BibleRefReader = BibleRefReader;
   ezraLinkifier._ChineseNumParser = ChineseNumParser;
 
-  function BibleRefReader(abbr) {
+  function BibleRefReader(abbr, versSep, booksSep) {
     var books = Object.keys(abbr);
     var abbrs = books.map(function (book) { return abbr[book]; });
     var bibleBooks = books.concat(abbrs).join('|');
     var chiNumParser = new ChineseNumParser();
     var lastAbbr = '';
+    var chapSep = ':：︰';
+    versSep = versSep || ',、\\-─~';
+    booksSep = booksSep || ';';
 
-    this.regexPattern = '(' + bibleBooks + '|，) ?([' + chiNumParser.supportedChars + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)';
-    this.readRef = function (ref) {
-      var match = new RegExp(this.regexPattern).exec(ref);
-      return new BibleRef(
-        this.readAbbr(match[1]),
-        chiNumParser.parse(match[2]),
-        this.readVers(match[3]));
-    }
-    this.readAbbr = function (book) {
+    this.createBibleRefs = function (text) {
+      var chapVersChars = chiNumParser.supportedChars + chapSep + versSep + booksSep + '\\d\\s';
+      var fullRef = new RegExp('(' + bibleBooks + ')' + '([' + chapVersChars + ']+)', 'g');
+      var singleRef = new RegExp('[' + bibleBooks + ']?\\s?' + '([' + chiNumParser.supportedChars + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)', 'g');
+      var bibleRefs = [];
+      bibleRefs.linkifiedHtml = text.replace(fullRef, function (refs, book, chapVers, offset, string) {
+        return refs.replace(singleRef, function (ref, chap, vers, offset, string) {
+          bibleRefs.push(new BibleRef(
+            readAbbr(book),
+            chiNumParser.parse(chap),
+            readVers(vers)));
+          return '<a href="#" title="載入中...(' + ref + ')" class="bibleRefLink">' + ref + '</a>';
+        });
+      });
+      return bibleRefs;
+    };
+    var readAbbr = function (book) {
       var curAbbr = abbr[book];
       if (curAbbr === undefined) {
         curAbbr = abbrs.indexOf(book) >= 0 ? book : lastAbbr;
@@ -73,11 +83,13 @@
       lastAbbr = curAbbr;
       return curAbbr;
     };
-    this.readVers = function (vers) {
+    var readVers = function (vers) {
       return vers.replace(/─/g, '-')
         .replace(/、/g, ',')
         .replace(/ /g, '');
     };
+    this.readAbbr = readAbbr;
+    this.readVers = readVers;
   }
 
   function ChineseNumParser() {
@@ -85,7 +97,7 @@
     var expVal = { 十: 10, 廿: 20, 卅: 30, 百: 100 };
     var nums = Object.keys(numVal);
     var exps = Object.keys(expVal);
-    this.supportedChars = nums.concat(exps).join();
+    this.supportedChars = nums.concat(exps).join('');
     this.parse = function (num) {
       if (!isNaN(num)) {
         return +num;

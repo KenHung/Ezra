@@ -26,10 +26,10 @@ QUnit.test("BibleRefReader.toVers", function (assert) {
     assert.strictEqual(bibleRefReader.readVers('12、25、30'), '12,25,30');
 });
 
-QUnit.test("BibleRefReader.readRef", function (assert) {
+QUnit.test("BibleRefReader.createBibleRefs", function (assert) {
     function refTest(ref, abbr, chap, vers) {
-        var bibleRef = bibleRefReader.readRef(ref);
-        var actual = bibleRef.abbr + ' ' + bibleRef.chap + ':' + bibleRef.vers;
+        var bibleRefs = bibleRefReader.createBibleRefs(ref);
+        var actual = bibleRefs[0].abbr + ' ' + bibleRefs[0].chap + ':' + bibleRefs[0].vers;
         var expected = abbr + ' ' + chap + ':' + vers;
         assert.strictEqual(actual, expected);
     }
