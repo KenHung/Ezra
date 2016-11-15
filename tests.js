@@ -1,9 +1,10 @@
 var bibleRefReader = new ezraLinkifier._BibleRefReader(ezraLinkifier._abbr);
+var abbrResolver = new ezraLinkifier._AbbrResolver();
 var chineseNumParser = new ezraLinkifier._ChineseNumParser();
 
-QUnit.test("BibleRefReader.readAbbr", function (assert) {
-    assert.strictEqual(bibleRefReader.readAbbr('啓'), '啟');
-    assert.strictEqual(bibleRefReader.readAbbr('啓示錄'), '啟');
+QUnit.test("AbbrResolver.toAbbr", function (assert) {
+    assert.strictEqual(abbrResolver.toAbbr('啓'), '啟');
+    assert.strictEqual(abbrResolver.toAbbr('啓示錄'), '啟');
 });
 
 QUnit.test("ChineseNumParser.parse", function (assert) {
