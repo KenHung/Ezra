@@ -29,8 +29,8 @@ QUnit.test("BibleRefReader.toVers", function (assert) {
 
 QUnit.test("BibleRefReader.createBibleRefs", function (assert) {
     function refTest(ref, abbr, chap, vers) {
-        var bibleRefs = bibleRefReader.createBibleRefs(ref);
-        var actual = bibleRefs[0].abbr + ' ' + bibleRefs[0].chap + ':' + bibleRefs[0].vers;
+        var bibleRef = bibleRefReader.readRef(ref);
+        var actual = bibleRef.abbr + ' ' + bibleRef.chap + ':' + bibleRef.vers;
         var expected = abbr + ' ' + chap + ':' + vers;
         assert.strictEqual(actual, expected);
     }
