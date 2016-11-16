@@ -56,13 +56,15 @@
     var toRegex = function (refex) {
       return refex
         .replace('{B}', abbrResolver.bibleBooks)
-        .replace('{C}', chiNumParser.supportedChars)
-        .replace('{S}', ':：︰')
-        .replace('{V}', versSep || ',，、\\-─–~～')
+        .replace('{C}', '[{CC}]+|\\d+')
+        .replace('{CC}', chiNumParser.supportedChars)
+        .replace('{S}', ':：︰\\s')
+        .replace('{V}', '[{VS}\\d\\s]+')
+        .replace('{VS}', versSep || ',，、\\-─–~～')
         .replace('{BS}', booksSep || ';；');
     };
-    var fullRef = new RegExp(toRegex('({B})([{C}{S}{V}{BS}\\d\\s]+)'), 'g');
-    var singleRef = new RegExp(toRegex('[{B}]?\\s?([{C}]+|\\d+)[\\s{S}]?([\\d{V}]+)'), 'g');
+    var fullRef = new RegExp(toRegex('({B})([{CC}{S}{VS}{BS}\\d]+)'), 'g');
+    var singleRef = new RegExp(toRegex('(?:{B})?\\s?({C})[{S}]*({V})'), 'g');
     this.linkify = function (text) {
       var linkifiedHtml = text.replace(fullRef, function (refs, book, chapVers, offset, string) {
         return refs.replace(singleRef, function (ref, chap, vers, offset, string) {
@@ -74,7 +76,7 @@
       return linkifiedHtml;
     };
     this.readRef = function (ref) {
-      var match = new RegExp(toRegex('({B})\\s?([{C}]+|\\d+)[\\s{S}]?([\\d{V}]+)')).exec(ref);
+      var match = new RegExp(toRegex('({B})\\s?({C})[{S}]*({V})')).exec(ref);
       return new BibleRef(
         abbrResolver.toAbbr(match[1]),
         chiNumParser.parse(match[2]),

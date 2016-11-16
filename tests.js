@@ -40,6 +40,18 @@ QUnit.test("BibleRefReader.createBibleRefs", function (assert) {
     refTest('約一1:14', '約一', 1, '14');
     refTest('約一14', '約', 1, '14');
     refTest('創24：7，12，27，52', '創', 24, '7,12,27,52');
-    refTest('西1 ： 16 ， 20', '西', 1, '16,20');
     refTest('啟19:10；20:8，9', '啟', 19, '10');
+    refTest('約1: 1', '約', 1, '1');
+    refTest('約 1 : 1', '約', 1, '1');
+    refTest('約翰福音1:1', '約', 1, '1');
+    refTest('西1 ： 16 ， 20', '西', 1, '16,20');
+});
+
+QUnit.test("BibleRefReader.linkify", function (assert) {
+    function linkifyTest(text, expected) {
+        var linkifiedHtml = bibleRefReader.linkify(text);
+        assert.strictEqual(linkifiedHtml, expected);
+    }
+    linkifyTest('約翰福音1:1', '<a href="#" title="載入中...(約翰福音1:1)" class="bibleRefLink">約翰福音1:1</a>');
+    linkifyTest('約四24，', '<a href="#" title="載入中...(約四24)" class="bibleRefLink">約四24</a>，');
 });
