@@ -26,7 +26,7 @@
           $(ui.tooltip).html(
             bibleText
             + '<div class="bibleRefSeperator"></div>'
-            + '<div class="bibleRefFooter"><a href="https://kenhung.github.io/Ezra/" target="_blank">關於</a></div>');
+            + '<div class="bibleRefFooter"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>');
         });
       },
       close: function (event, ui) {
