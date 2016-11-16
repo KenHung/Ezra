@@ -53,16 +53,17 @@
   function BibleRefReader(versSep, booksSep) {
     var abbrResolver = new AbbrResolver();
     var chiNumParser = new ChineseNumParser();
-    var chapSep = ':：︰';
-    versSep = versSep || ',，、\\-─~';
-    booksSep = booksSep || ';；';
-    var chapVersChars = chiNumParser.supportedChars + chapSep + versSep + booksSep + '\\d\\s';
-    var refPattern = '[' + abbrResolver.bibleBooks + ']?\\s?'
-      + '([' + chiNumParser.supportedChars + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)';
-
+    var toRegex = function (refex) {
+      return refex
+        .replace('{B}', abbrResolver.bibleBooks)
+        .replace('{C}', chiNumParser.supportedChars)
+        .replace('{S}', ':：︰')
+        .replace('{V}', versSep || ',，、\\-─–~～')
+        .replace('{BS}', booksSep || ';；');
+    };
+    var fullRef = new RegExp(toRegex('({B})([{C}{S}{V}{BS}\\d\\s]+)'), 'g');
+    var singleRef = new RegExp(toRegex('[{B}]?\\s?([{C}]+|\\d+)[\\s{S}]?([\\d{V}]+)'), 'g');
     this.linkify = function (text) {
-      var fullRef = new RegExp('(' + abbrResolver.bibleBooks + ')' + '([' + chapVersChars + ']+)', 'g');
-      var singleRef = new RegExp(refPattern, 'g');
       var linkifiedHtml = text.replace(fullRef, function (refs, book, chapVers, offset, string) {
         return refs.replace(singleRef, function (ref, chap, vers, offset, string) {
           var startsWithBook = ref.substr(0, book.length) === book;
@@ -73,16 +74,15 @@
       return linkifiedHtml;
     };
     this.readRef = function (ref) {
-      var refPattern = '(' + abbrResolver.bibleBooks + ')\\s?(['
-        + chiNumParser.supportedChars + ']+|\\d+)[ :：︰]?([\\d-─,、 ]+)';
-      var match = new RegExp(refPattern).exec(ref);
+      var match = new RegExp(toRegex('({B})\\s?([{C}]+|\\d+)[\\s{S}]?([\\d{V}]+)')).exec(ref);
       return new BibleRef(
         abbrResolver.toAbbr(match[1]),
         chiNumParser.parse(match[2]),
         this.readVers(match[3]));
     };
     this.readVers = function (vers) {
-      return vers.replace(/[─~]/g, '-')
+      return vers
+        .replace(/[─–~～]/g, '-')
         .replace(/[，、]/g, ',')
         .replace(/ /g, '');
     };
