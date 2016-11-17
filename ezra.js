@@ -12,7 +12,7 @@
         }
       }
     }
-    $(element).tooltip({
+    $('.ezraBibleRefLink').tooltip({
       open: function (event, ui) {
         if (typeof (event.originalEvent) === 'undefined') {
           return false;
@@ -25,8 +25,8 @@
         ref.getBibleText(function (bibleText) {
           $(ui.tooltip).html(
             bibleText
-            + '<div class="bibleRefSeperator"></div>'
-            + '<div class="bibleRefFooter"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>');
+            + '<div class="ezraBibleRefSeperator"></div>'
+            + '<div class="ezraBibleRefFooter"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>');
         });
       },
       close: function (event, ui) {
@@ -70,7 +70,7 @@
         return refs.replace(singleRef, function (ref, chap, vers, offset, string) {
           var startsWithBook = ref.substr(0, book.length) === book;
           var titleRef = startsWithBook ? ref : book + ref;
-          return '<a href="#" title="載入中...(' + titleRef + ')" class="bibleRefLink">' + ref + '</a>';
+          return '<a href="#" title="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
         });
       });
       return linkifiedHtml;
