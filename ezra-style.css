@@ -1,4 +1,5 @@
 /* uncomment below to style bible reference link */
-/* .bibleRefLink { text-decoration: none } */
+/* a.ezraBibleRefLink:visited { text-decoration: none } */
 .ezraBibleRefSeperator { height: 5px }
 .ezraBibleRefFooter { text-align: right }
+.ezraBibleRefFooter a { color: darkgrey; text-decoration: none }
