@@ -59,7 +59,7 @@
         .replace('{C}', '[{CC}]+|\\d+')
         .replace('{CC}', chiNumParser.supportedChars)
         .replace('{S}', ':：︰\\s')
-        .replace('{V}', '[{VS}\\d\\s]+')
+        .replace('{V}', '[{VS}\\s\\d]+')
         .replace('{VS}', versSep || ',，、\\-─–~～')
         .replace('{BS}', booksSep || ';；');
     };
@@ -88,7 +88,7 @@
         .replace(/[，、]/g, ',')
         .replace(/ /g, '');
     };
-  };
+  }
 
   function ChineseNumParser() {
     var numVal = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
@@ -134,15 +134,15 @@
         }
       }
       return false;
-    }
-    var isExp = function (num) { return expVal[num] ? true : false; }
+    };
+    var isExp = function (num) { return expVal[num] ? true : false; };
     var sumOf = function (nums) {
       var sum = 0;
       for (var i = 0; i < nums.length; i++) {
         sum += nums[i];
       }
       return sum;
-    }
+    };
   }
 
   function BibleRef(abbr, chap, vers) {
