@@ -86,7 +86,7 @@
       return vers
         .replace(/[─–~～]/g, '-')
         .replace(/[，、]/g, ',')
-        .replace(/ /g, '');
+        .replace(/\s/g, '');
     };
   }
 
