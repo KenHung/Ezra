@@ -188,8 +188,13 @@
           fail('未能查訽經文: ' + err);
         }
       };
-      xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
-      xhr.send();
+      try {
+        xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
+        xhr.send();
+      }
+      catch (err) {
+        fail('未能查訽經文: ' + err);
+      }
     };
   }
 
