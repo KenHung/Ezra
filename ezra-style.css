@@ -2,4 +2,4 @@
 /* a.ezraBibleRefLink:visited { text-decoration: none } */
 .ezraBibleRefSeperator { height: 5px }
 .ezraBibleRefFooter { text-align: right }
-.ezraBibleRefFooter a { color: darkgrey; text-decoration: none }
+.ezraBibleRefFooter a { color: darkgrey; font-size: 75%; text-decoration: none }
