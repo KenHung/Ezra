@@ -52,6 +52,6 @@ QUnit.test("BibleRefReader.linkify", function (assert) {
         var linkifiedHtml = bibleRefReader.linkify(text);
         assert.strictEqual(linkifiedHtml, expected);
     }
-    linkifyTest('約翰福音1:1', '<a href="#" title="載入中...(約翰福音1:1)" class="bibleRefLink">約翰福音1:1</a>');
-    linkifyTest('約四24，', '<a href="#" title="載入中...(約四24)" class="bibleRefLink">約四24</a>，');
+    linkifyTest('約翰福音1:1', '<a href="#" title="載入中...(約翰福音1:1)" class="ezraBibleRefLink">約翰福音1:1</a>');
+    linkifyTest('約四24，', '<a href="#" title="載入中...(約四24)" class="ezraBibleRefLink">約四24</a>，');
 });
