@@ -92,7 +92,7 @@
 
   function ChineseNumParser() {
     var numVal = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
-    var expVal = { 十: 10, 廿: 20, 卅: 30, 百: 100 };
+    var expVal = { 十: 10, 廿: 20, 卅: 30, 卌: 40, 百: 100 };
     var nums = Object.keys(numVal);
     var exps = Object.keys(expVal);
     this.supportedChars = nums.concat(exps).join('');
