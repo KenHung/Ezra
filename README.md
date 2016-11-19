@@ -33,7 +33,7 @@ Ezra是中文的[Reftagger](https://reftagger.com/)。Ezra能夠找出網頁中�
 暫時只支援繁體中文和合本。
 
 ### 使用方法
-Ezra剛剛起步，歡迎自由使用！如果你的網站沒有使用jQuery和jQuery UI，可以直接把以下代碼加入網頁的底部：
+Ezra剛剛起步，歡迎自由使用！如果你的網站沒有使用jQuery和jQuery UI，可以直接把以下代碼加入網頁的底部，</body>之前：
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
       crossorigin="anonymous"></script>
