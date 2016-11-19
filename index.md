@@ -59,6 +59,7 @@ Ezra剛剛起步，歡迎自由使用！如果你的網站沒有使用jQuery和j
 
 ### 致謝
 Ezra能夠運作，要感謝下列開源項目/免費軟件的幫助：
+
 * 「信望愛信仰與聖經資源中心」提供了[聖經JSON API](https://bible.fhl.net/json/)作經文查詢。
 * [JQuery UI Tooltip](https://jqueryui.com/tooltip/)提供了Toolip。
 * [GitHub](https://github.com/)提供了代碼和Ezra主網寄存。
