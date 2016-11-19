@@ -70,7 +70,7 @@
         return refs.replace(singleRef, function (ref, chap, vers, offset, string) {
           var startsWithBook = ref.substr(0, book.length) === book;
           var titleRef = startsWithBook ? ref : book + ref;
-          return '<a href="#" title="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
+          return '<a title="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
         });
       });
       return linkifiedHtml;

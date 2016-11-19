@@ -1,5 +1,4 @@
-/* uncomment below to style bible reference link */
-/* a.ezraBibleRefLink:visited { text-decoration: none } */
+.ezraBibleRefLink { cursor: pointer; color: #0071CF }
 .ezraBibleRefSeperator { height: 5px }
 .ezraBibleRefFooter { text-align: right }
 .ezraBibleRefFooter a { color: darkgrey; font-size: 75%; text-decoration: none }
