@@ -38,6 +38,7 @@ QUnit.test("BibleRefReader.createBibleRefs", function (assert) {
     refTest('利未記 7:14', '利', 7, '14');
     refTest('猶3, 6', '猶', 1, '3,6');
     refTest('約一1:14', '約一', 1, '14');
+    refTest('約壹一14', '約一', 1, '14');
     refTest('約一14', '約', 1, '14');
     refTest('創24：7，12，27，52', '創', 24, '7,12,27,52');
     refTest('啟19:10；20:8，9', '啟', 19, '10');
