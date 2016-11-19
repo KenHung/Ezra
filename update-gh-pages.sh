@@ -24,7 +24,7 @@ if [ `git rev-parse --abbrev-ref HEAD` == "master" ]; then
     # the gh-pages branch whenever you commit to master locally.
     # This is a little extreme. Use with care!
     ###################################################################
-    # git push origin gh-pages
+    git push origin gh-pages
 
     # Finally, switch back to the master branch and exit block
     git checkout master
