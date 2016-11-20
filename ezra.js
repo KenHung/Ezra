@@ -167,11 +167,16 @@
       xhr.onload = function () {
         if (xhr.status !== 200) {
           fail('未能查訽經文: XHR status = ' + xhr.status);
+          return;
         }
         try {
           var resp = JSON.parse(xhr.responseText);
           if (resp.status !== 'success') {
             fail('未能查訽經文: FHL response text = ' + xhr.responseText);
+            return;
+          } else if (resp.record.length === 0) {
+            fail('找不到記錄！是不是聖經中沒有這章節' + refText + '？');
+            return;
           }
           var versesText = '';
           var lastSec = 0;
