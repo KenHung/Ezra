@@ -58,12 +58,14 @@
         .replace('{B}', abbrResolver.bibleBooks)
         .replace('{C}', '[{CC}]+|\\d+')
         .replace('{CC}', chiNumParser.supportedChars)
-        .replace('{S}', ':：︰\\s')
-        .replace('{V}', '[{VS}\\s\\d]+')
-        .replace('{VS}', versSep || ',，、\\-─–~～')
+        .replace('{S}', ':：︰\\s篇章第')
+        .replace('{V}', '[{VS}{TO}{VE}\\s\\d]+')
+        .replace('{VS}', versSep || ',，、和及')
+        .replace('{TO}', '\\-─–~～至')
+        .replace('{VE}', '節节')
         .replace('{BS}', booksSep || ';；');
     };
-    var fullRef = new RegExp(toRegex('({B})([{CC}{S}{VS}{BS}\\d]*\\d+節?)'), 'g');
+    var fullRef = new RegExp(toRegex('({B})([{CC}{S}{VS}{TO}{BS}\\d]*\\d+[{VE}]?)'), 'g');
     var singleRef = new RegExp(toRegex('(?:{B})?\\s?({C})[{S}]*({V})'), 'g');
     this.linkify = function (text) {
       var linkifiedHtml = text.replace(fullRef, function (refs, book, chapVers, offset, string) {
@@ -71,7 +73,7 @@
           var startsWithBook = ref.substr(0, book.length) === book;
           var titleRef = startsWithBook ? ref : book + ref;
           return '<a title="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
-        });
+        })
       });
       return linkifiedHtml;
     };
@@ -84,9 +86,9 @@
     };
     this.readVers = function (vers) {
       return vers
-        .replace(/[─–~～]/g, '-')
-        .replace(/[，、]/g, ',')
-        .replace(/\s/g, '');
+        .replace(new RegExp(toRegex('[{TO}]'), 'g'), '-')
+        .replace(new RegExp(toRegex('[{VS}]'), 'g'), ',')
+        .replace(new RegExp(toRegex('[{VE} ]'), 'g'), '');
     };
   }
 

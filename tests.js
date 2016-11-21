@@ -46,6 +46,8 @@ QUnit.test("BibleRefReader.createBibleRefs", function (assert) {
     refTest('約 1 : 1', '約', 1, '1');
     refTest('約翰福音1:1', '約', 1, '1');
     refTest('西1 ： 16 ， 20', '西', 1, '16,20');
+    refTest('希伯來書四章8節', '來', 4, '8');
+    refTest('詩篇一百一十八篇8至9節', '詩', 118, '8-9');
 });
 
 QUnit.test("BibleRefReader.linkify", function (assert) {
@@ -56,4 +58,6 @@ QUnit.test("BibleRefReader.linkify", function (assert) {
     linkifyTest('約翰福音1:1', '<a title="載入中...(約翰福音1:1)" class="ezraBibleRefLink">約翰福音1:1</a>');
     linkifyTest('約四24，', '<a title="載入中...(約四24)" class="ezraBibleRefLink">約四24</a>，');
     linkifyTest('約四，', '約四，');
+    linkifyTest('希伯來書四章8節', '<a title="載入中...(希伯來書四章8節)" class="ezraBibleRefLink">希伯來書四章8節</a>');
+    linkifyTest('詩篇一百一十八篇8至9節', '<a title="載入中...(詩篇一百一十八篇8至9節)" class="ezraBibleRefLink">詩篇一百一十八篇8至9節</a>');
 });
