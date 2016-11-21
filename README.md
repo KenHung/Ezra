@@ -14,7 +14,7 @@ Ezra是中文的[Reftagger](https://reftagger.com/)。Ezra能夠找出網頁中�
 * 約 1 : 1
 
 #### 支援全寫書卷：
-* 約翰福音1:1
+* 希伯來書四章8節
 
 #### 支援全型標點：
 * 約一：1
@@ -40,8 +40,8 @@ Ezra剛剛起步，歡迎自由使用！如果你的網站沒有使用jQuery和j
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
       crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-    <script src="https://cdn.rawgit.com/KenHung/Ezra/0.2/ezra.js"></script>
-    <link href="https://cdn.rawgit.com/KenHung/Ezra/0.2/ezra-style.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.rawgit.com/KenHung/Ezra/0.3/ezra.js"></script>
+    <link href="https://cdn.rawgit.com/KenHung/Ezra/0.3/ezra-style.css" rel="stylesheet" type="text/css" />
     <script>
       ezraLinkifier.linkify(document.body);
     </script>
