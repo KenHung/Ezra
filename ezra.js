@@ -63,7 +63,7 @@
         .replace('{VS}', versSep || ',，、\\-─–~～')
         .replace('{BS}', booksSep || ';；');
     };
-    var fullRef = new RegExp(toRegex('({B})([{CC}{S}{VS}{BS}\\d]+)'), 'g');
+    var fullRef = new RegExp(toRegex('({B})([{CC}{S}{VS}{BS}\\d]*\\d+節?)'), 'g');
     var singleRef = new RegExp(toRegex('(?:{B})?\\s?({C})[{S}]*({V})'), 'g');
     this.linkify = function (text) {
       var linkifiedHtml = text.replace(fullRef, function (refs, book, chapVers, offset, string) {
