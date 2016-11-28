@@ -47,7 +47,7 @@ Ezra剛剛起步，歡迎自由使用！一般使用者可以使用以下的簡�
     </script>
 
 ### 意見/問題
-如果有意見或者問題想要提出，歡迎到[GitHub Issues](https://github.com/KenHung/Ezra/issues/new)發表。
+如果有意見或者問題想要提出，歡迎到[GitHub Issues](https://github.com/KenHung/Ezra/issues/new)發表，或者電郵給我：<eiekenhung@gmail.com>。
 
 ### 為什麼叫Ezra？
 文士是抄寫聖經的人，很熟悉聖經，所以我特地用文士以斯拉(Ezra)來命名這個經文查詢小工具。而且這個名字簡短，優美，不易和常用字混淆。
