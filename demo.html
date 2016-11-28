@@ -4,7 +4,6 @@
 <head>
 	<meta charset="UTF-8" name="viewport" content="width=device-width">
 	<title>Demo</title>
-	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css" />
 	<link rel="stylesheet" type="text/css" href="ezra-style.css" />
 </head>
@@ -35,13 +34,12 @@
 	<div id="qunit-fixture"></div>
 
 	<script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-		crossorigin="anonymous"></script>
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>window.jQuery || document.write('<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous">\x3C/script>')</script>
+	<script>window.jQuery.ui || document.write('<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />')</script>
+	<script>window.jQuery.ui || document.write('<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">\x3C/script>')</script>
 	<script src="ezra.js"></script>
 	<script>
-	ezraLinkifier.linkify(document.getElementById("demo"));
+		ezraLinkifier.linkify(document.getElementById("demo"));
 	</script>
 	<script src="tests.js"></script>
 </body>

@@ -33,18 +33,13 @@ Ezra是中文的[Reftagger](https://reftagger.com/)。Ezra能夠找出網頁中�
 暫時只支援繁體中文和合本。
 
 ### 使用方法
-Ezra剛剛起步，歡迎自由使用！如果您的網站沒有使用jQuery和jQuery UI，可以直接把以下代碼加入網頁的底部，```</body>```之前：([詳細說明](https://github.com/KenHung/Ezra/wiki/jQuery-UI%E7%9B%B8%E5%AE%B9%E6%80%A7%E5%95%8F%E9%A1%8C))
+Ezra剛剛起步，歡迎自由使用！一般使用者可以使用以下的簡易安裝方法，可以直接把以下代碼加入到網頁HTML的底部，```</body>```之前：(進階使用者請參閱[進階安裝說明](https://github.com/KenHung/Ezra/wiki/%E9%80%B2%E9%9A%8E%E5%AE%89%E8%A3%9D%E8%AA%AA%E6%98%8E))
 
-    <!--以下只有在沒有jQuery的情況下才需要-->
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-      crossorigin="anonymous"></script>
-    
-    <!--以下只有在沒有jQuery UI的情況下才需要-->
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-      crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-    
-    <!--Ezra的主要代碼-->
+    <!--載入jQuery和jQuery UI-->
+    <script>window.jQuery || document.write('<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous">\x3C/script>')</script>
+    <script>window.jQuery.ui || document.write('<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />')</script>
+    <script>window.jQuery.ui || document.write('<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">\x3C/script>')</script>
+    <!--載入Ezra-->
     <script src="https://cdn.rawgit.com/KenHung/Ezra/0.3/ezra.js"></script>
     <link href="https://cdn.rawgit.com/KenHung/Ezra/0.3/ezra-style.css" rel="stylesheet" type="text/css" />
     <script>
