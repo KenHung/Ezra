@@ -53,20 +53,21 @@
   function BibleRefReader(versSep, booksSep) {
     var abbrResolver = new AbbrResolver();
     var chiNumParser = new ChineseNumParser();
-    var toRegex = function (refex) {
-      return refex
+    var refexp = function (exp) {
+      return exp
         .replace('{B}', abbrResolver.bibleBooks)
-        .replace('{C}', '[{CC}]+|\\d+')
+        .replace('{C}', '[{CC}]+|\\d+\\s*[{:}]')
         .replace('{CC}', chiNumParser.supportedChars)
-        .replace('{S}', ':：︰\\s篇章第')
-        .replace('{V}', '[{VS}{TO}{VE}\\s\\d]+')
-        .replace('{VS}', versSep || ',，、和及')
-        .replace('{TO}', '\\-─–~～至')
+        .replace('{S}', '\\s篇章第')
+        .replace('{:}', ':：︰')
+        .replace('{V}', '[{,}{-}{VE}\\s\\d]+')
+        .replace('{,}', versSep || ',，、和及')
+        .replace('{-}', '\\-─–~～至')
         .replace('{VE}', '節节')
         .replace('{BS}', booksSep || ';；');
     };
-    var fullRef = new RegExp(toRegex('({B})([{CC}{S}{VS}{TO}{BS}\\d]*\\d+[{VE}]?)'), 'g');
-    var singleRef = new RegExp(toRegex('(?:{B})?\\s?({C})[{S}]*({V})'), 'g');
+    var fullRef = new RegExp(refexp('({B})([{CC}{:}{S}{,}{-}{BS}\\d]*\\d+[{VE}]?)'), 'g');
+    var singleRef = new RegExp(refexp('(?:{B})?\\s?({C})[{S}]*({V})'), 'g');
     this.linkify = function (text) {
       var linkifiedHtml = text.replace(fullRef, function (refs, book, chapVers, offset, string) {
         return refs.replace(singleRef, function (ref, chap, vers, offset, string) {
@@ -78,17 +79,17 @@
       return linkifiedHtml;
     };
     this.readRef = function (ref) {
-      var match = new RegExp(toRegex('({B})\\s?({C})[{S}]*({V})')).exec(ref);
+      var match = new RegExp(refexp('({B})\\s?({C})[{S}]*({V})')).exec(ref);
       return new BibleRef(
         abbrResolver.toAbbr(match[1]),
-        chiNumParser.parse(match[2]),
+        chiNumParser.parse(match[2].replace(new RegExp(refexp('[{:}\\s]'), 'g'), '')),
         this.readVers(match[3]));
     };
     this.readVers = function (vers) {
       return vers
-        .replace(new RegExp(toRegex('[{TO}]'), 'g'), '-')
-        .replace(new RegExp(toRegex('[{VS}]'), 'g'), ',')
-        .replace(new RegExp(toRegex('[{VE} ]'), 'g'), '');
+        .replace(new RegExp(refexp('[{-}]'), 'g'), '-')
+        .replace(new RegExp(refexp('[{,}]'), 'g'), ',')
+        .replace(new RegExp(refexp('[{VE}\\s]'), 'g'), '');
     };
   }
 
@@ -327,7 +328,8 @@
       约参: '約三'
     };
     var books = Object.keys(abbr);
-    var abbrs = books.map(function (book) { return abbr[book]; });
+    var abbrs = books.map(function (book) { return abbr[book]; })
+      .sort(function (a, b) { return b.length - a.length; });
     this.bibleBooks = books.concat(abbrs).join('|');
     this.toAbbr = function (book) { return abbr[book] || book; };
   }
