@@ -62,7 +62,7 @@
         .replace('{:}', ':：︰')
         .replace('{,}', ',，、和及')
         .replace('{-}', '\\-─–~～至')
-        .replace('{VE}', '節节')
+        .replace(/{VE}/g, '節节')
         .replace('{;}', ';；'), flags || '');
     };
     var bibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
