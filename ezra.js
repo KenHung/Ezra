@@ -66,19 +66,33 @@
         .replace('{VE}', '節节')
         .replace('{BS}', booksSep || ';；');
     };
-    var fullRef = new RegExp(refexp('({B})([{CC}{:}{S}{,}{-}{BS}\\d]*\\d+[{VE}]?)'), 'g');
-    var singleRef = new RegExp(refexp('(?:{B})?\\s?({C})[{S}]*({V})'), 'g');
+    var bibleRef = new RegExp(refexp('({B})?\\s?({C})[{S}]*({V})[{VE}]?'), 'g');
     this.linkify = function (text) {
-      var linkifiedHtml = text.replace(fullRef, function (refs, book, chapVers, offset, string) {
-        return refs.replace(singleRef, function (ref, chap, vers, offset, string) {
-          var startsWithBook = ref.substr(0, book.length) === book;
-          var titleRef = startsWithBook ? ref : book + ref;
-          return '<a title="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
-        })
-      });
+      var linkifiedHtml = '';
+      var match;
+      var lastBook = '';
+      var lastIndex = 0;
+      while (match = bibleRef.exec(text)) {
+        var ref = match[0];
+        // remove last number in ref if it is the next bilble reference match
+        if (text.substring(bibleRef.lastIndex).trim().search(new RegExp(refexp('[{:}]'))) === 0) {
+          var nums = ref.split(new RegExp(refexp('[{,}{-}\\s]')));
+          var sndLastNumIndex = ref.lastIndexOf(nums[nums.length - 1]) - 1;
+          //bibleRef.lastIndex -= ref.length - sndLastNumIndex;
+          ref = ref.substring(0, sndLastNumIndex);
+        }
+        var book = match[1];
+        var titleRef = book !== null ? ref : lastBook + ref;
+        var strBeforeMatch = text.substring(lastIndex, match.index);
+        linkifiedHtml += strBeforeMatch + '<a title="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
+        lastBook = book || lastBook;
+        lastIndex = bibleRef.lastIndex;
+      }
+      linkifiedHtml += text.substring(lastIndex);
       return linkifiedHtml;
     };
     this.readRef = function (ref) {
+      // preconditions: ref must contains a full bible referance
       var match = new RegExp(refexp('({B})\\s?({C})[{S}]*({V})')).exec(ref);
       return new BibleRef(
         abbrResolver.toAbbr(match[1]),
