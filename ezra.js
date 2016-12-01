@@ -64,7 +64,7 @@
         .replace('{-}', '\\-─–~～至')
         .replace(/{VE}/g, '節节')
         .replace('{;}', ';；'), flags || '');
-    };
+    }
     var bibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
     this.linkify = function (text) {
       // different bible referance formats are handled: 約1:1 約1:1,2 約1:1;2 約1:2,3:4 約1:2;3:4
@@ -72,7 +72,7 @@
       var match;
       var lastBook = '';
       var lastIndex = 0;
-      while (match = bibleRef.exec(text)) {
+      while ((match = bibleRef.exec(text)) !== null) {
         var ref = match[0];
         // check if verses accidently matched the next bilble reference
         // for referances like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
@@ -164,14 +164,14 @@
       }
       return false;
     };
-    var isExp = function (num) { return expVal[num] ? true : false; };
-    var sumOf = function (nums) {
+    function isExp(num) { return expVal[num] ? true : false; }
+    function sumOf(nums) {
       var sum = 0;
       for (var i = 0; i < nums.length; i++) {
         sum += nums[i];
       }
       return sum;
-    };
+    }
   }
 
   function BibleRef(abbr, chap, vers) {
@@ -223,7 +223,7 @@
         }
       };
       try {
-        xhr.open("GET", 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
+        xhr.open('GET', 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
         xhr.send();
       }
       catch (err) {
@@ -360,7 +360,7 @@
     this.toAbbr = function (book) { return abbr[book] || book; };
   }
 
-  function getTextNodesIn(node, includeWhitespaceNodes) {
+  function getTextNodesIn(node) {
     var textNodes = [];
     function getTextNodes(node) {
       if (node.nodeType == 3) {
