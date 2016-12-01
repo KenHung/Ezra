@@ -53,8 +53,8 @@
   function BibleRefReader(versSep, booksSep) {
     var abbrResolver = new AbbrResolver();
     var chiNumParser = new ChineseNumParser();
-    var refexp = function (exp) {
-      return exp
+    var bibleRefExp = function (exp, flags) {
+      return new RegExp(exp
         .replace('{B}', abbrResolver.bibleBooks)
         .replace('{C}', '[{CC}]+|\\d+\\s*[{:}]')
         .replace('{CC}', chiNumParser.supportedChars)
@@ -64,9 +64,9 @@
         .replace('{,}', versSep || ',，、和及')
         .replace('{-}', '\\-─–~～至')
         .replace('{VE}', '節节')
-        .replace('{BS}', booksSep || ';；');
+        .replace('{BS}', booksSep || ';；'), flags || '');
     };
-    var bibleRef = new RegExp(refexp('({B})?\\s?({C})[{S}]*({V})[{VE}]?'), 'g');
+    var bibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
     this.linkify = function (text) {
       var linkifiedHtml = '';
       var match;
@@ -75,16 +75,21 @@
       while (match = bibleRef.exec(text)) {
         var ref = match[0];
         // remove last number in ref if it is the next bilble reference match
-        if (text.substring(bibleRef.lastIndex).trim().search(new RegExp(refexp('[{:}]'))) === 0) {
-          var nums = ref.split(new RegExp(refexp('[{,}{-}\\s]')));
+        var strAfterMatch = text.substring(bibleRef.lastIndex);
+        if (strAfterMatch.search(bibleRefExp('\\s*[{:}]{V}')) === 0) {
+          var nums = ref.split(bibleRefExp('[{,}{-}\\s]'));
           var sndLastNumIndex = ref.lastIndexOf(nums[nums.length - 1]) - 1;
           //bibleRef.lastIndex -= ref.length - sndLastNumIndex;
           ref = ref.substring(0, sndLastNumIndex);
         }
         var book = match[1];
-        var titleRef = book !== null ? ref : lastBook + ref;
+        var link = '';
+        if (book !== undefined || lastBook !== '') {
+          var titleRef = book !== undefined ? ref : lastBook + ref;
+          link = '<a title="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
+        }
         var strBeforeMatch = text.substring(lastIndex, match.index);
-        linkifiedHtml += strBeforeMatch + '<a title="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
+        linkifiedHtml += strBeforeMatch + link || ref;
         lastBook = book || lastBook;
         lastIndex = bibleRef.lastIndex;
       }
@@ -93,17 +98,17 @@
     };
     this.readRef = function (ref) {
       // preconditions: ref must contains a full bible referance
-      var match = new RegExp(refexp('({B})\\s?({C})[{S}]*({V})')).exec(ref);
+      var match = bibleRefExp('({B})\\s?({C})[{S}]*({V})').exec(ref);
       return new BibleRef(
         abbrResolver.toAbbr(match[1]),
-        chiNumParser.parse(match[2].replace(new RegExp(refexp('[{:}\\s]'), 'g'), '')),
+        chiNumParser.parse(match[2].replace(bibleRefExp('[{:}\\s]', 'g'), '')),
         this.readVers(match[3]));
     };
     this.readVers = function (vers) {
       return vers
-        .replace(new RegExp(refexp('[{-}]'), 'g'), '-')
-        .replace(new RegExp(refexp('[{,}]'), 'g'), ',')
-        .replace(new RegExp(refexp('[{VE}\\s]'), 'g'), '');
+        .replace(bibleRefExp('[{-}]', 'g'), '-')
+        .replace(bibleRefExp('[{,}]', 'g'), ',')
+        .replace(bibleRefExp('[{VE}\\s]', 'g'), '');
     };
   }
 

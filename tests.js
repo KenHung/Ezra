@@ -60,5 +60,6 @@ QUnit.test("BibleRefReader.linkify", function (assert) {
     linkifyTest('約四，', '約四，');
     linkifyTest('李約 2013.11.17', '李約 2013.11.17');
     linkifyTest('希伯來書四章8節', '<a title="載入中...(希伯來書四章8節)" class="ezraBibleRefLink">希伯來書四章8節</a>');
+    linkifyTest('四章8節', '四章8節');
     linkifyTest('詩篇一百一十八篇8至9節', '<a title="載入中...(詩篇一百一十八篇8至9節)" class="ezraBibleRefLink">詩篇一百一十八篇8至9節</a>');
 });
