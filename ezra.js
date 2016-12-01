@@ -76,8 +76,8 @@
         var ref = match[0];
         // check if verses accidently matched the next bilble reference
         // for referances like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
-        var strAfterMatch = text.substring(bibleRef.lastIndex);
-        var verses = match[3].match(/\d+/g);
+        var strAfterMatch = text.substring(bibleRef.lastIndex); // ":4" in the example
+        var verses = match[3].match(/\d+/g); // [2, 3] in the example
         if (strAfterMatch.search(bibleRefExp('\\s*[{:}]{V}')) === 0 && verses.length > 1) {
           var realRef = trimLast(ref, bibleRefExp('[{,}{;}\\s]+' + verses[verses.length - 1]));
           bibleRef.lastIndex -= (ref.length - realRef.length);
