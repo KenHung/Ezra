@@ -50,21 +50,20 @@
   ezraLinkifier._AbbrResolver = AbbrResolver;
   ezraLinkifier._ChineseNumParser = ChineseNumParser;
 
-  function BibleRefReader(versSep, booksSep) {
+  function BibleRefReader() {
     var abbrResolver = new AbbrResolver();
     var chiNumParser = new ChineseNumParser();
-    var bibleRefExp = function (exp, flags) {
+    function bibleRefExp(exp, flags) {
       return new RegExp(exp
         .replace('{B}', abbrResolver.bibleBooks)
-        .replace('{C}', '[{CC}]+|\\d+\\s*[{:}]')
-        .replace('{CC}', chiNumParser.supportedChars)
+        .replace('{C}', '[' + chiNumParser.supportedChars + ']+|\\d+\\s*[{:}]')
         .replace('{S}', '\\s篇章第')
+        .replace('{V}', '[{,}{-}{;}{VE}\\s\\d]+')
         .replace('{:}', ':：︰')
-        .replace('{V}', '[{,}{-}{VE}\\s\\d]+')
-        .replace('{,}', versSep || ',，、和及')
+        .replace('{,}', ',，、和及')
         .replace('{-}', '\\-─–~～至')
         .replace('{VE}', '節节')
-        .replace('{BS}', booksSep || ';；'), flags || '');
+        .replace('{;}', ';；'), flags || '');
     };
     var bibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
     this.linkify = function (text) {
@@ -74,13 +73,13 @@
       var lastIndex = 0;
       while (match = bibleRef.exec(text)) {
         var ref = match[0];
-        // remove last number in ref if it is the next bilble reference match
+        // check if verses accidently matched the next bilble reference
         var strAfterMatch = text.substring(bibleRef.lastIndex);
-        if (strAfterMatch.search(bibleRefExp('\\s*[{:}]{V}')) === 0) {
-          var nums = ref.split(bibleRefExp('[{,}{-}\\s]'));
-          var sndLastNumIndex = ref.lastIndexOf(nums[nums.length - 1]) - 1;
-          //bibleRef.lastIndex -= ref.length - sndLastNumIndex;
-          ref = ref.substring(0, sndLastNumIndex);
+        var verses = match[3].match(/\d+/g);
+        if (strAfterMatch.search(bibleRefExp('\\s*[{:}]{V}')) === 0 && verses.length > 1) {
+          var realRef = trimLast(ref, bibleRefExp('[{,}{;}\\s]+' + verses[verses.length - 1]));
+          bibleRef.lastIndex -= (ref.length - realRef.length);
+          ref = realRef;
         }
         var book = match[1];
         var link = '';
@@ -96,6 +95,12 @@
       linkifiedHtml += text.substring(lastIndex);
       return linkifiedHtml;
     };
+    function trimLast(ref, regex) {
+      // preconditions: at least one match
+      var matches = ref.match(regex);
+      var newIndex = ref.lastIndexOf(matches[matches.length - 1]);
+      return ref.substring(0, newIndex);
+    }
     this.readRef = function (ref) {
       // preconditions: ref must contains a full bible referance
       var match = bibleRefExp('({B})\\s?({C})[{S}]*({V})').exec(ref);

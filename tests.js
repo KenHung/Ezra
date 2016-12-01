@@ -41,7 +41,6 @@ QUnit.test("BibleRefReader.createBibleRefs", function (assert) {
     refTest('約壹一14', '約一', 1, '14');
     refTest('約一14', '約', 1, '14');
     refTest('創24：7，12，27，52', '創', 24, '7,12,27,52');
-    refTest('啟19:10；20:8，9', '啟', 19, '10');
     refTest('約1: 1', '約', 1, '1');
     refTest('約 1 : 1', '約', 1, '1');
     refTest('約翰福音1:1', '約', 1, '1');
@@ -55,11 +54,18 @@ QUnit.test("BibleRefReader.linkify", function (assert) {
         var linkifiedHtml = bibleRefReader.linkify(text);
         assert.strictEqual(linkifiedHtml, expected);
     }
-    linkifyTest('約翰福音1:1', '<a title="載入中...(約翰福音1:1)" class="ezraBibleRefLink">約翰福音1:1</a>');
-    linkifyTest('約四24，', '<a title="載入中...(約四24)" class="ezraBibleRefLink">約四24</a>，');
+    function link(text, ref) {
+        return '<a title="載入中...(' + (ref || text) + ')" class="ezraBibleRefLink">' + text + '</a>';
+    }
+    linkifyTest('約翰福音1:1', link('約翰福音1:1'));
+    linkifyTest('約四24，', link('約四24') + '，');
     linkifyTest('約四，', '約四，');
     linkifyTest('李約 2013.11.17', '李約 2013.11.17');
-    linkifyTest('希伯來書四章8節', '<a title="載入中...(希伯來書四章8節)" class="ezraBibleRefLink">希伯來書四章8節</a>');
+    linkifyTest('希伯來書四章8節', link('希伯來書四章8節'));
     linkifyTest('四章8節', '四章8節');
-    linkifyTest('詩篇一百一十八篇8至9節', '<a title="載入中...(詩篇一百一十八篇8至9節)" class="ezraBibleRefLink">詩篇一百一十八篇8至9節</a>');
+    linkifyTest('詩篇一百一十八篇8至9節', link('詩篇一百一十八篇8至9節'));
+    linkifyTest('約1:1;2:1', link('約1:1') + ';' + link('2:1', '約2:1'));
+    linkifyTest('約1:1,2:1', link('約1:1') + ',' + link('2:1', '約2:1'));
+    linkifyTest('約1:1;2', link('約1:1;2'));
+    linkifyTest('約1:2:3', link('約1:2') + ':3');
 });
