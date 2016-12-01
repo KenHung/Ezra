@@ -58,7 +58,7 @@
         .replace('{B}', abbrResolver.bibleBooks)
         .replace('{C}', '[' + chiNumParser.supportedChars + ']+|\\d+\\s*[{:}]')
         .replace('{S}', '\\s篇章第')
-        .replace('{V}', '[{,}{-}{;}{VE}\\s\\d]+')
+        .replace('{V}', '[{,}{-}{;}{VE}\\s\\d]*\\d')
         .replace('{:}', ':：︰')
         .replace('{,}', ',，、和及')
         .replace('{-}', '\\-─–~～至')
@@ -67,6 +67,7 @@
     };
     var bibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
     this.linkify = function (text) {
+      // different bible referance formats are handled: 約1:1 約1:1,2 約1:1;2 約1:2,3:4 約1:2;3:4
       var linkifiedHtml = '';
       var match;
       var lastBook = '';
@@ -74,6 +75,7 @@
       while (match = bibleRef.exec(text)) {
         var ref = match[0];
         // check if verses accidently matched the next bilble reference
+        // for referances like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
         var strAfterMatch = text.substring(bibleRef.lastIndex);
         var verses = match[3].match(/\d+/g);
         if (strAfterMatch.search(bibleRefExp('\\s*[{:}]{V}')) === 0 && verses.length > 1) {
