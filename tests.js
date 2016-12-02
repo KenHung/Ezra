@@ -69,6 +69,6 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('約1:1;2', link('約1:1;2'));
   linkifyTest('約1:2:3', link('約1:2') + ':3');
   linkifyTest('約一:1', link('約一:1'));
-  linkifyTest('約 1、6', link('約 1、6'));
-  linkifyTest('約 1～5，6', link('約 1～5，6'));
+  linkifyTest('約一1、6', link('約一1、6'));
+  linkifyTest('約一1～5，6', link('約一1～5，6'));
 });
