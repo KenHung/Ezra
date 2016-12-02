@@ -57,13 +57,13 @@
       return new RegExp(exp
         .replace('{B}', abbrResolver.bibleBooks)
         .replace('{C}', '[' + chiNumParser.supportedChars + ']+|\\d+\\s*[{:}]')
-        .replace('{S}', '\\s篇章第')
+        .replace('{S}', '\\s{:}篇章第')
         .replace('{V}', '[{,}{-}{;}{VE}\\s\\d]*\\d')
         .replace('{:}', ':：︰')
         .replace('{,}', ',，、和及')
         .replace('{-}', '\\-─–~～至')
         .replace(/{VE}/g, '節节')
-        .replace('{;}', ';；'), flags || '');
+        .replace(/{;}/g, ';；'), flags || '');
     }
     var bibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
     this.linkify = function (text) {
