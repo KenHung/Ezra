@@ -59,7 +59,7 @@
         .replace('{C}', '[' + chiNumParser.supportedChars + ']+|\\d+\\s*[{:}]')
         .replace('{S}', '\\s{:}篇章第')
         .replace('{V}', '[{,}{-}{;}{VE}\\s\\d]*\\d')
-        .replace('{:}', ':：︰')
+        .replace(/{:}/g, ':：︰')
         .replace('{,}', ',，、和及')
         .replace('{-}', '\\-─–~～至')
         .replace(/{VE}/g, '節节')

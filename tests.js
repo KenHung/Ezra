@@ -43,6 +43,7 @@ QUnit.test('BibleRefReader.createBibleRefs', function (assert) {
   refTest('創24：7，12，27，52', '創', 24, '7,12,27,52');
   refTest('約1: 1', '約', 1, '1');
   refTest('約 1 : 1', '約', 1, '1');
+  refTest('約一：1–5，6', '約', 1, '1-5,6');
   refTest('約翰福音1:1', '約', 1, '1');
   refTest('西1 ： 16 ， 20', '西', 1, '16,20');
   refTest('希伯來書四章8節', '來', 4, '8');
@@ -71,4 +72,5 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('約一:1', link('約一:1'));
   linkifyTest('約一1、6', link('約一1、6'));
   linkifyTest('約一1～5，6', link('約一1～5，6'));
+  linkifyTest('約七：1–5，6', link('約七：1–5，6'));
 });
