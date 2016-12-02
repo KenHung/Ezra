@@ -40,8 +40,8 @@ Ezra剛剛起步，歡迎自由使用！一般使用者可以使用以下的簡�
     <script>window.jQuery.ui || document.write('<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />')</script>
     <script>window.jQuery.ui || document.write('<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">\x3C/script>')</script>
     <!--載入Ezra-->
-    <script src="https://cdn.rawgit.com/KenHung/Ezra/1.0/ezra.js"></script>
-    <link href="https://cdn.rawgit.com/KenHung/Ezra/1.0/ezra-style.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.rawgit.com/KenHung/Ezra/1.1/ezra.js"></script>
+    <link href="https://cdn.rawgit.com/KenHung/Ezra/1.1/ezra-style.css" rel="stylesheet" type="text/css" />
     <script>
       ezraLinkifier.linkify(document.body);
     </script>
