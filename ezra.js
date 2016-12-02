@@ -354,8 +354,9 @@
       约参: '約三'
     };
     var books = Object.keys(abbr);
-    var abbrs = books.map(function (book) { return abbr[book]; })
-      .sort(function (a, b) { return b.length - a.length; });
+    var descending = function (a, b) { return b.length - a.length; };
+    // sort by length descending, such that match of "約" will not override "約一"
+    var abbrs = books.map(function (book) { return abbr[book]; }).sort(descending);
     this.bibleBooks = books.concat(abbrs).join('|');
     this.toAbbr = function (book) { return abbr[book] || book; };
   }
