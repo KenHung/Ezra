@@ -36,8 +36,18 @@
   <script src="https://cdn.rawgit.com/KenHung/Ezra/1.1/ezra.js"></script>
   <link href="https://cdn.rawgit.com/KenHung/Ezra/1.1/ezra-style.css" rel="stylesheet" type="text/css" />
   <script>
-  ezraLinkifier.linkify(document.body);
-</script>
+    ezraLinkifier.linkify(document.body);
+  </script>
+
+  <script src="javascripts/getLatestEzraVersion.js"></script>
+  <script>
+    getLatestEzraVersion(function(ver) { 
+      $('code').each(function () {
+        var versioned = $(this).text().replace(/\[版本\]/g, ver); 
+        $(this).text(versioned);
+      });
+    });
+  </script>
 </body>
 
 </html>
