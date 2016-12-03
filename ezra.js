@@ -146,24 +146,19 @@
           return sumOf(acc);
         }
         else {
-          var sum = 0;
-          for (var i = 0; i < num.length; i++) {
-            var n = num[i];
-            var val = (numVal[n] || 0) * Math.pow(10, num.length - 1 - i);
-            sum += val;
-          }
-          return sum;
+          var intStr = num.split('').map(function (n) { return numVal[n]; }).join('');
+          return parseInt(intStr, 10);
         }
       }
     };
-    var contiansExp = function (num) {
+    function contiansExp(num) {
       for (var i = 0; i < num.length; i++) {
         if (expVal[num[i]]) {
           return true;
         }
       }
       return false;
-    };
+    }
     function isExp(num) { return expVal[num] ? true : false; }
     function sumOf(nums) {
       var sum = 0;
