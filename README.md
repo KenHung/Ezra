@@ -36,9 +36,9 @@ Ezra是中文的[Reftagger](https://reftagger.com/)。Ezra能夠找出網頁中�
 Ezra剛剛起步，歡迎自由使用！一般使用者可以使用以下的簡易安裝方法，可以直接把以下代碼加入到網頁HTML的底部，```</body>```之前：([詳細安裝說明](https://github.com/KenHung/Ezra/wiki/%E8%A9%B3%E7%B4%B0%E5%AE%89%E8%A3%9D%E8%AA%AA%E6%98%8E)/[進階安裝說明](https://github.com/KenHung/Ezra/wiki/%E9%80%B2%E9%9A%8E%E5%AE%89%E8%A3%9D%E8%AA%AA%E6%98%8E))
 
     <!--載入jQuery和jQuery UI-->
-    <script>window.jQuery || document.write('<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous">\x3C/script>')</script>
-    <script>window.jQuery.ui || document.write('<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />')</script>
-    <script>window.jQuery.ui || document.write('<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">\x3C/script>')</script>
+    <script>window.jQuery || document.write('\x3Cscript src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous">\x3C/script>')</script>
+    <script>window.jQuery.ui || document.write('\x3Clink rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />')</script>
+    <script>window.jQuery.ui || document.write('\x3Cscript src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">\x3C/script>')</script>
     <!--載入Ezra-->
     <script src="https://cdn.rawgit.com/KenHung/Ezra/[版本]/ezra.js"></script>
     <link href="https://cdn.rawgit.com/KenHung/Ezra/[版本]/ezra-style.css" rel="stylesheet" type="text/css" />
