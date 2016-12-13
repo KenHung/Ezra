@@ -56,7 +56,7 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
     assert.strictEqual(linkifiedHtml, expected);
   }
   function link(text, ref) {
-    return '<a title="載入中...(' + (ref || text) + ')" class="ezraBibleRefLink">' + text + '</a>';
+    return '<a ezra-ref="載入中...(' + (ref || text) + ')" class="ezraBibleRefLink">' + text + '</a>';
   }
   linkifyTest('約翰福音1:1', link('約翰福音1:1'));
   linkifyTest('約四24，', link('約四24') + '，');

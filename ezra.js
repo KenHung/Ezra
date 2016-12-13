@@ -21,7 +21,7 @@
       var d = new _Drop({
         classes: 'ezra-theme-arrows',
         target: link,
-        content: link.getAttribute('title'),
+        content: link.getAttribute('ezra-ref'),
         openOn: 'hover',
         constrainToScrollParent: false,
         tetherOptions: {
@@ -89,7 +89,7 @@
         var link = '';
         if (book !== undefined || lastBook !== '') {
           var titleRef = book !== undefined ? ref : lastBook + ref;
-          link = '<a title="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
+          link = '<a ezra-ref="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
         }
         var strBeforeMatch = text.substring(lastIndex, match.index);
         linkifiedHtml += strBeforeMatch + link || ref;
