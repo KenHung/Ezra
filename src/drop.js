@@ -1,15 +1,7 @@
 /*! tether-drop 1.4.1 */
 // (c) HubSpot https://github.com/HubSpot/drop/blob/master/LICENSE
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(["tether"], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('tether'));
-  } else {
-    root.Drop = factory(root.Tether);
-  }
-}(this, function(Tether) {
+var Drop = (function(Tether) {
 
 /* global Tether */
 'use strict';
@@ -558,4 +550,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 return Drop;
 
-}));
+})(Tether);

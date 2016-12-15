@@ -1,0 +1,25 @@
+{
+  "name": "ezra",
+  "version": "1.5.0",
+  "description": "linkify Chinese Bible verses",
+  "main": "ezra.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KenHung/Ezra.git"
+  },
+  "author": "Ken Hung",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KenHung/Ezra/issues"
+  },
+  "homepage": "https://github.com/KenHung/Ezra#readme",
+  "devDependencies": {
+    "gulp-file-insert": "^1.0.2",
+    "gulp-inject": "^4.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0"
+  }
+}

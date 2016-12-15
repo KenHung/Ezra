@@ -1,15 +1,7 @@
 /*! tether 1.3.3 */
 // (c) HubSpot https://github.com/HubSpot/tether/blob/master/LICENSE
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require, exports, module);
-  } else {
-    root.Tether = factory();
-  }
-}(this, function(require, exports, module) {
+var Tether = (function() {
 
 'use strict';
 
@@ -1790,4 +1782,4 @@ TetherBase.modules.push({
 });
 return Tether;
 
-}));
+})();
