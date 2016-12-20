@@ -23,6 +23,7 @@
     color: #444;
     padding: 0.5em;
     line-height: 1.2em;
+    text-align: justify;
     -webkit-transform: translateZ(0);
             transform: translateZ(0);
     -webkit-filter: ezra-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
