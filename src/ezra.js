@@ -32,7 +32,7 @@
             {
               to: 'window',
               attachment: 'together',
-              pin: true
+              pin: ['left', 'right']
             }
           ]
         }
