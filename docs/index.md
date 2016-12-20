@@ -46,6 +46,7 @@ Ezra剛剛起步，歡迎自由使用！一般使用者可以使用以下的簡�
     </script>
 
 您也可以更改所使用的Ezra版本。[所有版本](https://github.com/KenHung/Ezra/releases)
+
 支援一般網頁瀏覧器，最低支援IE9。
 
 ### 意見/問題

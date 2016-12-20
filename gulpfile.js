@@ -29,6 +29,6 @@ gulp.task('update-gh-pages', function () {
 
 gulp.watch('src/*.js', gulp.parallel('min'));
 gulp.watch('src/temp/*.js', gulp.parallel('insert'));
-gulp.watch('readme.md', gulp.parallel('update-gh-pages'));
+gulp.watch('README.md', gulp.parallel('update-gh-pages'));
 
 gulp.task('default', gulp.parallel('min', 'update-gh-pages'));
