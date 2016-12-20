@@ -38,6 +38,8 @@
         }
       });
       d.on('open', function () {
+        var linkSize = window.getComputedStyle(this.target).fontSize;
+        this.content.style.fontSize = linkSize;
         var ref = bibleRefReader.readRef(this.target.getAttribute('ezra-ref'));
         var drop = this;
         ref.getBibleText(function (bibleText) {
@@ -222,7 +224,7 @@
           fail('未能查訽經文: ' + err);
         }
       };
-      xhr.onerror = function() {
+      xhr.onerror = function () {
         fail('無法連上伺服器。');
       };
       try {
