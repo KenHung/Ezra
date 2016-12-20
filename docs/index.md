@@ -2,7 +2,6 @@
 layout: index
 ---
 
-
 Ezra是中文的[Reftagger](https://reftagger.com/)。Ezra能夠找出網頁中的所有聖經依據，如：約 1:2；弗 2:1，然後顯示經文。當光標移到經文依據時，Ezra就會顯示相應的經文。適用於基督教網頁，如部落格、信仰告白或要理問答等。
 
 ### 支援格式
@@ -47,6 +46,7 @@ Ezra剛剛起步，歡迎自由使用！一般使用者可以使用以下的簡�
     </script>
 
 您也可以更改所使用的Ezra版本。[所有版本](https://github.com/KenHung/Ezra/releases)
+支援一般網頁瀏覧器，最低支援IE9。
 
 ### 意見/問題
 如果有意見或者問題想要提出，歡迎到[GitHub Issues](https://github.com/KenHung/Ezra/issues/new)發表，或者電郵給我：<eiekenhung@gmail.com>。
