@@ -74,3 +74,11 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('約一1～5，6', link('約一1～5，6'));
   linkifyTest('約七：1–5，6', link('約七：1–5，6'));
 });
+
+QUnit.test('ezraLinkifier.linkify', function (assert) {
+  var fixture = document.getElementById('qunit-fixture');
+  var existingLink = '<a class="ezraBibleRefLink">ezraBibleRefLink</a>';
+  fixture.innerHTML = existingLink;
+  ezraLinkifier.linkify(fixture);
+  assert.strictEqual(fixture.innerHTML, existingLink);
+});

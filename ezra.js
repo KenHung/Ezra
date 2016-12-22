@@ -5,8 +5,8 @@
   var _Drop = Drop.createContext({
     classPrefix: 'ezra'
   });
+  var bibleRefReader = new BibleRefReader();
   ezraLinkifier.linkify = function (element) {
-    var bibleRefReader = new BibleRefReader();
     var textNodes = getTextNodesIn(element);
     for (var i = 0; i < textNodes.length; i++) {
       if (textNodes[i].parentNode.nodeName !== 'A') {
@@ -21,36 +21,42 @@
     var ezraLinks = element.querySelectorAll('.ezraBibleRefLink');
     for (var i = 0; i < ezraLinks.length; i++) {
       var link = ezraLinks[i];
-      var d = new _Drop({
-        classes: 'ezra-theme-arrows',
-        target: link,
-        content: link.getAttribute('ezra-ref'),
-        openOn: 'hover',
-        constrainToScrollParent: false,
-        tetherOptions: {
-          constraints: [
-            {
-              to: 'window',
-              attachment: 'together',
-              pin: ['left', 'right']
-            }
-          ]
-        }
-      });
-      d.on('open', function () {
-        var linkSize = window.getComputedStyle(this.target).fontSize;
-        this.content.style.fontSize = linkSize;
-        var ref = bibleRefReader.readRef(this.target.getAttribute('ezra-ref'));
-        var drop = this;
-        ref.getBibleText(function (bibleText) {
-          drop.content.innerHTML = bibleText
-            + '<div class="ezraBibleRefSeperator"></div>'
-            + '<div class="ezraBibleRefFooter"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
-          drop.position();
-        });
-      });
+      var ref = link.getAttribute('ezra-ref');
+      if (ref !== null) {
+        createDrop(link, ref);
+      }
     }
   };
+
+  function createDrop(link, refText) {
+    var drop = new _Drop({
+      classes: 'ezra-theme-arrows',
+      target: link,
+      content: refText,
+      openOn: 'hover',
+      constrainToScrollParent: false,
+      tetherOptions: {
+        constraints: [
+          {
+            to: 'window',
+            attachment: 'together',
+            pin: ['left', 'right']
+          }
+        ]
+      }
+    });
+    drop.on('open', function () {
+      var linkSize = window.getComputedStyle(this.target).fontSize;
+      this.content.style.fontSize = linkSize;
+      var ref = bibleRefReader.readRef(refText);
+      ref.getBibleText(function (bibleText) {
+        drop.content.innerHTML = bibleText
+          + '<div class="ezraBibleRefSeperator"></div>'
+          + '<div class="ezraBibleRefFooter"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
+        drop.position();
+      });
+    });
+  }
 
   // added for unit testing
   ezraLinkifier._BibleRefReader = BibleRefReader;
