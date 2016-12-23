@@ -10,10 +10,11 @@
     var textNodes = getTextNodesIn(element);
     for (var i = 0; i < textNodes.length; i++) {
       if (textNodes[i].parentNode.nodeName !== 'A') {
-        var linkifiedHtml = bibleRefReader.linkify(textNodes[i].nodeValue);
-        var linkified = linkifiedHtml.length > textNodes[i].nodeValue.length;
-        if (linkified) {
-          var linkifiedNodes = createNodes(linkifiedHtml);
+        var linkifiedNodes = bibleRefReader.linkify(textNodes[i].nodeValue);
+        var hasLink = linkifiedNodes.some(function (node) {
+          return node.nodeName === 'A';
+        });
+        if (hasLink) {
           replaceWithNodes(textNodes[i], linkifiedNodes);
         }
       }
@@ -32,7 +33,7 @@
     var drop = new _Drop({
       classes: 'ezra-theme-arrows',
       target: link,
-      content: refText,
+      content: document.createTextNode(refText),
       openOn: 'hover',
       constrainToScrollParent: false,
       tetherOptions: {
@@ -50,8 +51,8 @@
       this.content.style.fontSize = linkSize;
       var ref = bibleRefReader.readRef(refText);
       ref.getBibleText(function (bibleText) {
-        drop.content.innerHTML = bibleText
-          + '<div class="ezraBibleRefSeperator"></div>'
+        drop.content.innerText = bibleText;
+        drop.content.innerHTML += '<div class="ezraBibleRefSeperator"></div>'
           + '<div class="ezraBibleRefFooter"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
         drop.position();
       });
@@ -81,7 +82,7 @@
     var bibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
     this.linkify = function (text) {
       // different bible referance formats are handled: 約1:1 約1:1,2 約1:1;2 約1:2,3:4 約1:2;3:4
-      var linkifiedHtml = '';
+      var linkifiedNodes = [];
       var match;
       var lastBook = '';
       var lastIndex = 0;
@@ -97,18 +98,24 @@
           ref = realRef;
         }
         var book = match[1];
-        var link = '';
         if (book !== undefined || lastBook !== '') {
           var titleRef = book !== undefined ? ref : lastBook + ref;
-          link = '<a ezra-ref="載入中...(' + titleRef + ')" class="ezraBibleRefLink">' + ref + '</a>';
+          var link = document.createElement('a');
+          link.setAttribute('ezra-ref', '載入中...(' + titleRef + ')');
+          link.className = 'ezraBibleRefLink';
+          link.innerText = ref;
+        }
+        else {
+          // if no book is provided (e.g. 4:11), there will be no link created
         }
         var strBeforeMatch = text.substring(lastIndex, match.index);
-        linkifiedHtml += strBeforeMatch + link || ref;
+        linkifiedNodes.push(document.createTextNode(strBeforeMatch));
+        linkifiedNodes.push(link || document.createTextNode(ref));
         lastBook = book || lastBook;
         lastIndex = bibleRef.lastIndex;
       }
-      linkifiedHtml += text.substring(lastIndex);
-      return linkifiedHtml;
+      linkifiedNodes.push(document.createTextNode(text.substring(lastIndex)));
+      return linkifiedNodes;
     };
     function trimLast(ref, regex) {
       // preconditions: at least one match
@@ -385,13 +392,6 @@
     }
     getTextNodes(node);
     return textNodes;
-  }
-
-  function createNodes(html) {
-    // assuming html containing only text nodes and anchor, so it is safe to put it in div
-    var dummy = document.createElement('div');
-    dummy.innerHTML = html;
-    return dummy.childNodes;
   }
 
   function replaceWithNodes(oldNode, newNodes) {
