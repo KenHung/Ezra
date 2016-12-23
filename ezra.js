@@ -26,6 +26,11 @@
       if (ref !== null) {
         createDrop(link, ref);
       }
+      else {
+        // there should be something wrong if ref is null
+        // maybe there is a link inserted manually but ezra-ref is missing
+        // consider adding some notice for the site owner
+      }
     }
   };
 
