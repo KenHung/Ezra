@@ -16,6 +16,7 @@ QUnit.test('ChineseNumParser.parse', function (assert) {
   assert.strictEqual(chineseNumParser.parse('六十八'), 68);
   assert.strictEqual(chineseNumParser.parse('一百'), 100);
   assert.strictEqual(chineseNumParser.parse('一百零五'), 105);
+  assert.strictEqual(chineseNumParser.parse('一百○五'), 105);
   assert.strictEqual(chineseNumParser.parse('一百三十六'), 136);
   assert.strictEqual(chineseNumParser.parse('一四七'), 147);
 });
@@ -48,6 +49,7 @@ QUnit.test('BibleRefReader.createBibleRefs', function (assert) {
   refTest('西1 ： 16 ， 20', '西', 1, '16,20');
   refTest('希伯來書四章8節', '來', 4, '8');
   refTest('詩篇一百一十八篇8至9節', '詩', 118, '8-9');
+  refTest('詩一百○六篇25', '詩', 106, '25');
 });
 
 QUnit.test('BibleRefReader.linkify', function (assert) {
@@ -63,6 +65,7 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('希伯來書四章8節', link('希伯來書四章8節'));
   linkifyTest('四章8節', '四章8節');
   linkifyTest('詩篇一百一十八篇8至9節', link('詩篇一百一十八篇8至9節'));
+  linkifyTest('詩一百○六篇25', link('詩一百○六篇25'));
   linkifyTest('約1:1;2:1', link('約1:1') + ';' + link('2:1', '約2:1'));
   linkifyTest('約1:1,2:1', link('約1:1') + ',' + link('2:1', '約2:1'));
   linkifyTest('約1:1;2', link('約1:1;2'));
