@@ -24,6 +24,7 @@ QUnit.test('ChineseNumParser.parse', function (assert) {
 QUnit.test('BibleRefReader.toVers', function (assert) {
   assert.strictEqual(bibleRefReader.readVers('1 - 4'), '1-4');
   assert.strictEqual(bibleRefReader.readVers('1─4'), '1-4');
+  assert.strictEqual(bibleRefReader.readVers('1〜4'), '1-4');
   assert.strictEqual(bibleRefReader.readVers('12、25'), '12,25');
   assert.strictEqual(bibleRefReader.readVers('12、25、30'), '12,25,30');
 });
@@ -65,6 +66,7 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('希伯來書四章8節', link('希伯來書四章8節'));
   linkifyTest('四章8節', '四章8節');
   linkifyTest('詩篇一百一十八篇8至9節', link('詩篇一百一十八篇8至9節'));
+  linkifyTest('阿摩司書5：21〜24', link('阿摩司書5：21〜24'));
   linkifyTest('詩一百○六篇25', link('詩一百○六篇25'));
   linkifyTest('約1:1;2:1', link('約1:1') + ';' + link('2:1', '約2:1'));
   linkifyTest('約1:1,2:1', link('約1:1') + ',' + link('2:1', '約2:1'));
