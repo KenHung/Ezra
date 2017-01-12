@@ -8,6 +8,7 @@
 
 .ezra-element {
   position: absolute;
+  z-index: 9999;
   display: none; }
   .ezra-element.ezra-open {
     display: block; }
