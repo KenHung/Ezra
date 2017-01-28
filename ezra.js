@@ -55,8 +55,8 @@
       var linkSize = window.getComputedStyle(this.target).fontSize;
       this.content.style.fontSize = linkSize;
       var ref = bibleRefReader.readRef(refText);
-      ref.getBibleText(function (bibleText) {
-        drop.content.innerText = bibleText;
+      ref.getBibleTextWithRef(function (text) {
+        drop.content.innerText = text;
         drop.content.innerHTML += '<div class="ezraBibleRefSeperator"></div>'
           + '<div class="ezraBibleRefFooter"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
         drop.position();
@@ -131,10 +131,15 @@
     this.readRef = function (ref) {
       // preconditions: ref must contains a full bible referance
       var match = bibleRefExp('({B})\\s?({C})[{S}]*({V})').exec(ref);
-      return new BibleRef(
-        abbrResolver.toAbbr(match[1]),
-        chiNumParser.parse(match[2].replace(bibleRefExp('[{:}\\s]', 'g'), '')),
-        this.readVers(match[3]));
+      if (match !== null) {
+        return new BibleRef(
+          abbrResolver.toAbbr(match[1]),
+          chiNumParser.parse(match[2].replace(bibleRefExp('[{:}\\s]', 'g'), '')),
+          this.readVers(match[3]));
+      }
+      else {
+        return null;
+      }
     };
     this.readVers = function (vers) {
       return vers
@@ -199,18 +204,24 @@
     this.chap = chap;
     this.vers = vers;
     var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
-    this.getBibleText = function (callback) {
+    this.getBibleTextWithRef = function (success, fail) {
+      this.getBibleText(function (bibleText) {
+        success(bibleText + refText);
+      }, fail || success);
+    };
+    this.getBibleText = function (success, fail) {
       BibleRef.versesCache = BibleRef.versesCache || {};
       var cache = BibleRef.versesCache;
       if (cache.hasOwnProperty(refText)) {
-        callback(cache[refText]);
+        success(cache[refText]);
       } else {
         getBibleTextFromFHL(function (text) {
           cache[refText] = text;
-          callback(text);
-        }, callback);
+          success(text);
+        }, fail || success);
       }
     };
+    // the returning text will be the parameter of both success and fail callback
     var getBibleTextFromFHL = function (success, fail) {
       var xhr = new XMLHttpRequest();
       xhr.onload = function () {
@@ -237,7 +248,7 @@
             lastSec = record.sec;
             versesText += record.bible_text;
           }
-          success(versesText + refText);
+          success(versesText);
         } catch (err) {
           fail('未能查訽經文: ' + err);
         }

@@ -12,7 +12,7 @@
         "src/tether.js",
         "src/drop.js",
         "src/ezra.js",
-        "chromeExt/linkify.js"
+        "chromeExt/contentScript.js"
       ],
       "css": [
         "ezra-style.css"
