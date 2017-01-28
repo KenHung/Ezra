@@ -26,6 +26,15 @@
     ],
     "persistent": false
   },
+  "commands": {
+    "copy-verse": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "查詢及複製經文"
+    }
+  },
   "permissions": [
     "activeTab",
     "http://bible.fhl.net/json",

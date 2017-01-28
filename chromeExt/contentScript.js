@@ -1,22 +1,23 @@
 ezraLinkifier.linkify(document.body);
 
 chrome.runtime.onMessage.addListener(function (request) {
-  var selection = window.getSelection();
-  if (selection.rangeCount > 0) {
-    var msg = attachMsg('查詢中...', selection.getRangeAt(0));
-
-    var bibleRefReader = new ezraLinkifier._BibleRefReader();
-    var bibleRef = bibleRefReader.readRef(request.selectionText);
-    if (bibleRef !== null) {
-      bibleRef.getBibleText(
-        (text) => {
-          writeClipboard(text);
-          detachMsg(msg, '已複製！');
-        },
-        (errMsg) => detachMsg(msg, '沒有經文！'));
-    }
-    else {
-      detachMsg(msg, '沒有經文！');
+  if (request === 'copy-verse') {
+    var selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      var msg = attachMsg('查詢中...', selection.getRangeAt(0));
+      var bibleRefReader = new ezraLinkifier._BibleRefReader();
+      var bibleRef = bibleRefReader.readRef(selection.toString());
+      if (bibleRef !== null) {
+        bibleRef.getBibleText(
+          (text) => {
+            writeClipboard(text);
+            detachMsg(msg, '已複製！');
+          },
+          (errMsg) => detachMsg(msg, '沒有經文！'));
+      }
+      else {
+        detachMsg(msg, '沒有經文！');
+      }
     }
   }
 });

@@ -5,7 +5,19 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.onClicked.addListener(function (info) {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, { selectionText: info.selectionText });
-  });
+  if (info.menuItemId === 'ezraMenu') {
+    requestCopyVerse();
+  }
 });
+
+chrome.commands.onCommand.addListener(function (command) {
+  if (command === 'copy-verse') {
+    requestCopyVerse();
+  }
+});
+
+function requestCopyVerse() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, 'copy-verse');
+  });
+}
