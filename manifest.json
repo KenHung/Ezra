@@ -35,6 +35,10 @@
       "description": "查詢及複製經文"
     }
   },
+  "icons": {
+    "16": "chromeExt/icon_16.png",
+    "128": "chromeExt/icon_128.png"
+  },
   "permissions": [
     "activeTab",
     "http://bible.fhl.net/json",
