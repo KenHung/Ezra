@@ -1,0 +1,35 @@
+{
+  "manifest_version": 2,
+  "name": "Ezra",
+  "description": "自動經文顯示",
+  "version": "1.8",
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/tether.js",
+        "src/drop.js",
+        "src/ezra.js",
+        "chromeExt/linkify.js"
+      ],
+      "css": [
+        "ezra-style.css"
+      ],
+      "all_frames": true
+    }
+  ],
+  "background": {
+    "scripts": [
+      "chromeExt/eventPage.js"
+    ],
+    "persistent": false
+  },
+  "permissions": [
+    "activeTab",
+    "http://bible.fhl.net/json",
+    "contextMenus",
+    "clipboardWrite"
+  ]
+}
