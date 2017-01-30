@@ -1,0 +1,1 @@
+zip ext.zip manifest.json chromeExt/*.js src/*.js ezra-style.css images/icon.png
