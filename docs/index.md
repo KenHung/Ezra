@@ -2,7 +2,23 @@
 layout: index
 ---
 
-Ezra是中文的[Reftagger](https://reftagger.com/)。Ezra能夠找出網頁中的所有聖經依據，如：約 1:2；弗 2:1，然後顯示經文。當光標移到經文依據時，Ezra就會顯示相應的經文。適用於基督教網頁，如部落格、信仰告白或要理問答等。
+Ezra能辦認網頁上的聖經依據，如：約 3:16；弗 2:1-2，當鼠標移到經文依據時，就會顯示經文。
+
+#### Chrome擴充功能
+如果您想在瀏覧所有基督教網站時，都有Ezra效果，請使用[Ezra Chrome擴充功能](https://chrome.google.com/webstore/detail/ezra-%E5%8D%B3%E6%99%82%E8%81%96%E7%B6%93%E6%9F%A5%E8%A8%BD/malpgijpleaapnkjihoacpbkkodkmjgg?hl=zh-TW&gl=HK)。
+
+#### Web Widget
+如果您想自己的基督教網頁自動帶有Ezra效果，請把以下代碼加入到網頁HTML的底部，```</body>```之前：([詳細安裝說明](https://github.com/KenHung/Ezra/wiki/%E8%A9%B3%E7%B4%B0%E5%AE%89%E8%A3%9D%E8%AA%AA%E6%98%8E))
+
+    <script src="https://cdn.rawgit.com/KenHung/Ezra/[版本]/ezra.js"></script>
+    <link href="https://cdn.rawgit.com/KenHung/Ezra/[版本]/ezra-style.css" rel="stylesheet" type="text/css" />
+    <script>
+      ezraLinkifier.linkify(document.body);
+    </script>
+
+您也可以自訂Ezra版本：[所有版本](https://github.com/KenHung/Ezra/releases)
+
+最新版本支援一般網頁瀏覧器，最低支援IE9。
 
 ### 支援格式
 |           |[書卷][章]:[節]|[書卷][中文章][節]|[書卷][中文章]:[節]|
@@ -11,43 +27,16 @@ Ezra是中文的[Reftagger](https://reftagger.com/)。Ezra能夠找出網頁中�
 |連續多節    |約1:1-5       |約一1-5          |約一:1-5          |
 |間斷多節    |約1:1,6       |約一1,6          |約一:1,6          |
 |連續＋間斷節 |約1:1-5,7     |約一1-5,7        |約一:1-5,7       |
-
-#### 書卷和章節間可以有空格：
-* 約 1:1
-* 約1: 1
-* 約 1 : 1
+|不同標點    |約1：1–5，7    |約一1～5、7       |約一︰1－5、7      |
 
 #### 支援全寫書卷：
 * 希伯來書四章8節
 
-#### 支援全型標點：
-* 約一：1
-* 約一：1，6
-* 約一：1–5，6
-
 #### 支援書卷省略：
 * 約 1:1; 2:1; 7:31
 
-#### 支援不同標點：
-* 約一1、6
-* 約一1～5，6
-* 約 1：1；2：1
-
 ### 譯本
 暫時只支援繁體中文和合本。
-
-### [使用方法](#web-widget)
-Ezra剛剛起步，歡迎自由使用！一般使用者可以使用以下的簡易安裝方法，可以直接把以下代碼加入到網頁HTML的底部，```</body>```之前：([詳細安裝說明](https://github.com/KenHung/Ezra/wiki/%E8%A9%B3%E7%B4%B0%E5%AE%89%E8%A3%9D%E8%AA%AA%E6%98%8E))
-
-    <script src="https://cdn.rawgit.com/KenHung/Ezra/[版本]/ezra.js"></script>
-    <link href="https://cdn.rawgit.com/KenHung/Ezra/[版本]/ezra-style.css" rel="stylesheet" type="text/css" />
-    <script>
-      ezraLinkifier.linkify(document.body);
-    </script>
-
-您也可以更改所使用的Ezra版本。[所有版本](https://github.com/KenHung/Ezra/releases)
-
-支援一般網頁瀏覧器，最低支援IE9。
 
 ### 意見/問題
 如果有意見或者問題想要提出，歡迎到[GitHub Issues](https://github.com/KenHung/Ezra/issues/new)發表，或者電郵給我：<eiekenhung@gmail.com>。
