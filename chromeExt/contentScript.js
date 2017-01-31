@@ -13,7 +13,7 @@ chrome.runtime.onMessage.addListener(function (request) {
             writeClipboard(text);
             detachMsg(msg, '已複製！');
           },
-          (errMsg) => detachMsg(msg, '沒有經文！'));
+          (errMsg) => detachMsg(msg, errMsg));
       }
       else {
         detachMsg(msg, '沒有經文！');
