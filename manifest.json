@@ -39,7 +39,6 @@
     "128": "images/icon.png"
   },
   "permissions": [
-    "activeTab",
     "http://bible.fhl.net/json",
     "contextMenus",
     "clipboardWrite"
