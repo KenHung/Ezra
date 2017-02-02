@@ -2,7 +2,7 @@
 layout: index
 ---
 
-Ezra能辦認網頁上的聖經依據，如：約 3:16；弗 2:1-2，當鼠標移到經文依據時，就會顯示經文。
+Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5，當鼠標移到經文依據時，就會顯示經文。
 
 #### Chrome擴充功能
 如果您想在瀏覧所有基督教網站時，都有Ezra效果，請使用[Ezra Chrome擴充功能](https://chrome.google.com/webstore/detail/ezra-%E5%8D%B3%E6%99%82%E8%81%96%E7%B6%93%E6%9F%A5%E8%A8%BD/malpgijpleaapnkjihoacpbkkodkmjgg?hl=zh-TW&gl=HK)。
@@ -46,6 +46,6 @@ Ezra能夠運作，要感謝下列開源項目/免費軟件的幫助：
 * HubSpot提供了[Drop](http://github.hubspot.com/drop/docs/welcome/)。
 * [GitHub](https://github.com/)提供了代碼和Ezra主網寄存。
 * [RawGit](https://rawgit.com/)讓我可以直接發佈GitHub上的Ezra代碼。
-* 我形容Ezra是中文Reftagger只是為了方便，Ezra並不是由Reftagger人員開發，不要找他們支援，我只是仿照他們製作。
+* [Reftagger](https://reftagger.com/)為本項目提供了靈感。
 
 *Soli Deo gloria* - 唯獨榮耀上帝
