@@ -48,7 +48,9 @@ QUnit.test('BibleRefReader.createBibleRefs', function (assert) {
   refTest('約一：1–5，6', '約', 1, '1-5,6');
   refTest('約翰福音1:1', '約', 1, '1');
   refTest('西1 ： 16 ， 20', '西', 1, '16,20');
+  refTest('希伯來書4章8節', '來', 4, '8');
   refTest('希伯來書四章8節', '來', 4, '8');
+  refTest('希伯來書第四章8節', '來', 4, '8');
   refTest('詩篇一百一十八篇8至9節', '詩', 118, '8-9');
   refTest('詩一百○六篇25', '詩', 106, '25');
 });
@@ -63,7 +65,9 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('約四24，', link('約四24') + '，');
   linkifyTest('約四，', '約四，');
   linkifyTest('李約 2013.11.17', '李約 2013.11.17');
+  linkifyTest('希伯來書4章8節', link('希伯來書4章8節'));
   linkifyTest('希伯來書四章8節', link('希伯來書四章8節'));
+  linkifyTest('希伯來書第四章8節', link('希伯來書第四章8節'));
   linkifyTest('四章8節', '四章8節');
   linkifyTest('詩篇一百一十八篇8至9節', link('詩篇一百一十八篇8至9節'));
   linkifyTest('阿摩司書5：21〜24', link('阿摩司書5：21〜24'));
