@@ -19,7 +19,7 @@
         }
       }
     }
-    var ezraLinks = element.querySelectorAll('.ezraBibleRefLink');
+    var ezraLinks = element.querySelectorAll('.ezra-bible-ref-link');
     for (var i = 0; i < ezraLinks.length; i++) {
       var link = ezraLinks[i];
       var ref = link.getAttribute('ezra-ref');
@@ -57,8 +57,9 @@
       var ref = bibleRefReader.readRef(refText);
       ref.getBibleTextWithRef(function (text) {
         drop.content.innerText = text;
-        drop.content.innerHTML += '<div class="ezraBibleRefSeperator"></div>'
-          + '<div class="ezraBibleRefFooter"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
+        drop.content.innerHTML
+          += '<div class="ezra-seperator"></div>'
+          + '<div class="ezra-footer"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
         drop.position();
       });
     });
@@ -107,7 +108,7 @@
           var titleRef = book !== undefined ? ref : lastBook + ref;
           var link = document.createElement('a');
           link.setAttribute('ezra-ref', '載入中...(' + titleRef + ')');
-          link.className = 'ezraBibleRefLink';
+          link.className = 'ezra-bible-ref-link';
           link.innerText = ref;
         }
         else {
@@ -416,4 +417,4 @@
     }
     oldNode.parentNode.replaceChild(newNodes[0], oldNode);
   }
-} (window.ezraLinkifier = window.ezraLinkifier || {}));
+}(window.ezraLinkifier = window.ezraLinkifier || {}));

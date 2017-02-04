@@ -1,7 +1,11 @@
-.ezraBibleRefLink { cursor: pointer; color: #0071CF }
-.ezraBibleRefSeperator { height: 5px }
-.ezraBibleRefFooter { text-align: right }
-.ezraBibleRefFooter a { color: darkgrey; font-size: 75%; text-decoration: none }
+.ezra-bible-ref-link { cursor: pointer; color: #0071CF }
+.ezra-seperator { height: 5px }
+.ezra-footer { 
+  text-align: right; }
+.ezra-footer a {
+  color: darkgrey;
+  font-size: 70%;
+  text-decoration: none }
 
 .ezra-element, .ezra-element:after, .ezra-element:before, .ezra-element *, .ezra-element *:after, .ezra-element *:before {
   box-sizing: border-box; }
