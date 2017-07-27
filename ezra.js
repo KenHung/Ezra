@@ -225,7 +225,12 @@
     // the returning text will be the parameter of both success and fail callback
     var getBibleTextFromFHL = function (success, fail) {
       var xhr = new XMLHttpRequest();
-      xhr.onload = function () {
+      xhr.onerror = function () {
+        fail('無法連上伺服器。');
+      };
+      try {
+        xhr.open('GET', 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, false);
+        xhr.send();
         if (xhr.status !== 200) {
           fail('未能查訽經文: XHR status = ' + xhr.status);
           return;
@@ -253,13 +258,6 @@
         } catch (err) {
           fail('未能查訽經文: ' + err);
         }
-      };
-      xhr.onerror = function () {
-        fail('無法連上伺服器。');
-      };
-      try {
-        xhr.open('GET', 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, true);
-        xhr.send();
       }
       catch (err) {
         fail('未能查訽經文: ' + err);
