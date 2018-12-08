@@ -6,6 +6,11 @@
     classPrefix: 'ezra'
   });
   var bibleRefReader = new BibleRefReader();
+
+  /**
+   * Linkify all Bible references text within the DOM of the element.
+   * @param {Element} element HTML element to be linkified.
+   */
   ezraLinkifier.linkify = function (element) {
     var textNodes = getTextNodesIn(element);
     for (var i = 0; i < textNodes.length; i++) {
@@ -73,12 +78,18 @@
   function BibleRefReader() {
     var abbrResolver = new AbbrResolver();
     var chiNumParser = new ChineseNumParser();
+
+    /**
+     * Creates a regular expression for matching Bible references, probably the hardest code to understand in Ezra.
+     * @param {string} exp Base regular expression.
+     * @param {string} flags Regular expression flags.
+     */
     function bibleRefExp(exp, flags) {
       return new RegExp(exp
-        .replace('{B}', abbrResolver.bibleBooks)
-        .replace('{C}', '第?[' + chiNumParser.supportedChars + ']+|\\d+\\s*[{:}]')
+        .replace('{B}', abbrResolver.bibleBooks) // to match '創世記'/'出埃及記'/'利未記'/'民數記'/'申命記'/.../'創'/'出'/'利'/'民'/'申'...
+        .replace('{C}', '第?[' + chiNumParser.supportedChars + ']+|\\d+\\s*[{:}]') // to mach '第一章'/'第五篇'/'42:'...
         .replace('{S}', '\\s{:}第')
-        .replace('{V}', '[{,}{-}{;}{VE}\\s\\d]*\\d')
+        .replace('{V}', '[{,}{-}{;}{VE}\\s\\d]*\\d') // to match '1-5'/'1-3, 6'/'1;5'/'1及4節'...
         .replace(/{:}/g, ':：︰篇章')
         .replace('{,}', ',，、和及')
         .replace('{-}', '\\-─–－—~～〜至')
@@ -86,16 +97,21 @@
         .replace(/{;}/g, ';；'), flags || '');
     }
     var bibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
+
+    /**
+     * Converts text to text nodes with hyperlinks.
+     * @param {string} text Text to be linkified.
+     */
     this.linkify = function (text) {
-      // different bible referance formats are handled: 約1:1 約1:1,2 約1:1;2 約1:2,3:4 約1:2;3:4
+      // different bible reference formats are handled: 約1:1 約1:1,2 約1:1;2 約1:2,3:4 約1:2;3:4
       var linkifiedNodes = [];
       var match;
       var lastBook = '';
       var lastIndex = 0;
       while ((match = bibleRef.exec(text)) !== null) {
         var ref = match[0];
-        // check if verses accidently matched the next bilble reference
-        // for referances like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
+        // check if verses accidentally matched the next Bible reference
+        // for references like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
         var strAfterMatch = text.substring(bibleRef.lastIndex); // ":4" in the example
         var verses = match[3].match(/\d+/g); // [2, 3] in the example
         if (strAfterMatch.search(bibleRefExp('\\s*[{:}]{V}')) === 0 && verses.length > 1) {
@@ -129,8 +145,13 @@
       var newIndex = ref.lastIndexOf(matches[matches.length - 1]);
       return ref.substring(0, newIndex);
     }
+
+    /**
+     * Creates a Bible reference by text.
+     * @param {string} ref A Bible reference text.
+     */
     this.readRef = function (ref) {
-      // preconditions: ref must contains a full bible referance
+      // preconditions: ref must contains a full bible reference
       var match = bibleRefExp('({B})\\s?({C})[{S}]*({V})').exec(ref);
       if (match !== null) {
         return new BibleRef(
@@ -142,6 +163,11 @@
         return null;
       }
     };
+
+    /**
+     * Converts or removes unsupported string for query. (e.g. '1，4' => '1,4' / '1及4節' => '1,4' / ...)
+     * @param {string} vers Verses string.
+     */
     this.readVers = function (vers) {
       return vers
         .replace(bibleRefExp('[{-}]', 'g'), '-')
@@ -156,6 +182,11 @@
     var nums = Object.keys(numVal);
     var exps = Object.keys(expVal);
     this.supportedChars = nums.concat(exps).join('');
+
+    /**
+     * Parses a Chinese number.
+     * @param {string} num A Chinese number.
+     */
     this.parse = function (num) {
       if (!isNaN(num)) {
         return +num;
@@ -200,16 +231,33 @@
     }
   }
 
+  /**
+   * A Bible reference containing one or multiple verse.
+   * @constructor
+   * @param {string} abbr Book of Bible. (in Chinese abbreviation, e.g. 創，出，利，民，申，⋯⋯)
+   * @param {number} chap Chapter of the Book.
+   * @param {string} vers Verses of the chapter, range is supported. (e.g. 1-3 / 1,3,7 / 1-5,10 / ...)
+   */
   function BibleRef(abbr, chap, vers) {
     this.abbr = abbr;
     this.chap = chap;
     this.vers = vers;
     var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
+
+    /**
+     * Gets Bible text and attaches reference text at the end.
+     * @param {function(string):void} success Callback for successfully getting bible text with reference attached.
+     * @param {function(string):void} fail Callback for failed query, error message will be passed as argument.
+     */
     this.getBibleTextWithRef = function (success, fail) {
       this.getBibleText(function (bibleText) {
         success(bibleText + refText);
       }, fail || success);
     };
+
+    /**
+     * Gets Bible text from cache if possible.
+     */
     this.getBibleText = function (success, fail) {
       BibleRef.versesCache = BibleRef.versesCache || {};
       var cache = BibleRef.versesCache;
@@ -222,7 +270,12 @@
         }, fail || success);
       }
     };
-    // the returning text will be the parameter of both success and fail callback
+
+    /**
+     * Gets Bible text using FHL API and passes result to callback.
+     * @param {function(string):void} success Callback for successfully getting bible text.
+     * @param {function(string):void} fail Callback for failed query, error message will be passed as argument.
+     */
     var getBibleTextFromFHL = function (success, fail) {
       var xhr = new XMLHttpRequest();
       xhr.onerror = function () {
@@ -248,6 +301,7 @@
           var lastSec = 0;
           for (var i = 0; i < resp.record.length; i++) {
             var record = resp.record[i];
+            // insert '⋯⋯' if verses are not continuous
             if (i > 0 && record.sec > lastSec + 1) {
               versesText += '⋯⋯';
             }
@@ -394,8 +448,17 @@
     this.toAbbr = function (book) { return abbr[book] || book; };
   }
 
+  /**
+   * Gets all text nodes inside the DOM tree of a node.
+   * @param {Node} node A DOM node.
+   * @returns {Node[]} List of text nodes.
+   */
   function getTextNodesIn(node) {
     var textNodes = [];
+    /**
+     * Recursively collects all text nodes inside the DOM tree of a node.
+     * @param {Node} node A DOM node.
+     */
     function getTextNodes(node) {
       if (node.nodeType == 3) {
         textNodes.push(node);
@@ -409,6 +472,11 @@
     return textNodes;
   }
 
+  /**
+   * Replaces a old node with new nodes.
+   * @param {Node} oldNode A node to be replaced.
+   * @param {Node[]} newNodes New nodes to be inserted.
+   */
   function replaceWithNodes(oldNode, newNodes) {
     for (var i = newNodes.length - 1; i > 0; i--) {
       oldNode.parentNode.insertBefore(newNodes[i], oldNode.nextSibling);
