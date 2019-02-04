@@ -1,5 +1,6 @@
 (function (ezraLinkifier, undefined) {
   // Ezra embeds Tether and Drop from HubSpot, which are MIT licensed
+  // Embedding reduces the changes of conflicts with the components of web pages
   /* Tether to be inserted */
   /* Drop to be inserted */
   var _Drop = Drop.createContext({
@@ -63,7 +64,7 @@
       ref.getBibleTextWithRef(function (text) {
         drop.content.innerText = text;
         drop.content.innerHTML
-          += '<div class="ezra-seperator"></div>'
+          += '<div class="ezra-separator"></div>'
           + '<div class="ezra-footer"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
         drop.position();
       });
@@ -192,7 +193,7 @@
         return +num;
       }
       else {
-        if (contiansExp(num)) {
+        if (containsExp(num)) {
           var acc = [];
           for (var i = 0; i < num.length; i++) {
             var n = num[i];
@@ -213,7 +214,7 @@
         }
       }
     };
-    function contiansExp(num) {
+    function containsExp(num) {
       for (var i = 0; i < num.length; i++) {
         if (expVal[num[i]]) {
           return true;
