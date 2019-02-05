@@ -1,8 +1,9 @@
 (function (ezraLinkifier, undefined) {
-  // Ezra embeds Tether and Drop from HubSpot, which are MIT licensed
-  // Embedding reduces the changes of conflicts with the components of web pages
-  /* Tether to be inserted */
-  /* Drop to be inserted */
+  // Embedding prevents conflicts with  the components of web pages.
+  // It is a little bit different from bundling, since the scripts are inserted inside.
+  /* {{insert-file:tether.min.js}} */
+  /* {{insert-file:drop.min.js}} */
+  /* {{insert-file:lang.js}} */
   var _Drop = Drop.createContext({
     classPrefix: 'ezra'
   });
@@ -280,22 +281,26 @@
     var getBibleTextFromFHL = function (success, fail) {
       var xhr = new XMLHttpRequest();
       xhr.onerror = function () {
-        fail('無法連上伺服器。');
+        fail(Resources.err_cannot_connect);
       };
       try {
-        xhr.open('GET', 'https://bible.fhl.net/json/qb.php?chineses=' + abbr + '&chap=' + chap + '&sec=' + vers, false);
+        var query = 'https://bible.fhl.net/json/qb.php?chineses=' + abbr
+                  + '&chap=' + chap 
+                  + '&sec=' + vers 
+                  + '&gb=' + Resources.fhl_gb;
+        xhr.open('GET', query, false);
         xhr.send();
         if (xhr.status !== 200) {
-          fail('未能查訽經文: XHR status = ' + xhr.status);
+          fail(Resources.err_cannot_find_verse + 'XHR status = ' + xhr.status);
           return;
         }
         try {
           var resp = JSON.parse(xhr.responseText);
           if (resp.status !== 'success') {
-            fail('未能查訽經文: FHL response text = ' + xhr.responseText);
+            fail(Resources.err_cannot_find_verse + 'FHL response text = ' + xhr.responseText);
             return;
           } else if (resp.record.length === 0) {
-            fail('找不到記錄！是不是聖經中沒有這章節' + refText + '？');
+            fail(Resources.err_no_record + refText + '？');
             return;
           }
           var versesText = '';
@@ -311,142 +316,24 @@
           }
           success(versesText);
         } catch (err) {
-          fail('未能查訽經文: ' + err);
+          fail(Resources.err_cannot_find_verse + err);
         }
       }
       catch (err) {
-        fail('未能查訽經文: ' + err);
+        fail(Resources.err_cannot_find_verse + err);
       }
     };
   }
 
-  ezraLinkifier.lang = 'zh-hk';
-
   function AbbrResolver() {
     // traditional Chinese and simplified Chinese parser cannot exist at the same time,
     // because words like '出', '利', '伯' can both be traditional or simplified Chinese
-    var abbr = {
-      創世記: '創',
-      出埃及記: '出',
-      利未記: '利',
-      民數記: '民',
-      申命記: '申',
-      約書亞記: '書',
-      士師記: '士',
-      路得記: '得',
-      撒母耳記上: '撒上',
-      撒母耳記下: '撒下',
-      列王紀上: '王上',
-      列王紀下: '王下',
-      歷代志上: '代上',
-      歷代志下: '代下',
-      以斯拉記: '拉',
-      尼希米記: '尼',
-      以斯帖記: '斯',
-      約伯記: '伯',
-      詩篇: '詩',
-      箴言: '箴',
-      傳道書: '傳',
-      雅歌: '歌',
-      以賽亞書: '賽',
-      耶利米書: '耶',
-      耶利米哀歌: '哀',
-      以西結書: '結',
-      但以理書: '但',
-      何西阿書: '何',
-      約珥書: '珥',
-      阿摩司書: '摩',
-      俄巴底亞書: '俄',
-      約拿書: '拿',
-      彌迦書: '彌',
-      那鴻書: '鴻',
-      哈巴谷書: '哈',
-      西番雅書: '番',
-      哈該書: '該',
-      撒迦利亞書: '亞',
-      瑪拉基書: '瑪',
-      馬太福音: '太',
-      馬可福音: '可',
-      路加福音: '路',
-      約翰福音: '約',
-      使徒行傳: '徒',
-      羅馬書: '羅',
-      哥林多前書: '林前',
-      哥林多後書: '林後',
-      加拉太書: '加',
-      以弗所書: '弗',
-      腓立比書: '腓',
-      歌羅西書: '西',
-      帖撒羅尼迦前書: '帖前',
-      帖撒羅尼迦後書: '帖後',
-      提摩太前書: '提前',
-      提摩太後書: '提後',
-      提多書: '多',
-      腓利門書: '門',
-      希伯來書: '來',
-      雅各書: '雅',
-      彼得前書: '彼前',
-      彼得後書: '彼後',
-      約翰壹書: '約一',
-      約翰貳書: '約二',
-      約翰參書: '約三',
-      猶大書: '猶',
-      啟示錄: '啟',
-
-      哥前: '林前',
-      哥後: '林後',
-      歌前: '林前',
-      歌後: '林後',
-      希: '來',
-      約翰一書: '約一',
-      約翰二書: '約二',
-      約翰三書: '約三',
-      約壹: '約一',
-      約貳: '約二',
-      約參: '約三',
-      啓示錄: '啟',
-      啓: '啟',
-
-      创: '創',
-      书: '書',
-      诗: '詩',
-      传: '傳',
-      赛: '賽',
-      结: '結',
-      弥: '彌',
-      鸿: '鴻',
-      该: '該',
-      亚: '亞',
-      玛: '瑪',
-      约: '約',
-      罗: '羅',
-      林后: '林後',
-      帖后: '帖後',
-      提后: '提後',
-      门: '門',
-      来: '來',
-      彼后: '彼後',
-      约一: '約一',
-      约二: '約二',
-      约三: '約三',
-      犹: '猶',
-      启: '啟',
-
-      哥后: '林後',
-      歌后: '林後',
-      约翰一书: '約一',
-      约翰二书: '約二',
-      约翰三书: '約三',
-      约壹: '約一',
-      约贰: '約二',
-      约参: '約三'
-    };
-    var books = Object.keys(abbr);
+    var books = Object.keys(Resources.abbr);
     var descending = function (a, b) { return b.length - a.length; };
     // sort by length descending, such that match of "約" will not override "約一"
-    var abbrs = books.map(function (book) { return abbr[book]; }).sort(descending);
+    var abbrs = books.map(function (book) { return Resources.abbr[book]; }).sort(descending);
     this.bibleBooks = books.concat(abbrs).join('|');
-    this.toAbbr = function (book) { return abbr[book] || book; };
+    this.toAbbr = function (book) { return Resources.abbr[book] || book; };
   }
 
   /**
