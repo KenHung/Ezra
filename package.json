@@ -17,13 +17,12 @@
   },
   "homepage": "https://github.com/KenHung/Ezra#readme",
   "devDependencies": {
+    "event-stream": "^3.3.4",
+    "gulp": "^4.0.0",
     "gulp-file-insert": "^2.0.0",
     "gulp-header": "^1.8.8",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^2.0.0",
     "uglify-save-license": "^0.4.1"
-  },
-  "dependencies": {
-    "gulp": "^4.0.0"
   }
 }
