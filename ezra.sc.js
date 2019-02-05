@@ -217,7 +217,7 @@ var Drop=function(t){"use strict";function e(t,e){if(!(t instanceof e))throw new
         if (book !== undefined || lastBook !== '') {
           var titleRef = book !== undefined ? ref : lastBook + ref;
           var link = document.createElement('a');
-          link.setAttribute('ezra-ref', '載入中...(' + titleRef + ')');
+          link.setAttribute('ezra-ref', Resources.loading + '...(' + titleRef + ')');
           link.className = 'ezra-bible-ref-link';
           link.innerText = ref;
         }
