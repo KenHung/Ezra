@@ -53,6 +53,7 @@ QUnit.test('BibleRefReader.createBibleRefs', function (assert) {
   refTest('希伯來書第四章8節', '來', 4, '8');
   refTest('詩篇一百一十八篇8至9節', '詩', 118, '8-9');
   refTest('詩一百○六篇25', '詩', 106, '25');
+  refTest('約叁1:1', '約三', 1, 1);
 });
 
 QUnit.test('BibleRefReader.linkify', function (assert) {

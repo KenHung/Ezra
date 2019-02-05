@@ -24,7 +24,7 @@ gulp.task('insert', function () {
     }));
   ezra.pipe(gfi({'/* {{insert-file:lang.js}} */': 'src/lang/zh-Hant.js'}))
     .pipe(gulp.dest('./'));
-  ezra.pipe(gfi({'/* {{insert-file:lang.js}} */': 'src/lang/zh-Hans.js'}))
+  return ezra.pipe(gfi({'/* {{insert-file:lang.js}} */': 'src/lang/zh-Hans.js'}))
     .pipe(rename('ezra.sc.js'))
     .pipe(gulp.dest('./'));
 });
