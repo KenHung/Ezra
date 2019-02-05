@@ -1,12 +1,8 @@
 (function (ezraLinkifier, undefined) {
   // Embedding prevents conflicts with  the components of web pages.
   // It is a little bit different from bundling, since the scripts are inserted inside.
-  /* {{insert-file:tether.min.js}} */
-  /* {{insert-file:drop.min.js}} */
   /* {{insert-file:lang.js}} */
-  var _Drop = Drop.createContext({
-    classPrefix: 'ezra'
-  });
+  var dropFactory = new DropFactory();
   var bibleRefReader = new BibleRefReader();
 
   /**
@@ -31,7 +27,7 @@
       var link = ezraLinks[i];
       var ref = link.getAttribute('ezra-ref');
       if (ref !== null) {
-        createDrop(link, ref);
+        dropFactory.create(link, ref);
       }
       else {
         // there should be something wrong if ref is null
@@ -41,35 +37,43 @@
     }
   };
 
-  function createDrop(link, refText) {
-    var drop = new _Drop({
-      classes: 'ezra-theme-arrows',
-      target: link,
-      content: document.createTextNode(refText),
-      openOn: 'hover',
-      constrainToScrollParent: false,
-      tetherOptions: {
-        constraints: [
-          {
-            to: 'window',
-            attachment: 'together',
-            pin: ['left', 'right']
-          }
-        ]
-      }
+  function DropFactory() {
+    /* {{insert-file:tether.min.js}} */
+    /* {{insert-file:drop.min.js}} */
+    var _Drop = Drop.createContext({
+      classPrefix: 'ezra'
     });
-    drop.on('open', function () {
-      var linkSize = window.getComputedStyle(this.target).fontSize;
-      this.content.style.fontSize = linkSize;
-      var ref = bibleRefReader.readRef(refText);
-      ref.getBibleTextWithRef(function (text) {
-        drop.content.innerText = text;
-        drop.content.innerHTML
-          += '<div class="ezra-separator"></div>'
-          + '<div class="ezra-footer"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
-        drop.position();
+  
+    this.create = function (link, refText) {
+      var drop = new _Drop({
+        classes: 'ezra-theme-arrows',
+        target: link,
+        content: document.createTextNode(refText),
+        openOn: 'hover',
+        constrainToScrollParent: false,
+        tetherOptions: {
+          constraints: [
+            {
+              to: 'window',
+              attachment: 'together',
+              pin: ['left', 'right']
+            }
+          ]
+        }
       });
-    });
+      drop.on('open', function () {
+        var linkSize = window.getComputedStyle(this.target).fontSize;
+        this.content.style.fontSize = linkSize;
+        var ref = bibleRefReader.readRef(refText);
+        ref.getBibleTextWithRef(function (text) {
+          drop.content.innerText = text;
+          drop.content.innerHTML
+            += '<div class="ezra-separator"></div>'
+            + '<div class="ezra-footer"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
+          drop.position();
+        });
+      });
+    };
   }
 
   // added for unit testing
