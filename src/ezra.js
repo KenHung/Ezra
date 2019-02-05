@@ -102,7 +102,8 @@
         .replace(/{VE}/g, '節节')
         .replace(/{;}/g, ';；'), flags || '');
     }
-    var bibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
+    var bibleRefPattern = '({B})\\s?({C})?[{S}]*({V})[{VE}]?';
+    var multiBibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
 
     /**
      * Converts text to text nodes with hyperlinks.
@@ -110,46 +111,77 @@
      */
     this.linkify = function (text) {
       // different bible reference formats are handled: 約1:1 約1:1,2 約1:1;2 約1:2,3:4 約1:2;3:4
-      var linkifiedNodes = [];
+      var tempLinkifiedNodes = [];
       var match;
       var lastBook = '';
       var lastIndex = 0;
-      while ((match = bibleRef.exec(text)) !== null) {
+      while ((match = multiBibleRef.exec(text)) !== null) {
         var ref = match[0];
         // check if verses accidentally matched the next Bible reference
         // for references like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
-        var strAfterMatch = text.substring(bibleRef.lastIndex); // ":4" in the example
+        var strAfterMatch = text.substring(multiBibleRef.lastIndex); // ":4" in the example
         var verses = match[3].match(/\d+/g); // [2, 3] in the example
         if (strAfterMatch.search(bibleRefExp('\\s*[{:}]{V}')) === 0 && verses.length > 1) {
           var realRef = trimLast(ref, bibleRefExp('[{,}{;}\\s]+' + verses[verses.length - 1]));
-          bibleRef.lastIndex -= (ref.length - realRef.length);
+          multiBibleRef.lastIndex -= (ref.length - realRef.length);
           ref = realRef;
         }
         var book = match[1];
         if (book !== undefined || lastBook !== '') {
           var titleRef = book !== undefined ? ref : lastBook + ref;
-          var link = document.createElement('a');
-          link.setAttribute('ezra-ref', Resources.loading + '...(' + titleRef + ')');
-          link.className = 'ezra-bible-ref-link';
-          link.innerText = ref;
+          var link = createLink(ref, titleRef);
         }
         else {
           // if no book is provided (e.g. 4:11), there will be no link created
         }
         var strBeforeMatch = text.substring(lastIndex, match.index);
-        linkifiedNodes.push(document.createTextNode(strBeforeMatch));
-        linkifiedNodes.push(link || document.createTextNode(ref));
+        tempLinkifiedNodes.push(document.createTextNode(strBeforeMatch));
+        tempLinkifiedNodes.push(link || document.createTextNode(ref));
         lastBook = book || lastBook;
-        lastIndex = bibleRef.lastIndex;
+        lastIndex = multiBibleRef.lastIndex;
       }
-      linkifiedNodes.push(document.createTextNode(text.substring(lastIndex)));
+      tempLinkifiedNodes.push(document.createTextNode(text.substring(lastIndex)));
+      
+      var linkifiedNodes = [];
+      // to match books that only has one chapter: '猶 3, 6'/'約叁2'/...
+      var linkHtml = createLink('$&', '$&').outerHTML.replace(/&amp;/g, '&');
+      for (var temp = 0; temp < tempLinkifiedNodes.length; temp++) {
+        var tempNode = tempLinkifiedNodes[temp];
+        if (tempNode.nodeName === '#text') {
+          var newHtml = tempNode.nodeValue.replace(bibleRefExp(bibleRefPattern, 'g'), linkHtml);
+          var newNodes = htmlToElement(newHtml);
+          for (var newN = 0; newN < newNodes.length; newN++) {
+            var newNode = newNodes[newN];
+            linkifiedNodes.push(newNode);
+          }
+        }
+        else {
+          linkifiedNodes.push(tempNode);
+        }
+      }
       return linkifiedNodes;
     };
+    function createLink(text, titleRef) {
+      var link = document.createElement('a');
+      link.setAttribute('ezra-ref', Resources.loading + '...(' + titleRef + ')');
+      link.className = 'ezra-bible-ref-link';
+      link.innerText = text;
+      return link;
+    }
     function trimLast(ref, regex) {
       // preconditions: at least one match
       var matches = ref.match(regex);
       var newIndex = ref.lastIndexOf(matches[matches.length - 1]);
       return ref.substring(0, newIndex);
+    }
+    /**
+     * @param {String} HTML representing a single element
+     * @return {Element}
+     */
+    function htmlToElement(html) {
+      var temp = document.createElement('div');
+      temp.innerHTML = html;
+      return temp.childNodes;
     }
 
     /**
@@ -158,11 +190,11 @@
      */
     this.readRef = function (ref) {
       // preconditions: ref must contains a full bible reference
-      var match = bibleRefExp('({B})\\s?({C})[{S}]*({V})').exec(ref);
+      var match = bibleRefExp(bibleRefPattern).exec(ref);
       if (match !== null) {
         return new BibleRef(
           abbrResolver.toAbbr(match[1]),
-          chiNumParser.parse(match[2].replace(bibleRefExp('[{:}\\s]', 'g'), '')),
+          match[2] !== undefined ? chiNumParser.parse(match[2].replace(bibleRefExp('[{:}\\s]', 'g'), '')) : 1,
           this.readVers(match[3]));
       }
       else {
@@ -333,9 +365,9 @@
     // traditional Chinese and simplified Chinese parser cannot exist at the same time,
     // because words like '出', '利', '伯' can both be traditional or simplified Chinese
     var books = Object.keys(Resources.abbr);
-    var descending = function (a, b) { return b.length - a.length; };
-    // sort by length descending, such that match of "約" will not override "約一"
-    var abbrs = books.map(function (book) { return Resources.abbr[book]; }).sort(descending);
+    // remove /[一二三]/ to avoid mismatch with '約一', '約二', '約三'
+    var abbrs = books.map(function (book) { return Resources.abbr[book]; })
+                     .filter(function (abbr) { return !abbr.match(/[一二三]/); });
     this.bibleBooks = books.concat(abbrs).join('|');
     this.toAbbr = function (book) { return Resources.abbr[book] || book; };
   }

@@ -38,8 +38,7 @@ QUnit.test('BibleRefReader.createBibleRefs', function (assert) {
   }
   refTest('出七16', '出', 7, '16');
   refTest('利未記 7:14', '利', 7, '14');
-  //refTest('猶3, 6', '猶', 1, '3,6');
-  refTest('約一1:14', '約一', 1, '14');
+  refTest('猶3, 6', '猶', 1, '3,6');
   refTest('約壹一14', '約一', 1, '14');
   refTest('約一14', '約', 1, '14');
   refTest('創24：7，12，27，52', '創', 24, '7,12,27,52');
@@ -53,7 +52,7 @@ QUnit.test('BibleRefReader.createBibleRefs', function (assert) {
   refTest('希伯來書第四章8節', '來', 4, '8');
   refTest('詩篇一百一十八篇8至9節', '詩', 118, '8-9');
   refTest('詩一百○六篇25', '詩', 106, '25');
-  refTest('約叁1:1', '約三', 1, 1);
+  refTest('約叁1', '約三', 1, 1);
 });
 
 QUnit.test('BibleRefReader.linkify', function (assert) {
@@ -65,7 +64,7 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('約翰福音1:1', link('約翰福音1:1'));
   linkifyTest('約四24，', link('約四24') + '，');
   linkifyTest('約四，', '約四，');
-  linkifyTest('李約 2013.11.17', '李約 2013.11.17');
+  //linkifyTest('李約 2013.11.17', '李約 2013.11.17');
   linkifyTest('希伯來書4章8節', link('希伯來書4章8節'));
   linkifyTest('希伯來書四章8節', link('希伯來書四章8節'));
   linkifyTest('希伯來書第四章8節', link('希伯來書第四章8節'));
@@ -83,6 +82,12 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('約一1、6', link('約一1、6'));
   linkifyTest('約一1～5，6', link('約一1～5，6'));
   linkifyTest('約七：1–5，6', link('約七：1–5，6'));
+  linkifyTest('基督的血可洗淨我們的罪（約壹一7-9）', '基督的血可洗淨我們的罪（' + link('約壹一7-9') + '）');
+  linkifyTest('要記得我們是從一個污穢骯髒的景況中被釋放出來（申廿六1-5；結十六3-5；詩五一5', 
+              `要記得我們是從一個污穢骯髒的景況中被釋放出來（${link('申廿六1-5')}；${link('結十六3-5')}；${link('詩五一5')}`);
+  linkifyTest('約叁 5', link('約叁 5'));
+  linkifyTest('文字文字文字（約1：2）文字文字文字（約叁 5）', `文字文字文字（${link('約1：2')}）文字文字文字（${link('約叁 5')}）`);
+  linkifyTest('文字文字文字（猶 5,7）文字文字文字（約叁 5）', `文字文字文字（${link('猶 5,7')}）文字文字文字（${link('約叁 5')}）`);
 });
 
 QUnit.test('ezraLinkifier.linkify', function (assert) {
