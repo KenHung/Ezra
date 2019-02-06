@@ -1,3 +1,4 @@
+/* exported Resources */
 var Resources = {
   abbr: {
     创世记: '创',

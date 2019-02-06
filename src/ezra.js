@@ -2,6 +2,7 @@
   // Embedding prevents conflicts with  the components of web pages.
   // It is a little bit different from bundling, since the scripts are inserted inside.
   /* {{insert-file:lang.js}} */
+  /* global Resources */
   var dropFactory = new DropFactory();
   var bibleRefReader = new BibleRefReader();
 
@@ -23,7 +24,7 @@
       }
     }
     var ezraLinks = element.querySelectorAll('.ezra-bible-ref-link');
-    for (var i = 0; i < ezraLinks.length; i++) {
+    for (i = 0; i < ezraLinks.length; i++) {
       var link = ezraLinks[i];
       var ref = link.getAttribute('ezra-ref');
       if (ref !== null) {
@@ -40,6 +41,7 @@
   function DropFactory() {
     /* {{insert-file:tether.min.js}} */
     /* {{insert-file:drop.min.js}} */
+    /* global Drop */
     var _Drop = Drop.createContext({
       classPrefix: 'ezra'
     });
