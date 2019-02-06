@@ -10,8 +10,18 @@ Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5，當鼠標
 #### Web Widget
 如果您想自己的基督教網頁自動帶有Ezra效果，請把以下代碼加入到網頁HTML的底部，```</body>```之前：([詳細安裝說明](https://github.com/KenHung/Ezra/wiki/%E8%A9%B3%E7%B4%B0%E5%AE%89%E8%A3%9D%E8%AA%AA%E6%98%8E))
 
-    <script src="https://cdn.rawgit.com/KenHung/Ezra/[版本]/ezra.js"></script>
-    <link href="https://cdn.rawgit.com/KenHung/Ezra/[版本]/ezra-style.css" rel="stylesheet" type="text/css" />
+繁體中文：
+
+    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra-style.css" rel="stylesheet" type="text/css" />
+    <script>
+      ezraLinkifier.linkify(document.body);
+    </script>
+
+簡體中文（版本必需為2.0或以上）：
+
+    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra.sc.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra-style.css" rel="stylesheet" type="text/css" />
     <script>
       ezraLinkifier.linkify(document.body);
     </script>
@@ -78,7 +88,7 @@ Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5，當鼠標
 </table>
 
 ### 譯本
-暫時只支援繁體中文和合本。
+支援繁體中文和簡體中文和合本。
 
 ### 意見/問題
 如果有意見或者問題想要提出，歡迎到[GitHub Issues](https://github.com/KenHung/Ezra/issues/new)發表，或者電郵給我：<eiekenhung@gmail.com>。
@@ -92,7 +102,7 @@ Ezra能夠運作，要感謝下列開源項目/免費軟件的幫助：
 * 「[信望愛信仰與聖經資源中心](https://bible.fhl.net/)」提供了[聖經JSON API](https://bible.fhl.net/json/)作經文查詢。
 * HubSpot提供了[Drop](http://github.hubspot.com/drop/docs/welcome/)。
 * [GitHub](https://github.com/)提供了代碼和Ezra主網寄存。
-* [RawGit](https://rawgit.com/)讓我可以直接發佈GitHub上的Ezra代碼。
+* [jsDelivr](https://www.jsdelivr.com/)讓我可以直接發佈GitHub上的Ezra代碼。
 * [Reftagger](https://reftagger.com/)為本項目提供了靈感。
 
 *Soli Deo gloria* - 唯獨榮耀上帝
