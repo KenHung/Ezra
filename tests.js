@@ -64,7 +64,7 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('約翰福音1:1', link('約翰福音1:1'));
   linkifyTest('約四24，', link('約四24') + '，');
   linkifyTest('約四，', '約四，');
-  //linkifyTest('李約 2013.11.17', '李約 2013.11.17');
+  linkifyTest('李約 2013.11.17', '李約 2013.11.17');
   linkifyTest('希伯來書4章8節', link('希伯來書4章8節'));
   linkifyTest('希伯來書四章8節', link('希伯來書四章8節'));
   linkifyTest('希伯來書第四章8節', link('希伯來書第四章8節'));
@@ -86,6 +86,7 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('要記得我們是從一個污穢骯髒的景況中被釋放出來（申廿六1-5；結十六3-5；詩五一5', 
               `要記得我們是從一個污穢骯髒的景況中被釋放出來（${link('申廿六1-5')}；${link('結十六3-5')}；${link('詩五一5')}`);
   linkifyTest('約叁 5', link('約叁 5'));
+  linkifyTest('文字文字文字（約翰二書5）', `文字文字文字（${link('約翰二書5')}）`);
   linkifyTest('文字文字文字（約1：2）文字文字文字（約叁 5）', `文字文字文字（${link('約1：2')}）文字文字文字（${link('約叁 5')}）`);
   linkifyTest('文字文字文字（猶 5,7）文字文字文字（約叁 5）', `文字文字文字（${link('猶 5,7')}）文字文字文字（${link('約叁 5')}）`);
 });

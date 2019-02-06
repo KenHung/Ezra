@@ -84,6 +84,7 @@
     约叁: '约三',
     约参: '约三'
   },
+  uniChapterRefPattern: '俄巴底亚书|俄|腓利门书|门|犹大书|犹|约翰二书|约翰三书|约翰贰书|约翰叁书|约翰参书|约贰|约叁|约参',
   loading: '载入中',
   err_cannot_connect: '无法连上伺服器。 ',
   err_cannot_find_verse: '未能查訽经文: ',
@@ -185,6 +186,7 @@ var Drop=function(t){"use strict";function e(t,e){if(!(t instanceof e))throw new
     function bibleRefExp(exp, flags) {
       return new RegExp(exp
         .replace('{B}', abbrResolver.bibleBooks) // to match '創世記'/'出埃及記'/'利未記'/'民數記'/'申命記'/.../'創'/'出'/'利'/'民'/'申'...
+        .replace('{SB}', Resources.uniChapterRefPattern)
         .replace('{C}', '第?[' + chiNumParser.supportedChars + ']+|\\d+\\s*[{:}]') // to mach '第一章'/'第五篇'/'42:'...
         .replace('{S}', '\\s{:}第')
         .replace('{V}', '[{,}{-}{;}{VE}\\s\\d]*\\d') // to match '1-5'/'1-3, 6'/'1;5'/'1及4節'...
@@ -194,8 +196,9 @@ var Drop=function(t){"use strict";function e(t,e){if(!(t instanceof e))throw new
         .replace(/{VE}/g, '節节')
         .replace(/{;}/g, ';；'), flags || '');
     }
-    var bibleRefPattern = '({B})\\s?({C})?[{S}]*({V})[{VE}]?';
+    var uniChapterRef = bibleRefExp('({SB})\\s?({C})?[{S}]*({V})[{VE}]?', 'g');
     var multiBibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
+    var bibleRefPattern = '({B})\\s?({C})?[{S}]*({V})[{VE}]?';
 
     /**
      * Converts text to text nodes with hyperlinks.
@@ -240,7 +243,7 @@ var Drop=function(t){"use strict";function e(t,e){if(!(t instanceof e))throw new
       for (var temp = 0; temp < tempLinkifiedNodes.length; temp++) {
         var tempNode = tempLinkifiedNodes[temp];
         if (tempNode.nodeName === '#text') {
-          var newHtml = tempNode.nodeValue.replace(bibleRefExp(bibleRefPattern, 'g'), linkHtml);
+          var newHtml = tempNode.nodeValue.replace(uniChapterRef, linkHtml);
           var newNodes = htmlToElement(newHtml);
           for (var newN = 0; newN < newNodes.length; newN++) {
             var newNode = newNodes[newN];
