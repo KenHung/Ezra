@@ -1,0 +1,7 @@
+Steps for deploying new versions:
+1. make sure ezra.js and ezra.sc.js are updated by gulp
+2. publish and tag new version on Github
+3. update release page by README.md if necessary, docs/index.md should be updated by gulp
+4. update Ezra version used in docs/index.html
+5. generate integrity by running "openssl dgst -sha384 -binary FILENAME.js | openssl base64 -A"
+6. update integrity in README.md and docs/index.html
