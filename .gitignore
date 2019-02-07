@@ -1,3 +1,4 @@
 node_modules
 src/temp
-*.zip
+chromeExt/src
+bin
