@@ -1,3 +1,5 @@
+    重要公告：Ezra Web Widget 1.9或以前的使用的CDN RawGit將會停止服務，為免Ezra效果受影響，請盡快更新。Chrome擴充功能不受影響。
+
 Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5，當鼠標移到經文依據時，就會顯示經文。
 
 #### Chrome擴充功能
@@ -6,7 +8,7 @@ Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5，當鼠標
 #### Web Widget
 如果您想自己的基督教網頁自動帶有Ezra效果，請把以下代碼加入到網頁HTML的底部，```</body>```之前：([詳細安裝說明](https://github.com/KenHung/Ezra/wiki/%E8%A9%B3%E7%B4%B0%E5%AE%89%E8%A3%9D%E8%AA%AA%E6%98%8E))
 
-繁體中文：
+繁體中文請用以下代碼：
 
     <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra.js" 
             integrity="sha384-o+tOlLJ3SV6TdIQMMdApSiZfENYb4Lpo27Fr9/cequ1Fwc54te0NjMMJNYNKCFX6" 
@@ -16,7 +18,7 @@ Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5，當鼠標
       ezraLinkifier.linkify(document.body);
     </script>
 
-簡體中文（版本必需為2.0或以上）：
+簡體中文請用以下代碼（版本必需為2.0或以上）：
 
     <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra.sc.js" 
             integrity="sha384-0DpMjaD+jT4owj9CVgXZwXKhcIdX884HkH+ix5Ns6mCkZo4wbpWIoP3bx4qOWgy8" 
