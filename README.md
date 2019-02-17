@@ -1,4 +1,5 @@
-    重要公告：Ezra Web Widget 1.9或以前的使用的CDN RawGit將會停止服務，為免Ezra效果受影響，請盡快更新。Chrome擴充功能不受影響。
+    重要公告：Ezra Web Widget 1.9或以前的使用的CDN RawGit將會停止服務，為免Ezra效果受影響，請盡快更新。
+    Chrome擴充功能不受影響。
 
 Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5，當鼠標移到經文依據時，就會顯示經文。
 
