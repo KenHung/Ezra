@@ -179,9 +179,6 @@ var Drop=function(t){"use strict";function e(t,e){if(!(t instanceof e))throw new
         var ref = bibleRefReader.readRef(refText);
         ref.getBibleTextWithRef(function (text) {
           drop.content.innerText = text;
-          drop.content.innerHTML
-            += '<div class="ezra-separator"></div>'
-            + '<div class="ezra-footer"><a href="https://kenhung.github.io/Ezra/" target="_blank">Powered by Ezra</a></div>';
           drop.position();
         });
       });

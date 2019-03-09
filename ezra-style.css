@@ -3,13 +3,6 @@
     See ezra.js / ezra.sc.js for full GPL notice.
  */
 .ezra-bible-ref-link { cursor: pointer; color: #0071CF }
-.ezra-separator { height: 5px }
-.ezra-footer { 
-  text-align: right; }
-.ezra-footer a {
-  color: darkgrey;
-  font-size: 70%;
-  text-decoration: none }
 
 .ezra-element, .ezra-element:after, .ezra-element:before, .ezra-element *, .ezra-element *:after, .ezra-element *:before {
   box-sizing: border-box; }
