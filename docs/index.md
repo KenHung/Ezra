@@ -15,20 +15,20 @@ Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5，當鼠標
 
 繁體中文請用以下代碼：
 
-    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra.js" 
-            integrity="sha384-o+tOlLJ3SV6TdIQMMdApSiZfENYb4Lpo27Fr9/cequ1Fwc54te0NjMMJNYNKCFX6" 
+    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra.js" 
+            integrity="sha384-{{ site.ezra.integrity }}" 
             crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra-style.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra-style.css" rel="stylesheet" type="text/css" />
     <script>
       ezraLinkifier.linkify(document.body);
     </script>
 
 簡體中文請用以下代碼（版本必需為2.0或以上）：
 
-    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra.sc.js" 
-            integrity="sha384-0DpMjaD+jT4owj9CVgXZwXKhcIdX884HkH+ix5Ns6mCkZo4wbpWIoP3bx4qOWgy8" 
+    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra.sc.js" 
+            integrity="sha384-{{ site.ezra.integrity_sc }}" 
             crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@[版本]/ezra-style.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra-style.css" rel="stylesheet" type="text/css" />
     <script>
       ezraLinkifier.linkify(document.body);
     </script>

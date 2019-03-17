@@ -30,24 +30,15 @@
     </footer>
   </section>
 
-  <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@2.0/ezra.js" 
-          integrity="sha384-o+tOlLJ3SV6TdIQMMdApSiZfENYb4Lpo27Fr9/cequ1Fwc54te0NjMMJNYNKCFX6" 
+  <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra.js" 
+          integrity="sha384-{{ site.ezra.integrity }}" 
           crossorigin="anonymous"></script>
-  <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@2.0/ezra-style.css" rel="stylesheet" type="text/css" />
+  <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra-style.css" rel="stylesheet" type="text/css" />
   <script>
     ezraLinkifier.linkify(document.body);
   </script>
 
   <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-  <script src="javascripts/getLatestEzraVersion.js"></script>
-  <script>
-    getLatestEzraVersion(function(ver) { 
-      $('code').each(function () {
-        var versioned = $(this).text().replace(/\[版本\]/g, ver); 
-        $(this).text(versioned);
-      });
-    });
-  </script>
 </body>
 
 </html>
