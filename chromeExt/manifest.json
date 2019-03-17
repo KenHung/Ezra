@@ -37,7 +37,7 @@
     }
   },
   "icons": {
-    "128": "images/icon.png"
+    "128": "icon.png"
   },
   "permissions": [
     "http://bible.fhl.net/json",

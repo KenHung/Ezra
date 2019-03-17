@@ -1,9 +1,9 @@
 #!/bin/bash
 # create zip package for publishing in Chrome web store
-# to test locally, unzip bin/dest.zip and load bin/dest/
-rm -r bin
-mkdir bin
-zip bin/dest.zip \
+# to test locally, unzip bin/dist.zip and load bin/dist/
+rm -r dist
+mkdir dist
+zip -j dist/ext.zip \
     manifest.json \
     *.js \
     ../src/*.js \
