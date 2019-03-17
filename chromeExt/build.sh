@@ -1,6 +1,12 @@
 #!/bin/bash
+# create zip package for publishing in Chrome web store
+# to test locally, unzip bin/dest.zip and load bin/dest/
 rm -r bin
 mkdir bin
-cp ../ezra-style.css src
-cp -R ../src src
-zip bin/ext.zip manifest.json *.js ../src/*.js ../src/lang/zh-Hant.js ../ezra-style.css images/icon.png
+zip bin/dest.zip \
+    manifest.json \
+    *.js \
+    ../src/*.js \
+    ../src/lang/*.js \
+    ../ezra-style.css \
+    images/icon.png

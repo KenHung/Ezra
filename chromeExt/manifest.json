@@ -16,7 +16,7 @@
         "contentScript.js"
       ],
       "css": [
-        "src/ezra-style.css"
+        "ezra-style.css"
       ],
       "all_frames": true
     }
