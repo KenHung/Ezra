@@ -319,10 +319,14 @@
       if (cache.hasOwnProperty(refText)) {
         success(cache[refText]);
       } else {
-        getBibleTextFromFHL(function (text) {
-          cache[refText] = text;
-          success(text);
-        }, fail || success);
+        /* global chrome */
+        chrome.runtime.sendMessage(
+          { contentScriptQuery: 'queryVers', abbr: abbr, chap: chap, vers: vers, Resources: Resources },
+          function (text) {
+            cache[refText] = text;
+            success(text);
+          }
+        );
       }
     };
 
