@@ -10,3 +10,4 @@ zip -j dist/ext.zip \
     ../src/lang/*.js \
     ../ezra-style.css \
     images/icon.png
+unzip dist/ext.zip -d dist/unpacked/
