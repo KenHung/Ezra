@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Ezra 自動聖經標示",
   "description": "Ezra能標示網頁上的聖經依據，如：約 3:16，當鼠標移到經文依據時，就會顯示經文。",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "content_scripts": [
     {
       "matches": [
@@ -23,7 +23,7 @@
   ],
   "background": {
     "scripts": [
-      "eventPage.js"
+      "background.js"
     ],
     "persistent": false
   },
@@ -40,7 +40,6 @@
     "128": "icon.png"
   },
   "permissions": [
-    "http://bible.fhl.net/json",
     "contextMenus",
     "clipboardWrite"
   ]
