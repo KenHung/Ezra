@@ -20,7 +20,8 @@ gulp.task('insert', function () {
   var ezra = gulp.src('src/ezra.js')
     .pipe(gfi({
       '/* {{insert-file:tether.min.js}} */': 'src/temp/tether.min.js',
-      '/* {{insert-file:drop.min.js}} */': 'src/temp/drop.min.js'
+      '/* {{insert-file:drop.min.js}} */': 'src/temp/drop.min.js',
+      '/* {{insert-file:FHLBibleService.js}} */': 'src/FHLBibleService.js'
     }));
   ezra.pipe(gfi({'/* {{insert-file:lang.js}} */': 'src/lang/zh-Hant.js'}))
     .pipe(gulp.dest('./'));

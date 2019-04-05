@@ -9,6 +9,7 @@
         "<all_urls>"
       ],
       "js": [
+        "ChromeBibleService.js",
         "zh-Hant.js",
         "tether.js",
         "drop.js",
@@ -23,6 +24,8 @@
   ],
   "background": {
     "scripts": [
+      "zh-Hant.js",
+      "FHLBibleService.js",
       "background.js"
     ],
     "persistent": false

@@ -19,6 +19,8 @@
   // It is a little bit different from bundling, since the scripts are inserted inside.
   /* {{insert-file:lang.js}} */
   /* global Resources */
+  /* {{insert-file:FHLBibleService.js}} */
+  /* global bibleService */
   var dropFactory = new DropFactory();
   var bibleRefReader = new BibleRefReader();
 
@@ -61,7 +63,7 @@
     var _Drop = Drop.createContext({
       classPrefix: 'ezra'
     });
-  
+
     this.create = function (link, refText) {
       var drop = new _Drop({
         classes: 'ezra-theme-arrows',
@@ -83,10 +85,11 @@
         var linkSize = window.getComputedStyle(this.target).fontSize;
         this.content.style.fontSize = linkSize;
         var ref = bibleRefReader.readRef(refText);
-        ref.getBibleTextWithRef(function (text) {
+        var displayText = function (text) {
           drop.content.innerText = text;
           drop.position();
-        });
+        };
+        bibleService.getVerses(ref, displayText);
       });
     };
   }
@@ -158,7 +161,7 @@
         lastIndex = multiBibleRef.lastIndex;
       }
       tempLinkifiedNodes.push(document.createTextNode(text.substring(lastIndex)));
-      
+
       var linkifiedNodes = [];
       // to match books that only has one chapter: '猶 3, 6'/'約叁2'/...
       var linkHtml = createLink('$&', '$&').outerHTML.replace(/&amp;/g, '&');
@@ -297,91 +300,7 @@
     this.abbr = abbr;
     this.chap = chap;
     this.vers = vers;
-    var refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
-
-    /**
-     * Gets Bible text and attaches reference text at the end.
-     * @param {function(string):void} success Callback for successfully getting bible text with reference attached.
-     * @param {function(string):void} fail Callback for failed query, error message will be passed as argument.
-     */
-    this.getBibleTextWithRef = function (success, fail) {
-      this.getBibleText(function (bibleText) {
-        success(bibleText + refText);
-      }, fail || success);
-    };
-
-    /**
-     * Gets Bible text from cache if possible.
-     */
-    this.getBibleText = function (success, fail) {
-      BibleRef.versesCache = BibleRef.versesCache || {};
-      var cache = BibleRef.versesCache;
-      if (cache.hasOwnProperty(refText)) {
-        success(cache[refText]);
-      } else {
-        /* global chrome */
-        chrome.runtime.sendMessage(
-          { contentScriptQuery: 'queryVers', abbr: abbr, chap: chap, vers: vers, Resources: Resources },
-          function (text) {
-            cache[refText] = text;
-            success(text);
-          }
-        );
-      }
-    };
-
-    /**
-     * Gets Bible text using FHL API and passes result to callback.
-     * @param {function(string):void} success Callback for successfully getting bible text.
-     * @param {function(string):void} fail Callback for failed query, error message will be passed as argument.
-     */
-    var getBibleTextFromFHL = function (success, fail) {
-      var xhr = new XMLHttpRequest();
-      xhr.onerror = function () {
-        fail(Resources.err_cannot_connect);
-      };
-      try {
-        var query = 'https://bible.fhl.net/json/qb.php?chineses=' + abbr
-                  + '&chap=' + chap 
-                  + '&sec=' + vers 
-                  + '&gb=' + Resources.fhl_gb;
-        xhr.open('GET', query, true);
-        xhr.onload = function() {
-          if (xhr.status !== 200) {
-            fail(Resources.err_cannot_find_verse + 'XHR status = ' + xhr.status);
-            return;
-          }
-          try {
-            var resp = JSON.parse(xhr.responseText);
-            if (resp.status !== 'success') {
-              fail(Resources.err_cannot_find_verse + 'FHL response text = ' + xhr.responseText);
-              return;
-            } else if (resp.record.length === 0) {
-              fail(Resources.err_no_record + refText + '？');
-              return;
-            }
-            var versesText = '';
-            var lastSec = 0;
-            for (var i = 0; i < resp.record.length; i++) {
-              var record = resp.record[i];
-              // insert '⋯⋯' if verses are not continuous
-              if (i > 0 && record.sec > lastSec + 1) {
-                versesText += '⋯⋯';
-              }
-              lastSec = record.sec;
-              versesText += record.bible_text;
-            }
-            success(versesText);
-          } catch (err) {
-            fail(Resources.err_cannot_find_verse + err);
-          }
-        };
-        xhr.send();
-      }
-      catch (err) {
-        fail(Resources.err_cannot_find_verse + err);
-      }
-    };
+    this.refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
   }
 
   function AbbrResolver() {
@@ -390,7 +309,7 @@
     var books = Object.keys(Resources.abbr);
     // remove /[一二三]/ to avoid mismatch with '約一', '約二', '約三'
     var abbrs = books.map(function (book) { return Resources.abbr[book]; })
-                     .filter(function (abbr) { return !abbr.match(/[一二三]/); });
+      .filter(function (abbr) { return !abbr.match(/[一二三]/); });
     this.bibleBooks = books.concat(abbrs).join('|');
     this.toAbbr = function (book) { return Resources.abbr[book] || book; };
   }
