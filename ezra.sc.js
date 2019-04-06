@@ -18,7 +18,7 @@
   // Embedding prevents conflicts with  the components of web pages.
   // It is a little bit different from bundling, since the scripts are inserted inside.
   /* exported Resources */
-var Resources = {
+var Resources = Object.freeze({
   abbr: {
     创世记: '创',
     出埃及记: '出',
@@ -107,7 +107,7 @@ var Resources = {
   err_cannot_find_verse: '未能查訽经文: ',
   err_no_record: '找不到记录！是不是圣经中没有这章节',
   fhl_gb: 1
-};
+});
   /* global Resources */
   /* global Resources */
 /* exported bibleService */

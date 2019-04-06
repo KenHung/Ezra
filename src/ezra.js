@@ -19,7 +19,7 @@
   // It is a little bit different from bundling, since the scripts are inserted inside.
   /* {{insert-file:lang.js}} */
   /* global Resources */
-  /* {{insert-file:FHLBibleService.js}} */
+  /* {{insert-file:bibleService.js}} */
   /* global bibleService */
   var dropFactory = new DropFactory();
   var bibleRefReader = new BibleRefReader();
