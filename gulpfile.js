@@ -3,7 +3,6 @@ var gfi = require('gulp-file-insert');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var saveLicense = require('uglify-save-license');
-var header = require('gulp-header');
 
 gulp.task('min', function () {
   return gulp.src('src/*.js')
@@ -30,16 +29,7 @@ gulp.task('insert', function () {
     .pipe(gulp.dest('./'));
 });
 
-gulp.task('update-gh-pages', function () {
-  return gulp.src('readme.md')
-    .pipe(header('---\r\nlayout: index\r\n---\r\n\r\n'))
-    .pipe(rename('index.md'))
-    .pipe(gulp.dest('docs/'));
-});
-
 gulp.watch('src/*.js', gulp.series('min', 'insert'));
 gulp.watch('src/lang/*.js', gulp.parallel('insert'));
 
-gulp.watch('README.md', gulp.parallel('update-gh-pages'));
-
-gulp.task('default', gulp.series('min', 'insert', 'update-gh-pages'));
+gulp.task('default', gulp.series('min', 'insert'));
