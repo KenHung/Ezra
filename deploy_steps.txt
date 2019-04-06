@@ -1,6 +1,0 @@
-Steps for deploying new versions:
-1. make sure ezra.js and ezra.sc.js are updated by gulp
-2. `git tag -a <tag_name>` and `git push origin <tag_name>`
-3. update release page by README.md if necessary, docs/index.md should be updated by gulp
-4. update Ezra version and integrity by update_config.sh
-5. publish on Github
