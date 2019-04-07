@@ -5,9 +5,9 @@ layout: index
     重要公告：Ezra Web Widget 1.9或以前的使用的CDN RawGit將會停止服務，為免Ezra效果受影響，請盡快更新。
     Chrome擴充功能不受影響。
 
-Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5。試試把鼠標移到經文依據，你就會看到經文。
+### 簡介
 
-### 特點
+Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5。試試把鼠標移到經文依據，你就會看到經文。
 
 * 標示網頁上的聖經依據
 * 可在Chrome上安裝
@@ -73,7 +73,7 @@ Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5。試試把
   </tbody>
 </table>
 
-### Chrome擴充功能(Extension)
+### Chrome擴充功能
 
 * 安裝在Chrome上，即可自動標示所有基督教網頁/部落格(blog)的經文依據
 * 可以在[Chrome Web Store下載安裝](https://chrome.google.com/webstore/detail/ezra-%E5%8D%B3%E6%99%82%E8%81%96%E7%B6%93%E6%9F%A5%E8%A8%BD/malpgijpleaapnkjihoacpbkkodkmjgg?hl=zh-TW&gl=HK)
