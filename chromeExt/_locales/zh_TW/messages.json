@@ -1,0 +1,28 @@
+{
+  "appName": {
+    "message": "Ezra 自動聖經標示",
+    "description": "The title of the application, displayed in the web store."
+  },
+  "appDesc": {
+    "message": "Ezra能標示網頁上的聖經依據，如：約 3:16，當鼠標移到經文依據時，就會顯示經文。", 
+    "description":"The description of the application, displayed in the web store."
+  },
+  "copyVerse" : {
+    "message": "複製經文"
+  },
+  "querying" : {
+    "message": "查詢中..."
+  },
+  "copied" : {
+    "message": "已複製！"
+  },
+  "noVerse" : {
+    "message": "沒有經文！"
+  },
+  "versesLang": {
+    "message": "經文語言"
+  },
+  "save": {
+    "message": "儲存"
+  }
+}

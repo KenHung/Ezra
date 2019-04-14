@@ -3,7 +3,7 @@
 
 chrome.contextMenus.create({
   id: 'ezraMenu',
-  title: '複製經文「%s」',
+  title: chrome.i18n.getMessage('copyVerse') + '「%s」',
   contexts: ['selection']
 });
 

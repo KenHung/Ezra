@@ -1,8 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Ezra 自動聖經標示",
-  "description": "Ezra能標示網頁上的聖經依據，如：約 3:16，當鼠標移到經文依據時，就會顯示經文。",
-  "version": "2.0.5",
+  "name": "__MSG_appName__",
+  "description": "__MSG_appDesc__",
+  "version": "2.1.1",
+  "default_locale": "zh_TW",
   "content_scripts": [
     {
       "matches": [
@@ -11,7 +12,9 @@
       "js": [
         "tether.js",
         "drop.js",
+        "resources.js",
         "zh-Hant.js",
+        "zh-Hans.js",
         "ezra.js",
         "contentScript.js"
       ],
@@ -23,7 +26,6 @@
   ],
   "background": {
     "scripts": [
-      "zh-Hant.js",
       "bibleService.js",
       "background.js"
     ],
@@ -35,14 +37,19 @@
         "default": "Ctrl+Shift+C",
         "mac": "Command+Shift+C"
       },
-      "description": "複製經文"
+      "description": "__MSG_copyVerse__"
     }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
   },
   "icons": {
     "128": "icon.png"
   },
   "permissions": [
     "contextMenus",
-    "clipboardWrite"
+    "clipboardWrite",
+    "storage"
   ]
 }

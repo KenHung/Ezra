@@ -15,21 +15,22 @@ gulp.task('min', function () {
     .pipe(gulp.dest('src/temp/'));
 });
 
-gulp.task('insert', function () {
+gulp.task('import', function () {
   var ezra = gulp.src('src/ezra.js')
     .pipe(gfi({
-      '/* {{insert-file:tether.min.js}} */': 'src/temp/tether.min.js',
-      '/* {{insert-file:drop.min.js}} */': 'src/temp/drop.min.js',
-      '/* {{insert-file:bibleService.js}} */': 'src/bibleService.js'
+      '/* import tether */': 'src/temp/tether.min.js',
+      '/* import drop */': 'src/temp/drop.min.js',
+      '/* import resources */': 'src/lang/resources.js',
+      '/* import bibleService */': 'src/bibleService.js'
     }));
-  ezra.pipe(gfi({'/* {{insert-file:lang.js}} */': 'src/lang/zh-Hant.js'}))
+  ezra.pipe(gfi({'/* import lang */': 'src/lang/zh-Hant.js'}))
     .pipe(gulp.dest('./'));
-  return ezra.pipe(gfi({'/* {{insert-file:lang.js}} */': 'src/lang/zh-Hans.js'}))
+  return ezra.pipe(gfi({'/* import lang */': 'src/lang/zh-Hans.js'}))
     .pipe(rename('ezra.sc.js'))
     .pipe(gulp.dest('./'));
 });
 
-gulp.watch('src/*.js', gulp.series('min', 'insert'));
-gulp.watch('src/lang/*.js', gulp.parallel('insert'));
+gulp.watch('src/*.js', gulp.series('min', 'import'));
+gulp.watch('src/lang/*.js', gulp.parallel('import'));
 
-gulp.task('default', gulp.series('min', 'insert'));
+gulp.task('default', gulp.series('min', 'import'));

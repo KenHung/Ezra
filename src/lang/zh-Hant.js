@@ -1,5 +1,5 @@
-/* exported Resources */
-var Resources = Object.freeze({
+/* global Resources */
+Resources.add('zh-Hant', Object.freeze({
   abbr: {
     創世記: '創',
     出埃及記: '出',
@@ -86,8 +86,8 @@ var Resources = Object.freeze({
   },
   uniChapterRefPattern: '俄巴底亞書|俄|腓利門書|門|猶大書|猶|約翰二書|約翰三書|約翰貳書|約翰叁書|約翰參書|約貳|約叁|約參',
   loading: '載入中',
-  err_cannot_connect: '無法連上伺服器。',
-  err_cannot_find_verse: '未能查訽經文: ',
-  err_no_record: '找不到記錄！是不是聖經中沒有這章節',
+  connectFail: '無法連上伺服器。',
+  verseNotFound: '未能查訽經文。',
+  refInvalid: '找不到記錄！聖經中沒有這章節。',
   fhl_gb: 0
-});
+}));

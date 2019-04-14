@@ -1,5 +1,5 @@
-/* exported Resources */
-var Resources = Object.freeze({
+/* global Resources */
+Resources.add('zh-Hans', Object.freeze({
   abbr: {
     创世记: '创',
     出埃及记: '出',
@@ -84,8 +84,8 @@ var Resources = Object.freeze({
   },
   uniChapterRefPattern: '俄巴底亚书|俄|腓利门书|门|犹大书|犹|约翰二书|约翰三书|约翰贰书|约翰叁书|约翰参书|约贰|约叁|约参',
   loading: '载入中',
-  err_cannot_connect: '无法连上伺服器。 ',
-  err_cannot_find_verse: '未能查訽经文: ',
-  err_no_record: '找不到记录！是不是圣经中没有这章节',
+  connectFail: '无法连上伺服器。 ',
+  verseNotFound: '未能查訽经文。',
+  refInvalid: '找不到记录！圣经中没有这章节。',
   fhl_gb: 1
-});
+}));

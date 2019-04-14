@@ -1,0 +1,26 @@
+{
+  "appName": {
+    "message": "Ezra 自动圣经标示"
+  },
+  "appDesc": {
+    "message": "Ezra能标示网页上的圣经依据，如：约 3:16，当鼠标移到经文依据时，就会显示经文。"
+  },
+  "copyVerse" : {
+    "message": "复制经文"
+  },
+  "querying" : {
+    "message": "查询中..."
+  },
+  "copied" : {
+    "message": "已复制！"
+  },
+  "noVerse" : {
+    "message": "没有经文！"
+  },
+  "versesLang": {
+    "message": "经文语言"
+  },
+  "save": {
+    "message": "保存"
+  }
+}

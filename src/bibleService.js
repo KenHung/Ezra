@@ -1,55 +1,63 @@
-/* global Resources */
 /* exported bibleService */
-var bibleService = new FHLBibleService(Resources);
+var bibleService = new FHLBibleService();
+
+var BibleServiceError = Object.freeze({
+  'connectFail': 'connectFail',
+  'verseNotFound': 'verseNotFound',
+  'refInvalid': 'refInvalid',
+});
 
 /**
  * Service for getting verses from FHL API (https://bible.fhl.net/json).
  */
-function FHLBibleService(Resources) {
+function FHLBibleService() {
+  var versesCache = {};
+
   /**
    * Gets Bible text and attaches reference text at the end.
    * @param {BibleRef} bibleRef Bible reference to query.
-   * @param {function(string): void} callback Callback for getting bible text.
+   * @param {function(any): void} callback Callback for getting bible text.
    */
   this.getVerses = function (bibleRef, callback) {
-    // gets Bible text from cache if possible
-    FHLBibleService.versesCache = FHLBibleService.versesCache || {};
-    var cache = FHLBibleService.versesCache;
-    if (cache.hasOwnProperty(bibleRef.refText)) {
-      callback(cache[bibleRef.refText] + bibleRef.refText);
+    var bibleRefStr = bibleRef.lang + bibleRef.refText;
+    if (versesCache.hasOwnProperty(bibleRefStr)) {
+      callback({ data: versesCache[bibleRefStr] + bibleRef.refText });
     }
     else {
       var cacheSuccess = function (text) {
-        cache[bibleRef.refText] = text;
-        callback(text + bibleRef.refText);
+        versesCache[bibleRefStr] = text;
+        callback({ data: text + bibleRef.refText });
       };
-      getVersesFromFHL(bibleRef, cacheSuccess, callback);
+      var fail = function (errCode, errMsg) {
+        callback({ errCode: errCode, errMsg: errMsg });
+      };
+      getVersesFromFHL(bibleRef, cacheSuccess, fail);
     }
   };
 
   /**
    * Gets Bible text using FHL API and passes result to callback.
    * @param {BibleRef} bibleRef Bible reference to query.
-   * @param {function(string):void} success Callback for successfully getting bible text.
-   * @param {function(string):void} fail Callback for failed query, error message will be passed as argument.
+   * @param {function(string): void} success Callback for successfully getting bible text.
+   * @param {function(string, any): void} fail Callback for failed query, error message will be passed as argument.
    */
   function getVersesFromFHL(bibleRef, success, fail) {
     var xhr = new XMLHttpRequest();
     xhr.onerror = function () {
-      fail(Resources.err_cannot_connect);
+      fail(BibleServiceError.connectFail);
     };
     xhr.onload = function () {
       if (xhr.status !== 200) {
-        fail(Resources.err_cannot_find_verse + 'XHR status = ' + xhr.status);
+        fail(BibleServiceError.verseNotFound, 'XHR status = ' + xhr.status);
         return;
       }
       try {
         var resp = JSON.parse(xhr.responseText);
         if (resp.status !== 'success') {
-          fail(Resources.err_cannot_find_verse + 'FHL response text = ' + xhr.responseText);
+          fail(BibleServiceError.verseNotFound, 'FHL response text = ' + xhr.responseText);
           return;
         } else if (resp.record.length === 0) {
-          fail(Resources.err_no_record + bibleRef.refText + '？');
+          fail(BibleServiceError.refInvalid);
           return;
         }
         var versesText = '';
@@ -65,19 +73,19 @@ function FHLBibleService(Resources) {
         }
         success(versesText);
       } catch (err) {
-        fail(Resources.err_cannot_find_verse + err);
+        fail(BibleServiceError.verseNotFound, err);
       }
     };
     try {
       var url = 'https://bible.fhl.net/json/qb.php?chineses=' + bibleRef.abbr
         + '&chap=' + bibleRef.chap
         + '&sec=' + bibleRef.vers
-        + '&gb=' + Resources.fhl_gb;
+        + '&gb=' + bibleRef.lang;
       xhr.open('GET', url, true);
       xhr.send();
     }
     catch (err) {
-      fail(Resources.err_cannot_find_verse + err);
+      fail(BibleServiceError.verseNotFound, err);
     }
   }
 }

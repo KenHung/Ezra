@@ -1,5 +1,6 @@
 /* global chrome */
-/* exported bibleService */
+/* global Resources */
+/* global ezraLinkifier */
 
 /**
  * Created for Chrome 73, since cross-origin requests are not allowed in content scripts.
@@ -12,34 +13,42 @@ var bibleService = {
   }
 };
 
-ezraLinkifier.linkify(document.body);
+chrome.storage.sync.get({ lang: 'zh-Hant' }, 
+  items => {
+    Resources.setLang(items.lang);
+    ezraLinkifier.linkify(document.body);
+  });
 
 chrome.runtime.onMessage.addListener(function (request) {
   if (request === 'copy-verse') {
     var selection = window.getSelection();
     if (selection.rangeCount > 0) {
-      var msg = attachMsg('查詢中...', selection.getRangeAt(0));
+      var msg = attachMsg('querying', selection.getRangeAt(0));
       var bibleRefReader = new ezraLinkifier._BibleRefReader();
       var bibleRef = bibleRefReader.readRef(selection.toString());
       if (bibleRef !== null) {
         bibleService.getVerses(bibleRef,
-          (text) => {
-            writeClipboard(text);
-            detachMsg(msg, '已複製！');
-          },
-          (errMsg) => detachMsg(msg, errMsg));
+          resp => {
+            if (resp.data) {
+              writeClipboard(resp.data);
+              detachMsg(msg, 'copied');
+            }
+            else {
+              detachMsg(msg, Resources[resp.errCode]);
+            }
+          });
       }
       else {
-        detachMsg(msg, '沒有經文！');
+        detachMsg(msg, 'noVerse');
       }
     }
   }
 });
 
-function attachMsg(text, range) {
+function attachMsg(msgCode, range) {
   var rect = range.getBoundingClientRect();
   var msg = document.createElement('div');
-  msg.textContent = text;
+  msg.textContent = chrome.i18n.getMessage(msgCode) || msgCode;
   msg.style.borderRadius = '3px';
   msg.style.background = '#eee';
   msg.style.padding = '0.3em';
@@ -51,8 +60,8 @@ function attachMsg(text, range) {
   return msg;
 }
 
-function detachMsg(msg, text) {
-  msg.textContent = text;
+function detachMsg(msg, msgCode) {
+  msg.textContent = chrome.i18n.getMessage(msgCode) || msgCode;
   setTimeout(() => document.body.removeChild(msg), 1500);
 }
 

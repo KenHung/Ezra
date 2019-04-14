@@ -16,19 +16,23 @@
  */
 (function (ezraLinkifier, undefined) {
   // Embedding prevents conflicts with  the components of web pages.
-  // It is a little bit different from bundling, since the scripts are inserted inside.
-  /* {{insert-file:lang.js}} */
+  /* import tether */
+  /* import drop */
+  /* import resources */
+  /* import lang */
+  /* import bibleService */
+  /* global Drop */
   /* global Resources */
-  /* {{insert-file:bibleService.js}} */
   /* global bibleService */
-  var dropFactory = new DropFactory();
-  var bibleRefReader = new BibleRefReader();
 
   /**
    * Linkify all Bible references text within the DOM of the element.
    * @param {Element} element HTML element to be linkified.
    */
   ezraLinkifier.linkify = function (element) {
+    var bibleRefReader = new BibleRefReader();
+    var dropFactory = new DropFactory(bibleRefReader, bibleService);
+
     var textNodes = getTextNodesIn(element);
     for (var i = 0; i < textNodes.length; i++) {
       if (textNodes[i].parentNode.nodeName !== 'A') {
@@ -56,19 +60,16 @@
     }
   };
 
-  function DropFactory() {
-    /* {{insert-file:tether.min.js}} */
-    /* {{insert-file:drop.min.js}} */
-    /* global Drop */
+  function DropFactory(bibleRefReader, bibleService) {
     var _Drop = Drop.createContext({
       classPrefix: 'ezra'
     });
 
-    this.create = function (link, refText) {
+    this.create = function (link, initText) {
       var drop = new _Drop({
         classes: 'ezra-theme-arrows',
         target: link,
-        content: document.createTextNode(refText),
+        content: document.createTextNode(initText),
         openOn: 'hover',
         constrainToScrollParent: false,
         tetherOptions: {
@@ -84,8 +85,11 @@
       drop.on('open', function () {
         var linkSize = window.getComputedStyle(this.target).fontSize;
         this.content.style.fontSize = linkSize;
-        var ref = bibleRefReader.readRef(refText);
-        var displayText = function (text) {
+
+        this.content.innerText = initText;
+        var ref = bibleRefReader.readRef(initText);
+        var displayText = function (resp) {
+          var text = resp.data || Resources[resp.errCode];
           drop.content.innerText = text;
           drop.position();
         };
@@ -110,7 +114,7 @@
      */
     function bibleRefExp(exp, flags) {
       return new RegExp(exp
-        .replace('{B}', abbrResolver.bibleBooks) // to match '創世記'/'出埃及記'/'利未記'/'民數記'/'申命記'/.../'創'/'出'/'利'/'民'/'申'...
+        .replace('{B}', Resources.refPattern) // to match '創世記'/'出埃及記'/'利未記'/'民數記'/'申命記'/.../'創'/'出'/'利'/'民'/'申'...
         .replace('{SB}', Resources.uniChapterRefPattern)
         .replace('{C}', '第?[' + chiNumParser.supportedChars + ']+|\\d+\\s*[{:}]') // to mach '第一章'/'第五篇'/'42:'...
         .replace('{S}', '\\s{:}第')
@@ -301,16 +305,10 @@
     this.chap = chap;
     this.vers = vers;
     this.refText = '(' + abbr + ' ' + chap + ':' + vers + ')';
+    this.lang = Resources.fhl_gb;
   }
 
   function AbbrResolver() {
-    // traditional Chinese and simplified Chinese parser cannot exist at the same time,
-    // because words like '出', '利', '伯' can both be traditional or simplified Chinese
-    var books = Object.keys(Resources.abbr);
-    // remove /[一二三]/ to avoid mismatch with '約一', '約二', '約三'
-    var abbrs = books.map(function (book) { return Resources.abbr[book]; })
-      .filter(function (abbr) { return !abbr.match(/[一二三]/); });
-    this.bibleBooks = books.concat(abbrs).join('|');
     this.toAbbr = function (book) { return Resources.abbr[book] || book; };
   }
 
