@@ -22,7 +22,7 @@ chrome.runtime.onMessage.addListener(function (request) {
       var bibleRefReader = new ezraLinkifier._BibleRefReader();
       var bibleRef = bibleRefReader.readRef(selection.toString());
       if (bibleRef !== null) {
-        bibleRef.getBibleText(
+        bibleService.getVerses(bibleRef,
           (text) => {
             writeClipboard(text);
             detachMsg(msg, '已複製！');
