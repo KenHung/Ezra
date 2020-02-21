@@ -24,7 +24,8 @@ gulp.task('import', function () {
       '/* import bibleService */': 'src/bibleService.js'
     }));
   ezra.pipe(gfi({'/* import lang */': 'src/lang/zh-Hant.js'}))
-    .pipe(gulp.dest('./'));
+    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest('docs/summaryview/javascripts/'));
   return ezra.pipe(gfi({'/* import lang */': 'src/lang/zh-Hans.js'}))
     .pipe(rename('ezra.sc.js'))
     .pipe(gulp.dest('./'));

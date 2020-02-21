@@ -208,6 +208,22 @@
       return temp.childNodes;
     }
 
+    this.summarize = function (text, refDataList) {
+      var match;
+      while ((match = multiBibleRef.exec(text)) !== null) {
+        var ref = match[0];
+        var bibleRef = this.readRef(ref);
+        bibleService.getVerses(bibleRef, function (resp) {
+          var text = resp.data || Resources[resp.errCode];
+          var refMatch = /(.*)\((.*)\)/.exec(text);
+          refDataList.push({
+            ref: refMatch[2],
+            verses: refMatch[1]
+          });  
+        });
+      }
+    };
+
     /**
      * Creates a Bible reference by text.
      * @param {string} ref A Bible reference text.
