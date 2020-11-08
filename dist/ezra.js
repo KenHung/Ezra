@@ -360,10 +360,11 @@ function FHLBibleService() {
         var ref = match[0];
         // check if verses accidentally matched the next Bible reference
         // for references like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
-        var strAfterMatch = text.substring(bibleRef.lastIndex); // ":4" in the example
+        var remaining = text.substring(bibleRef.lastIndex); // ":4" in the example
         var verses = match[3].match(/\d+/g); // [2, 3] in the example
-        if (strAfterMatch.search(new RegExp('\\s?' + chapSep + versPattern)) === 0 && verses.length > 1) {
-          var realRef = trimLast(ref, new RegExp('[' + versAnd + semiCol + '\\s]+' + verses[verses.length - 1]));
+        if (remaining.search(new RegExp('\\s?' + chapSep + versPattern)) === 0 && verses.length > 1) {
+          var redundantVers = new RegExp('[' + versAnd + semiCol + '\\s]+' + verses[verses.length - 1]); // ",3" in the example
+          var realRef = trimLast(ref, redundantVers);
           bibleRef.lastIndex -= (ref.length - realRef.length);
           ref = realRef;
         }
@@ -410,10 +411,14 @@ function FHLBibleService() {
       return link;
     }
     function trimLast(ref, regex) {
-      // preconditions: at least one match
       var matches = ref.match(regex);
-      var newIndex = ref.lastIndexOf(matches[matches.length - 1]);
-      return ref.substring(0, newIndex);
+      if (matches) {
+        var newIndex = ref.lastIndexOf(matches[matches.length - 1]);
+        return ref.substring(0, newIndex);
+      }
+      else {
+        return ref;
+      }
     }
     /**
      * @param {String} HTML representing a single element

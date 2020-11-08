@@ -74,6 +74,8 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('詩一百○六篇25', link('詩一百○六篇25'));
   linkifyTest('約1:1;2:1', link('約1:1') + ';' + link('2:1', '約2:1'));
   linkifyTest('約1:1,2:1', link('約1:1') + ',' + link('2:1', '約2:1'));
+  linkifyTest('(約1:1)一段文字後(2:1)', `(${link('約1:1')})一段文字後(${link('2:1', '約2:1')})`);
+  linkifyTest('約1:2,2:1', link('約1:2') + ',' + link('2:1', '約2:1'));
   linkifyTest('約1:1;2', link('約1:1;2'));
   linkifyTest('約1:2:3', link('約1:2') + ':3');
   linkifyTest('約一:1', link('約一:1'));
@@ -89,6 +91,7 @@ QUnit.test('BibleRefReader.linkify', function (assert) {
   linkifyTest('文字文字文字（約翰二書5）', `文字文字文字（${link('約翰二書5')}）`);
   linkifyTest('文字文字文字（約1：2）文字文字文字（約叁 5）', `文字文字文字（${link('約1：2')}）文字文字文字（${link('約叁 5')}）`);
   linkifyTest('文字文字文字（猶 5,7）文字文字文字（約叁 5）', `文字文字文字（${link('猶 5,7')}）文字文字文字（${link('約叁 5')}）`);
+  linkifyTest('07:00-08:00', '07:00-08:00');
 });
 
 QUnit.test('ezraLinkifier.linkify', function (assert) {
