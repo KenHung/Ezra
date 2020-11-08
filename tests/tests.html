@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-hant">
+
+<head>
+	<meta charset="UTF-8" name="viewport" content="width=device-width">
+	<title>Demo</title>
+	<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css" />
+	<link rel="stylesheet" type="text/css" href="../dist/ezra-style.css" />
+</head>
+
+<body>
+	<div id="main">
+		<table>
+			<tr>
+				<td>正常</td>
+				<td>將他的道教訓他們。」（詩廿五9）「謙卑人」原文是指謙卑</td>
+			</tr>
+			<tr>
+				<td>大字</td>
+				<td style="font-size: 24px">
+					因此有話吩咐我們：「存溫柔的心領受那所栽種的道。」（雅一21）如果有人對自己的技能
+				</td>
+			</tr>
+			<tr>
+				<td>沒這章節</td>
+				<td>再沒有比謙卑對我們更有用處，更討上帝喜悅的（彼前三42），因此這種特別的方式</td>
+			</tr>
+			<tr>
+				<td>無反應</td>
+				<td>7（本文摘譯自約翰歐文《希伯來書註釋》四章7節1部分</td>
+			</tr>
+			<tr>
+				<td>簡體</td>
+				<td><iframe src="sc.html"></iframe></td>
+			</tr>
+		</table>
+	</div>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+
+	<script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"
+		integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+	<script src="../src/tether.js"></script>
+	<script src="../src/drop.js"></script>
+	<script src="../src/lang/resources.js"></script>
+	<script src="../src/lang/zh-Hant.js"></script>
+	<script src="../src/bibleService.js"></script>
+	<script src="../src/ezra.js"></script>
+	<script>
+		ezraLinkifier.linkify(document.getElementById("main"));
+	</script>
+	<script src="tests.js"></script>
+</body>
+
+</html>
