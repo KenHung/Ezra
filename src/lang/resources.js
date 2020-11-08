@@ -12,7 +12,7 @@ var Resources = {
     var books = Object.keys(this.abbr);
     // remove /[一二三]/ to avoid mismatch with '約一', '約二', '約三'
     var abbrs = Object.values(this.abbr).filter(function (abbr) { return !abbr.match(/[一二三]/); });
-    this.refPattern = books.concat(abbrs).join('|');
+    this.namesOfAllBooks = books.concat(abbrs).join('|');
   },
   add: function (lang, res) {
     this.set(res);
