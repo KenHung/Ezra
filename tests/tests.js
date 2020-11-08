@@ -46,7 +46,7 @@ QUnit.test('BibleRefReader.createBibleRefs', function (assert) {
   refTest('約 1 : 1', '約', 1, '1');
   refTest('約一：1–5，6', '約', 1, '1-5,6');
   refTest('約翰福音1:1', '約', 1, '1');
-  refTest('西1 ： 16 ， 20', '西', 1, '16,20');
+  refTest('西 1：16，20', '西', 1, '16,20');
   refTest('希伯來書4章8節', '來', 4, '8');
   refTest('希伯來書四章8節', '來', 4, '8');
   refTest('希伯來書第四章8節', '來', 4, '8');

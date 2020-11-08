@@ -84,7 +84,7 @@ Resources.add('zh-Hant', Object.freeze({
     啓示錄: '啟',
     啓: '啟'
   },
-  uniChapterRefPattern: '俄巴底亞書|俄|腓利門書|門|猶大書|猶|約翰二書|約翰三書|約翰貳書|約翰叁書|約翰參書|約貳|約叁|約參',
+  singleChapterBooks: '俄巴底亞書|俄|腓利門書|門|猶大書|猶|約翰二書|約翰三書|約翰貳書|約翰叁書|約翰參書|約貳|約叁|約參',
   loading: '載入中',
   connectFail: '無法連上伺服器。',
   verseNotFound: '未能查訽經文。',

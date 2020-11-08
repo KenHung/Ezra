@@ -82,7 +82,7 @@ Resources.add('zh-Hans', Object.freeze({
     约叁: '约三',
     约参: '约三'
   },
-  uniChapterRefPattern: '俄巴底亚书|俄|腓利门书|门|犹大书|犹|约翰二书|约翰三书|约翰贰书|约翰叁书|约翰参书|约贰|约叁|约参',
+  singleChapterBooks: '俄巴底亚书|俄|腓利门书|门|犹大书|犹|约翰二书|约翰三书|约翰贰书|约翰叁书|约翰参书|约贰|约叁|约参',
   loading: '载入中',
   connectFail: '无法连上伺服器。 ',
   verseNotFound: '未能查訽经文。',

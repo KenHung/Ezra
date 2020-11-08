@@ -36,7 +36,7 @@ var Resources = {
     var books = Object.keys(this.abbr);
     // remove /[一二三]/ to avoid mismatch with '約一', '約二', '約三'
     var abbrs = Object.values(this.abbr).filter(function (abbr) { return !abbr.match(/[一二三]/); });
-    this.refPattern = books.concat(abbrs).join('|');
+    this.namesOfAllBooks = books.concat(abbrs).join('|');
   },
   add: function (lang, res) {
     this.set(res);
@@ -133,7 +133,7 @@ Resources.add('zh-Hant', Object.freeze({
     啓示錄: '啟',
     啓: '啟'
   },
-  uniChapterRefPattern: '俄巴底亞書|俄|腓利門書|門|猶大書|猶|約翰二書|約翰三書|約翰貳書|約翰叁書|約翰參書|約貳|約叁|約參',
+  singleChapterBooks: '俄巴底亞書|俄|腓利門書|門|猶大書|猶|約翰二書|約翰三書|約翰貳書|約翰叁書|約翰參書|約貳|約叁|約參',
   loading: '載入中',
   connectFail: '無法連上伺服器。',
   verseNotFound: '未能查訽經文。',
@@ -317,47 +317,54 @@ function FHLBibleService() {
     var abbrResolver = new AbbrResolver();
     var chiNumParser = new ChineseNumParser();
 
-    /**
-     * Creates a regular expression for matching Bible references, probably the hardest code to understand in Ezra.
-     * @param {string} exp Base regular expression.
-     * @param {string} flags Regular expression flags.
-     */
-    function bibleRefExp(exp, flags) {
-      return new RegExp(exp
-        .replace('{B}', Resources.refPattern) // to match '創世記'/'出埃及記'/'利未記'/'民數記'/'申命記'/.../'創'/'出'/'利'/'民'/'申'...
-        .replace('{SB}', Resources.uniChapterRefPattern)
-        .replace('{C}', '第?[' + chiNumParser.supportedChars + ']+|\\d+\\s*[{:}]') // to mach '第一章'/'第五篇'/'42:'...
-        .replace('{S}', '\\s{:}第')
-        .replace('{V}', '[{,}{-}{;}{VE}\\s\\d]*\\d') // to match '1-5'/'1-3, 6'/'1;5'/'1及4節'...
-        .replace(/{:}/g, ':：︰篇章')
-        .replace('{,}', ',，、和及')
-        .replace('{-}', '\\-─–－—~～〜至')
-        .replace(/{VE}/g, '節节')
-        .replace(/{;}/g, ';；'), flags || '');
-    }
-    var uniChapterRef = bibleRefExp('({SB})\\s?({C})?[{S}]*({V})[{VE}]?', 'g');
-    var multiBibleRef = bibleRefExp('({B})?\\s?({C})[{S}]*({V})[{VE}]?', 'g');
-    var bibleRefPattern = '({B})\\s?({C})?[{S}]*({V})[{VE}]?';
+    var chapSep = '[:：︰篇章]';
+    var versAnd = ',，、和及';
+    var versTo = '\\-─–－—~～〜至';
+    var semiCol = ';；';
+
+    var booksPattern = '(' + Resources.namesOfAllBooks + ')';
+    var singleChapBooksPattern = '(' + Resources.singleChapterBooks + ')';
+    var chapPattern
+      = '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // separator is optional: 第四章21節 / 四21
+      + '|\\d+' + chapSep + ')'; // the separator is required for chapter digit (e.g. 4:)
+    var versPattern = '第?([' + versAnd + versTo + semiCol + '節节\\s\\d]*\\d)[節节]?';
+
+    var bibleRef = new RegExp(
+      booksPattern + '?' // books can be skipped for matching latter part of 約1:13;3:14
+      + '\\s?'
+      + chapPattern
+      + versPattern, 'g');
+
+    var singleChapBibleRef = new RegExp(
+      singleChapBooksPattern
+      + '\\s?'
+      + chapPattern + '?' // cover some books that only have single chapter (e.g. 猶太書1節)
+      + versPattern, 'g');
+
+    var fullBibleRef = new RegExp(
+      booksPattern
+      + '\\s?'
+      + chapPattern + '?'
+      + versPattern);
 
     /**
      * Converts text to text nodes with hyperlinks.
      * @param {string} text Text to be linkified.
      */
     this.linkify = function (text) {
-      // different bible reference formats are handled: 約1:1 約1:1,2 約1:1;2 約1:2,3:4 約1:2;3:4
       var tempLinkifiedNodes = [];
       var match;
       var lastBook = '';
       var lastIndex = 0;
-      while ((match = multiBibleRef.exec(text)) !== null) {
+      while ((match = bibleRef.exec(text)) !== null) {
         var ref = match[0];
         // check if verses accidentally matched the next Bible reference
         // for references like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
-        var strAfterMatch = text.substring(multiBibleRef.lastIndex); // ":4" in the example
+        var strAfterMatch = text.substring(bibleRef.lastIndex); // ":4" in the example
         var verses = match[3].match(/\d+/g); // [2, 3] in the example
-        if (strAfterMatch.search(bibleRefExp('\\s*[{:}]{V}')) === 0 && verses.length > 1) {
-          var realRef = trimLast(ref, bibleRefExp('[{,}{;}\\s]+' + verses[verses.length - 1]));
-          multiBibleRef.lastIndex -= (ref.length - realRef.length);
+        if (strAfterMatch.search(new RegExp('\\s?' + chapSep + versPattern)) === 0 && verses.length > 1) {
+          var realRef = trimLast(ref, new RegExp('[' + versAnd + semiCol + '\\s]+' + verses[verses.length - 1]));
+          bibleRef.lastIndex -= (ref.length - realRef.length);
           ref = realRef;
         }
         var book = match[1];
@@ -372,7 +379,7 @@ function FHLBibleService() {
         tempLinkifiedNodes.push(document.createTextNode(strBeforeMatch));
         tempLinkifiedNodes.push(link || document.createTextNode(ref));
         lastBook = book || lastBook;
-        lastIndex = multiBibleRef.lastIndex;
+        lastIndex = bibleRef.lastIndex;
       }
       tempLinkifiedNodes.push(document.createTextNode(text.substring(lastIndex)));
 
@@ -382,7 +389,7 @@ function FHLBibleService() {
       for (var temp = 0; temp < tempLinkifiedNodes.length; temp++) {
         var tempNode = tempLinkifiedNodes[temp];
         if (tempNode.nodeName === '#text') {
-          var newHtml = tempNode.nodeValue.replace(uniChapterRef, linkHtml);
+          var newHtml = tempNode.nodeValue.replace(singleChapBibleRef, linkHtml);
           var newNodes = htmlToElement(newHtml);
           for (var newN = 0; newN < newNodes.length; newN++) {
             var newNode = newNodes[newN];
@@ -420,7 +427,7 @@ function FHLBibleService() {
 
     this.summarize = function (text, refDataList) {
       var match;
-      while ((match = multiBibleRef.exec(text)) !== null) {
+      while ((match = bibleRef.exec(text)) !== null) {
         var ref = match[0];
         var bibleRef = this.readRef(ref);
         bibleService.getVerses(bibleRef, function (resp) {
@@ -429,7 +436,7 @@ function FHLBibleService() {
           refDataList.push({
             ref: refMatch[2],
             verses: refMatch[1]
-          });  
+          });
         });
       }
     };
@@ -440,11 +447,12 @@ function FHLBibleService() {
      */
     this.readRef = function (ref) {
       // preconditions: ref must contains a full bible reference
-      var match = bibleRefExp(bibleRefPattern).exec(ref);
+      var match = fullBibleRef.exec(ref);
       if (match !== null) {
+        var chapSepRegex = new RegExp(chapSep, 'g');
         return new BibleRef(
           abbrResolver.toAbbr(match[1]),
-          match[2] !== undefined ? chiNumParser.parse(match[2].replace(bibleRefExp('[{:}\\s]', 'g'), '')) : 1,
+          match[2] !== undefined ? chiNumParser.parse(match[2].replace(chapSepRegex, '')) : 1,
           this.readVers(match[3]));
       }
       else {
@@ -458,9 +466,9 @@ function FHLBibleService() {
      */
     this.readVers = function (vers) {
       return vers
-        .replace(bibleRefExp('[{-}]', 'g'), '-')
-        .replace(bibleRefExp('[{,}]', 'g'), ',')
-        .replace(bibleRefExp('[{VE}\\s]', 'g'), '');
+        .replace(new RegExp('[' + versTo + ']', 'g'), '-')
+        .replace(new RegExp('[' + versAnd + ']', 'g'), ',')
+        .replace(/[節节\s]/g, '');
     };
   }
 
