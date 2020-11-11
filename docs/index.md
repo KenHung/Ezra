@@ -89,20 +89,20 @@ Ezra設有網頁部件，可供基督教網頁/部落格(blog)使用。這樣，
 
 繁體中文和合本：
 
-    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra.js" 
+    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.js" 
             integrity="sha384-{{ site.ezra.integrity }}" 
             crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra-style.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
     <script>
       ezraLinkifier.linkify(document.body);
     </script>
 
 簡体中文和合本：
 
-    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra.sc.js" 
+    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.sc.js" 
             integrity="sha384-{{ site.ezra.integrity_sc }}" 
             crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/ezra-style.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
     <script>
       ezraLinkifier.linkify(document.body);
     </script>
