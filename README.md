@@ -25,6 +25,17 @@ This is the Ezra code base, there are two parts:
 | docs      | GitHub Pages files              |
 | src       | Ezra core code base             |
 
+### Setup
+
+This project needs `npm` which comes with Node.js. 
+Although this project is purely frontend code 
+and Node.js is not required in runtime, 
+`npm` is needed to install dependencies and bundler 
+to create final output.
+
+Once `npm` is installed, run `npm install` to install dependencies, 
+and `npm run build` to bundle all the scripts.
+
 ### Deploying/Testing Chrome Extension
 
 * run `./build.sh` to create Chrome Extension

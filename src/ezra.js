@@ -16,14 +16,11 @@
  */
 (function (ezraLinkifier, undefined) {
   // Embedding prevents conflicts with  the components of web pages.
-  /* import tether */
-  /* import drop */
-  /* import resources */
-  /* import lang */
-  /* import bibleService */
-  /* global Drop */
-  /* global Resources */
-  /* global bibleService */
+  var Drop = require('./drop.js');
+  var bibleService = require('./bibleService.js');
+  var Resources = require('./lang/resources.js');
+  Resources.add('zh-Hans', require('./lang/zh-Hans.js'));
+  Resources.add('zh-Hant', require('./lang/zh-Hant.js'));
 
   /**
    * Linkify all Bible references text within the DOM of the element.

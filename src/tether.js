@@ -1,7 +1,7 @@
 /*! tether 1.3.3 */
 // (c) HubSpot https://github.com/HubSpot/tether/blob/master/LICENSE
 
-var Tether = (function() {
+module.exports = (function() {
 
 'use strict';
 

@@ -1,5 +1,4 @@
-/* global Resources */
-Resources.add('zh-Hans', Object.freeze({
+module.exports = Object.freeze({
   abbr: {
     创世记: '创',
     出埃及记: '出',
@@ -88,4 +87,4 @@ Resources.add('zh-Hans', Object.freeze({
   verseNotFound: '未能查訽经文。',
   refInvalid: '找不到记录！圣经中没有这章节。',
   fhl_gb: 1
-}));
+});
