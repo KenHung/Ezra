@@ -1,5 +1,4 @@
-/* global Resources */
-Resources.add('zh-Hant', Object.freeze({
+module.exports = Object.freeze({
   abbr: {
     創世記: '創',
     出埃及記: '出',
@@ -90,4 +89,4 @@ Resources.add('zh-Hant', Object.freeze({
   verseNotFound: '未能查訽經文。',
   refInvalid: '找不到記錄！聖經中沒有這章節。',
   fhl_gb: 0
-}));
+});

@@ -4,6 +4,7 @@
   "description": "linkify Chinese Bible verses",
   "main": "ezra.js",
   "scripts": {
+    "build": "browserify src/ezra.js > dist/ezra.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,12 +18,6 @@
   },
   "homepage": "https://github.com/KenHung/Ezra#readme",
   "devDependencies": {
-    "event-stream": "^3.3.4",
-    "gulp": "^4.0.0",
-    "gulp-file-insert": "^2.0.0",
-    "gulp-header": "^1.8.8",
-    "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^2.0.0",
-    "uglify-save-license": "^0.4.1"
+    "browserify": "^17.0.0"
   }
 }

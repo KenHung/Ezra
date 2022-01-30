@@ -1,9 +1,10 @@
 /*! tether-drop 1.4.1 */
 // (c) HubSpot https://github.com/HubSpot/drop/blob/master/LICENSE
 
-var Drop = (function(Tether) {
+var Tether = require('./tether.js');
 
-/* global Tether */
+module.exports = (function(Tether) {
+
 'use strict';
 
 var _bind = Function.prototype.bind;

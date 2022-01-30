@@ -1,5 +1,4 @@
-/* exported Resources */
-var Resources = {
+module.exports = {
   res: {},
   set: function (res) {
     for (var key in res) {

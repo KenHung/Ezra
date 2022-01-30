@@ -1,5 +1,4 @@
-/* exported bibleService */
-var bibleService = new FHLBibleService();
+module.exports = new FHLBibleService();
 
 var BibleServiceError = Object.freeze({
   'connectFail': 'connectFail',
