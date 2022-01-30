@@ -1,13 +1,8 @@
-var bibleRefReader = new ezraLinkifier._BibleRefReader(ezraLinkifier._abbr);
-var abbrResolver = new ezraLinkifier._AbbrResolver();
-var chineseNumParser = new ezraLinkifier._ChineseNumParser();
+var ezraLinkifier = require('../src/ezra');
+var BibleRefReader = require('../src/bibleRefReader');
+var chineseNumParser = require('../src/chineseNumParser');
 
-QUnit.test('AbbrResolver.toAbbr', function (assert) {
-  assert.strictEqual(abbrResolver.toAbbr('啓'), '啟');
-  assert.strictEqual(abbrResolver.toAbbr('啓示錄'), '啟');
-});
-
-QUnit.test('ChineseNumParser.parse', function (assert) {
+QUnit.test('Chinese numbers parsing', function (assert) {
   assert.strictEqual(chineseNumParser.parse('1948'), 1948);
   assert.strictEqual(chineseNumParser.parse('七'), 7);
   assert.strictEqual(chineseNumParser.parse('十二'), 12);
@@ -22,6 +17,7 @@ QUnit.test('ChineseNumParser.parse', function (assert) {
 });
 
 QUnit.test('BibleRefReader.toVers', function (assert) {
+  var bibleRefReader = new BibleRefReader(document);
   assert.strictEqual(bibleRefReader.readVers('1 - 4'), '1-4');
   assert.strictEqual(bibleRefReader.readVers('1─4'), '1-4');
   assert.strictEqual(bibleRefReader.readVers('1〜4'), '1-4');
@@ -31,6 +27,7 @@ QUnit.test('BibleRefReader.toVers', function (assert) {
 
 QUnit.test('BibleRefReader.createBibleRefs', function (assert) {
   function refTest(ref, abbr, chap, vers) {
+    var bibleRefReader = new BibleRefReader(document);
     var bibleRef = bibleRefReader.readRef(ref);
     var actual = bibleRef.abbr + ' ' + bibleRef.chap + ':' + bibleRef.vers;
     var expected = abbr + ' ' + chap + ':' + vers;
