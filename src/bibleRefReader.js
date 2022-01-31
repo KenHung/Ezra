@@ -1,5 +1,5 @@
 var Resources = require('./lang/resources');
-var chiNumParser = require('./chineseNumParser');
+var chiNumParser = require('./chinese-number-parser');
 
 module.exports = function BibleRefReader(document) {
   var chapSep = '[:：︰篇章]';
