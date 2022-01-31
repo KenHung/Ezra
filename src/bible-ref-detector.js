@@ -49,7 +49,7 @@ module.exports = function BibleRefDetector() {
         ref = realRef;
       }
       var book = match[1] || lastBook;
-      if (book !== undefined) {
+      if (book) {
         results.push(new BibleRef(ref, match.index, book, match[2], match[3]));
       }
       else {
