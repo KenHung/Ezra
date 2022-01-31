@@ -1,9 +1,6 @@
 var bibleService = require('./bibleService.js');
-var BibleRefReader = require('./bibleRefReader');
+var BibleRefReader = require('./bible-ref-detector');
 var Resources = require('./lang/resources.js');
-
-Resources.add('zh-Hans', require('./lang/zh-Hans.js'));
-Resources.add('zh-Hant', require('./lang/zh-Hant.js'));
 
 /**
  * Linkify all Bible references text within the DOM of the element.
