@@ -4,17 +4,48 @@
 <head>
 	<meta charset="UTF-8" name="viewport" content="width=device-width">
 	<title>Tests</title>
-	<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css" />
 	<link rel="stylesheet" type="text/css" href="../dist/ezra-style.css" />
 </head>
 
 <body>
 	<div id="main">
+		<table class="unchanged rich-diff-level-one">
+			<thead>
+				<tr>
+					<th></th>
+					<th>[書卷][章]:[節]</th>
+					<th>[書卷][中文章][節]</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>單節</td>
+					<td>約 1:1</td>
+					<td>約一1</td>
+				</tr>
+				<tr>
+					<td>多節</td>
+					<td>約 1:1-5,7</td>
+					<td>約一1-5,7</td>
+				</tr>
+				<tr>
+					<td>不同標點</td>
+					<td>約 1：1–5，7</td>
+					<td>約一1～5、7</td>
+				</tr>
+				<tr>
+					<td>全寫</td>
+					<td>約翰福音 1:1-5,7</td>
+					<td>約翰福音一章1至5及7節</td>
+				</tr>
+				<tr>
+					<td>多章</td>
+					<td>約 1:1;2:1</td>
+					<td>約一1；二1</td>
+				</tr>
+			</tbody>
+		</table>
 		<table>
-			<tr>
-				<td>正常</td>
-				<td>將他的道教訓他們。」（詩廿五9）「謙卑人」原文是指謙卑</td>
-			</tr>
 			<tr>
 				<td>大字</td>
 				<td style="font-size: 24px">
@@ -35,22 +66,10 @@
 			</tr>
 		</table>
 	</div>
-	<div id="qunit"></div>
-	<div id="qunit-fixture"></div>
-
-	<script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
-	<script src="https://code.jquery.com/jquery-1.12.4.min.js"
-		integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-	<script src="../src/tether.js"></script>
-	<script src="../src/drop.js"></script>
-	<script src="../src/lang/resources.js"></script>
-	<script src="../src/lang/zh-Hant.js"></script>
-	<script src="../src/bibleService.js"></script>
-	<script src="../src/ezra.js"></script>
+	<script src="../dist/ezra.js"></script>
 	<script>
 		ezraLinkifier.linkify(document.getElementById("main"));
 	</script>
-	<script src="tests.js"></script>
 </body>
 
 </html>
