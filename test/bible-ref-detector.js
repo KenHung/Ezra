@@ -74,7 +74,7 @@ QUnit.test('multiple Bible references embedded', function (assert) {
 QUnit.test('no Bible reference', function (assert) {
   function test(text) {
     var actual = detector.detect(text);
-    assert.strictEqual(actual.length, 0);
+    assert.deepEqual(actual, []);
   }
   test('約四，');
   test('李約 2013.11.17');
