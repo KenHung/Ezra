@@ -57,6 +57,9 @@ module.exports = function BibleRefDetector() {
       }
       lastBook = book;
     }
+    while ((match = singleChapBibleRef.exec(text)) !== null) {
+      results.push(new BibleRef(match[0], match.index, match[1], '1', match[2]));
+    }
     return results;
   };
 
