@@ -4,7 +4,7 @@
   "description": "linkify Chinese Bible verses",
   "main": "ezra.js",
   "scripts": {
-    "build": "browserify src/main.js > dist/ezra.js",
+    "build": "cp src/copyright.js dist/ezra.js & browserify -p tinyify src/main.js >> dist/ezra.js",
     "test": "qunit"
   },
   "repository": {
@@ -20,7 +20,8 @@
   "devDependencies": {
     "browserify": "^17.0.0",
     "eslint": "^8.8.0",
-    "qunit": "^2.17.2"
+    "qunit": "^2.17.2",
+    "tinyify": "^3.0.0"
   },
   "dependencies": {
     "tether-drop": "^1.4.2"
