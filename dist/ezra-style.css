@@ -1,9 +1,9 @@
 /*! Style sheet of Ezra <https://kenhung.github.io/Ezra/>
     Copyright (C) 2016  Ken Hung
-    See ezra.js / ezra.sc.js for full GPL notice.
+    See ezra.js for full GPL notice.
  */
 
-.ezra-bible-ref-link {
+a[data-ezra-ref] {
     cursor: pointer;
     color: #0071CF
 }
