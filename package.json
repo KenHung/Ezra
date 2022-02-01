@@ -5,6 +5,7 @@
   "main": "ezra.js",
   "scripts": {
     "build": "cp src/copyright.js dist/ezra.js & browserify -p tinyify src/main.js >> dist/ezra.js",
+    "build-chrome-ext": "cd chromeExt && ./build.sh",
     "test": "qunit"
   },
   "repository": {

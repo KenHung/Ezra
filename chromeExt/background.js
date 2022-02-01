@@ -1,5 +1,5 @@
 /* global chrome */
-/* global bibleService */
+const bibleService = require('../src/bible-service');
 
 chrome.contextMenus.create({
   id: 'ezraMenu',

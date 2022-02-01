@@ -1,6 +1,7 @@
 /* global chrome */
-/* global Resources */
-/* global ezraLinkifier */
+const Resources = require('../src/lang/resources');
+const linkify = require('../src/ezra');
+const BibleRefDetector = require('../src/bible-ref-detector');
 
 /**
  * Created for Chrome 73, since cross-origin requests are not allowed in content scripts.
@@ -16,7 +17,7 @@ var bibleService = {
 chrome.storage.sync.get({ lang: 'zh-Hant' }, 
   items => {
     Resources.setLang(items.lang);
-    ezraLinkifier.linkify(document.body);
+    linkify(document.body);
   });
 
 chrome.runtime.onMessage.addListener(function (request) {
@@ -24,10 +25,10 @@ chrome.runtime.onMessage.addListener(function (request) {
     var selection = window.getSelection();
     if (selection.rangeCount > 0) {
       var msg = attachMsg('querying', selection.getRangeAt(0));
-      var bibleRefReader = new ezraLinkifier._BibleRefReader();
-      var bibleRef = bibleRefReader.readRef(selection.toString());
-      if (bibleRef !== null) {
-        bibleService.getVerses(bibleRef,
+      var detector = new BibleRefDetector();
+      var bibleRefs = detector.detect(selection.toString());
+      if (bibleRefs.length > 0) {
+        bibleService.getVerses(bibleRefs[0],
           resp => {
             if (resp.data) {
               writeClipboard(resp.data);
