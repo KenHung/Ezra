@@ -1,4 +1,4 @@
-var bibleService = require('./bibleService');
+var bibleService = require('./bible-service');
 var BibleRefReader = require('./bible-ref-detector');
 var Resources = require('./lang/resources');
 var Drop = require('tether-drop');
