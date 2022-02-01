@@ -1,6 +1,6 @@
 var Resources = require('./lang/resources');
-Resources.add('zh-Hans', require('./lang/zh-Hans.js'));
-Resources.add('zh-Hant', require('./lang/zh-Hant.js'));
+Resources.add('zh-Hans', require('./lang/zh-Hans'));
+Resources.add('zh-Hant', require('./lang/zh-Hant'));
 
 var chiNumParser = require('./chinese-number-parser');
 var chapSep = '[:：︰篇章]';
@@ -38,19 +38,21 @@ module.exports = function BibleRefDetector() {
     var lastBook = '';
     while ((match = bibleRef.exec(text)) !== null) {
       var ref = match[0];
+      var vers = match[3];
       // check if verses accidentally matched the next Bible reference
       // for references like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
       var remaining = text.substring(bibleRef.lastIndex); // ":4" in the example
-      var verses = match[3].match(/\d+/g); // [2, 3] in the example
+      var verses = vers.match(/\d+/g); // [2, 3] in the example
       if (remaining.search(new RegExp('\\s?' + chapSep + versPattern)) === 0 && verses.length > 1) {
         var redundantVers = new RegExp('[' + versAnd + semiCol + '\\s]+' + verses[verses.length - 1]); // ",3" in the example
+        vers = trimLast(vers, redundantVers);
         var realRef = trimLast(ref, redundantVers);
         bibleRef.lastIndex -= (ref.length - realRef.length);
         ref = realRef;
       }
       var book = match[1] || lastBook;
       if (book) {
-        results.push(new BibleRef(ref, match.index, book, match[2], match[3]));
+        results.push(new BibleRef(ref, match.index, book, match[2], vers));
       }
       else {
         // if no book is provided (e.g. 4:11), there will be no link created

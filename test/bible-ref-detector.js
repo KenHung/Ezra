@@ -33,20 +33,29 @@ QUnit.test('single Bible reference', function (assert) {
 QUnit.test('trim last comma', function (assert) {
   var bibleRef = detector.detect('約四24，')[0];
   assert.strictEqual(bibleRef.text, '約四24');
+  assert.strictEqual(bibleRef.abbr, '約');
+  assert.strictEqual(bibleRef.chap, 4);
+  assert.strictEqual(bibleRef.vers, '24');
 });
 
 QUnit.test('multiple Bible references in John', function (assert) {
-  function test(text, expected) {
+  function test(text, expected, checkRef = false) {
     var bibleRefs = detector.detect(text);
     var actual = bibleRefs.map(b => b.text);
     assert.deepEqual(actual, expected);
-    assert.ok(bibleRefs.every(b => b.abbr == '約'));
+    if (checkRef) {
+      for (const b of bibleRefs) {
+        assert.ok(
+          `${b.abbr}${b.chap}:${b.vers}`.endsWith(b.text),
+          `verse of ${b.text} is wrong: ${b.vers}`);
+      }
+    }
   }
-  test('約1:1;2:1', ['約1:1', '2:1']);
-  test('約1:1,2:1', ['約1:1', '2:1']);
-  test('約1:2,2:1', ['約1:2', '2:1']);
-  test('約1:1;2', ['約1:1;2']);
-  test('約1:2:3', ['約1:2']);
+  test('約1:1;2:1', ['約1:1', '2:1'], true);
+  test('約1:1,2:1', ['約1:1', '2:1'], true);
+  test('約1:2,2:1', ['約1:2', '2:1'], true);
+  test('約1:1;2', ['約1:1;2'], true);
+  test('約1:2:3', ['約1:2'], true);
   test('約一:1', ['約一:1']);
   test('約一:1－2', ['約一:1－2']);
   test('約一:1—2', ['約一:1—2']);
