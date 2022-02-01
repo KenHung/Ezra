@@ -4,7 +4,7 @@
   "description": "linkify Chinese Bible verses",
   "main": "ezra.js",
   "scripts": {
-    "build": "browserify src/ezra.js > dist/ezra.js",
+    "build": "browserify src/main.js > dist/ezra.js",
     "test": "qunit"
   },
   "repository": {

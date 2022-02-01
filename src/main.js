@@ -15,5 +15,5 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 (function (ezraLinkifier, undefined) {
-  
+  ezraLinkifier.linkify = require('./ezra');
 }(window.ezraLinkifier = window.ezraLinkifier || {}));
