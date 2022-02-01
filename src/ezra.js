@@ -1,6 +1,7 @@
 var bibleService = require('./bibleService');
 var BibleRefReader = require('./bible-ref-detector');
 var Resources = require('./lang/resources');
+var Drop = require('tether-drop');
 
 /**
  * Linkify all Bible references text within the DOM of the element.
@@ -8,7 +9,6 @@ var Resources = require('./lang/resources');
  */
 module.exports = function (element) {
   var bibleRefReader = new BibleRefReader();
-  var dropFactory = new DropFactory();
 
   var textNodes = getTextNodesIn(element);
   for (var i = 0; i < textNodes.length; i++) {
@@ -24,45 +24,42 @@ module.exports = function (element) {
   for (i = 0; i < ezraLinks.length; i++) {
     var link = ezraLinks[i];
     var bibleRef = JSON.parse(link.dataset.ezraRef);
-    dropFactory.create(link, bibleRef);
+    createDrop(link, bibleRef);
   }
 };
 
-function DropFactory() {
-  var Drop = require('./drop.js');
-  var _Drop = Drop.createContext({
-    classPrefix: 'ezra'
+var _Drop = Drop.createContext({
+  classPrefix: 'ezra'
+});
+
+function createDrop(link, bibleRef) {
+  var drop = new _Drop({
+    classes: 'ezra-theme-arrows',
+    target: link,
+    content: document.createTextNode(Resources.loading + '...' + bibleRef.refText),
+    openOn: 'hover',
+    constrainToScrollParent: false,
+    tetherOptions: {
+      constraints: [
+        {
+          to: 'window',
+          attachment: 'together',
+          pin: ['left', 'right']
+        }
+      ]
+    }
   });
+  drop.on('open', function () {
+    var linkSize = window.getComputedStyle(this.target).fontSize;
+    this.content.style.fontSize = linkSize;
 
-  this.create = function (link, bibleRef) {
-    var drop = new _Drop({
-      classes: 'ezra-theme-arrows',
-      target: link,
-      content: document.createTextNode(Resources.loading + '...' + bibleRef.refText),
-      openOn: 'hover',
-      constrainToScrollParent: false,
-      tetherOptions: {
-        constraints: [
-          {
-            to: 'window',
-            attachment: 'together',
-            pin: ['left', 'right']
-          }
-        ]
-      }
-    });
-    drop.on('open', function () {
-      var linkSize = window.getComputedStyle(this.target).fontSize;
-      this.content.style.fontSize = linkSize;
-
-      var displayText = function (resp) {
-        var text = resp.data || Resources[resp.errCode];
-        drop.content.innerText = text;
-        drop.position();
-      };
-      bibleService.getVerses(bibleRef, displayText);
-    });
-  };
+    var displayText = function (resp) {
+      var text = resp.data || Resources[resp.errCode];
+      drop.content.innerText = text;
+      drop.position();
+    };
+    bibleService.getVerses(bibleRef, displayText);
+  });
 }
 
 function linkifyText(text, bibleRefs) {

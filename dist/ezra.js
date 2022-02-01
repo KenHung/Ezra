@@ -1,268 +1,17 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-var Resources = require('./lang/resources');
-Resources.add('zh-Hans', require('./lang/zh-Hans.js'));
-Resources.add('zh-Hant', require('./lang/zh-Hant.js'));
-
-var chiNumParser = require('./chinese-number-parser');
-var chapSep = '[:：︰篇章]';
-var versAnd = ',，、和及';
-var versTo = '\\-─–－—~～〜至';
-
-module.exports = function BibleRefDetector() {
-  var semiCol = ';；';
-
-  var booksPattern = '(' + Resources.namesOfAllBooks + ')';
-  var singleChapBooksPattern = '(' + Resources.singleChapterBooks + ')';
-  var chapPattern
-    = '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // separator is optional: 第四章21節 / 四21
-    + '|\\d+' + chapSep + ')'; // the separator is required for chapter digit (e.g. 4:)
-  var versPattern = '第?([' + versAnd + versTo + semiCol + '節节\\s\\d]*\\d)[節节]?';
-
-  var bibleRef = new RegExp(
-    booksPattern + '?' // books can be skipped for matching latter part of 約1:13;3:14
-    + '\\s?'
-    + chapPattern
-    + versPattern, 'g');
-
-  var singleChapBibleRef = new RegExp(
-    singleChapBooksPattern
-    + '\\s?'
-    + versPattern, 'g');
-
-  /**
-   * Converts text to text nodes with hyperlinks.
-   * @param {string} text Text to be linkified.
-   */
-  this.detect = function (text) {
-    var results = [];
-    var match;
-    var lastBook = '';
-    while ((match = bibleRef.exec(text)) !== null) {
-      var ref = match[0];
-      // check if verses accidentally matched the next Bible reference
-      // for references like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
-      var remaining = text.substring(bibleRef.lastIndex); // ":4" in the example
-      var verses = match[3].match(/\d+/g); // [2, 3] in the example
-      if (remaining.search(new RegExp('\\s?' + chapSep + versPattern)) === 0 && verses.length > 1) {
-        var redundantVers = new RegExp('[' + versAnd + semiCol + '\\s]+' + verses[verses.length - 1]); // ",3" in the example
-        var realRef = trimLast(ref, redundantVers);
-        bibleRef.lastIndex -= (ref.length - realRef.length);
-        ref = realRef;
-      }
-      var book = match[1] || lastBook;
-      if (book) {
-        results.push(new BibleRef(ref, match.index, book, match[2], match[3]));
-      }
-      else {
-        // if no book is provided (e.g. 4:11), there will be no link created
-      }
-      lastBook = book;
-    }
-    while ((match = singleChapBibleRef.exec(text)) !== null) {
-      results.push(new BibleRef(match[0], match.index, match[1], '1', match[2]));
-    }
-    return results;
-  };
-
-  function trimLast(ref, regex) {
-    var matches = ref.match(regex);
-    if (matches) {
-      var newIndex = ref.lastIndexOf(matches[matches.length - 1]);
-      return ref.substring(0, newIndex);
-    }
-    else {
-      return ref;
-    }
-  }
-}
-
-/**
- * A Bible reference containing one or multiple verses.
- */
-function BibleRef(text, pos, book, chap, vers) {
-  this.text = text;
-  this.pos = pos;
-
-  this.abbr = toAbbr(book);
-  this.chap = chiNumParser.parse(chap.replace(new RegExp(chapSep, 'g'), ''));
-  this.vers = readVers(vers);
-
-  this.refText = '(' + this.abbr + ' ' + this.chap + ':' + this.vers + ')';
-  this.lang = Resources.fhl_gb;
-
-  function toAbbr(book) {
-    return Resources.abbr[book] || book;
-  }
-
-  /**
-   * Converts or removes unsupported string for query. (e.g. '1，4' => '1,4' / '1及4節' => '1,4' / ...)
-   * @param {string} vers Verses string.
-   */
-  function readVers(vers) {
-    return vers
-      .replace(new RegExp('[' + versTo + ']', 'g'), '-')
-      .replace(new RegExp('[' + versAnd + ']', 'g'), ',')
-      .replace(/[節节\s]/g, '');
-  };
-}
-
-},{"./chinese-number-parser":3,"./lang/resources":6,"./lang/zh-Hans.js":7,"./lang/zh-Hant.js":8}],2:[function(require,module,exports){
-module.exports = new FHLBibleService();
-
-var BibleServiceError = Object.freeze({
-  'connectFail': 'connectFail',
-  'verseNotFound': 'verseNotFound',
-  'refInvalid': 'refInvalid',
-});
-
-/**
- * Service for getting verses from FHL API (https://bible.fhl.net/json).
- */
-function FHLBibleService() {
-  var versesCache = {};
-
-  /**
-   * Gets Bible text and attaches reference text at the end.
-   * @param {BibleRef} bibleRef Bible reference to query.
-   * @param {function(any): void} callback Callback for getting bible text.
-   */
-  this.getVerses = function (bibleRef, callback) {
-    var bibleRefStr = bibleRef.lang + bibleRef.refText;
-    if (versesCache.hasOwnProperty(bibleRefStr)) {
-      callback({ data: versesCache[bibleRefStr] + bibleRef.refText });
-    }
-    else {
-      var cacheSuccess = function (text) {
-        versesCache[bibleRefStr] = text;
-        callback({ data: text + bibleRef.refText });
-      };
-      var fail = function (errCode, errMsg) {
-        callback({ errCode: errCode, errMsg: errMsg });
-      };
-      getVersesFromFHL(bibleRef, cacheSuccess, fail);
-    }
-  };
-
-  /**
-   * Gets Bible text using FHL API and passes result to callback.
-   * @param {BibleRef} bibleRef Bible reference to query.
-   * @param {function(string): void} success Callback for successfully getting bible text.
-   * @param {function(string, any): void} fail Callback for failed query, error message will be passed as argument.
-   */
-  function getVersesFromFHL(bibleRef, success, fail) {
-    var xhr = new XMLHttpRequest();
-    xhr.onerror = function () {
-      fail(BibleServiceError.connectFail);
-    };
-    xhr.onload = function () {
-      if (xhr.status !== 200) {
-        fail(BibleServiceError.verseNotFound, 'XHR status = ' + xhr.status);
-        return;
-      }
-      try {
-        var resp = JSON.parse(xhr.responseText);
-        if (resp.status !== 'success') {
-          fail(BibleServiceError.verseNotFound, 'FHL response text = ' + xhr.responseText);
-          return;
-        } else if (resp.record.length === 0) {
-          fail(BibleServiceError.refInvalid);
-          return;
-        }
-        var versesText = '';
-        var lastSec = 0;
-        for (var i = 0; i < resp.record.length; i++) {
-          var record = resp.record[i];
-          // insert '⋯⋯' if verses are not continuous
-          if (i > 0 && record.sec > lastSec + 1) {
-            versesText += '⋯⋯';
-          }
-          lastSec = record.sec;
-          versesText += record.bible_text;
-        }
-        success(versesText);
-      } catch (err) {
-        fail(BibleServiceError.verseNotFound, err);
-      }
-    };
-    try {
-      var url = 'https://bible.fhl.net/json/qb.php?chineses=' + bibleRef.abbr
-        + '&chap=' + bibleRef.chap
-        + '&sec=' + bibleRef.vers
-        + '&gb=' + bibleRef.lang;
-      xhr.open('GET', url, true);
-      xhr.send();
-    }
-    catch (err) {
-      fail(BibleServiceError.verseNotFound, err);
-    }
-  }
-}
-},{}],3:[function(require,module,exports){
-var numVal = { '○': 0, 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
-var expVal = { 十: 10, 廿: 20, 卅: 30, 卌: 40, 百: 100 };
-var nums = Object.keys(numVal);
-var exps = Object.keys(expVal);
-
-exports.supportedChars = nums.concat(exps).join('');
-
-/**
- * Parses a Chinese number.
- * @param {string} num A Chinese number.
- */
-exports.parse = function (num) {
-  if (!isNaN(num)) {
-    return +num;
-  }
-  else {
-    if (containsExp(num)) {
-      var acc = [];
-      for (var i = 0; i < num.length; i++) {
-        var n = num[i];
-        if (isExp(n)) {
-          if (acc.length === 0) {
-            acc.push(1);
-          }
-          acc[acc.length - 1] *= expVal[n];
-        } else {
-          acc.push(numVal[n] || 0);
-        }
-      }
-      return sumOf(acc);
-    }
-    else {
-      var intStr = num.split('').map(function (n) { return numVal[n]; }).join('');
-      return parseInt(intStr, 10);
-    }
-  }
-};
-
-function containsExp(num) {
-  for (var i = 0; i < num.length; i++) {
-    if (expVal[num[i]]) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function isExp(num) { return expVal[num] ? true : false; }
-
-function sumOf(nums) {
-  var sum = 0;
-  for (var i = 0; i < nums.length; i++) {
-    sum += nums[i];
-  }
-  return sum;
-}
-
-},{}],4:[function(require,module,exports){
 /*! tether-drop 1.4.1 */
-// (c) HubSpot https://github.com/HubSpot/drop/blob/master/LICENSE
 
-var Tether = require('./tether.js');
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(["tether"], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('tether'));
+  } else {
+    root.Drop = factory(root.Tether);
+  }
+}(this, function(Tether) {
 
-module.exports = (function(Tether) {
-
+/* global Tether */
 'use strict';
 
 var _bind = Function.prototype.bind;
@@ -809,377 +558,20 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 return Drop;
 
-})(Tether);
+}));
 
-},{"./tether.js":10}],5:[function(require,module,exports){
-var bibleService = require('./bibleService');
-var BibleRefReader = require('./bible-ref-detector');
-var Resources = require('./lang/resources');
+},{"tether":2}],2:[function(require,module,exports){
+/*! tether 1.4.7 */
 
-/**
- * Linkify all Bible references text within the DOM of the element.
- * @param {Element} element HTML element to be linkified.
- */
-module.exports = function (element) {
-  var bibleRefReader = new BibleRefReader();
-  var dropFactory = new DropFactory();
-
-  var textNodes = getTextNodesIn(element);
-  for (var i = 0; i < textNodes.length; i++) {
-    if (textNodes[i].parentNode.nodeName !== 'A') {
-      var bibleRefs = bibleRefReader.detect(textNodes[i].nodeValue);
-      if (bibleRefs.length > 0) {
-        var linkifiedNodes = linkifyText(textNodes[i].nodeValue, bibleRefs);
-        replaceWithNodes(textNodes[i], linkifiedNodes);
-      }
-    }
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Tether = factory();
   }
-  var ezraLinks = element.querySelectorAll('a[data-ezra-ref]');
-  for (i = 0; i < ezraLinks.length; i++) {
-    var link = ezraLinks[i];
-    var bibleRef = JSON.parse(link.dataset.ezraRef);
-    dropFactory.create(link, bibleRef);
-  }
-};
-
-function DropFactory() {
-  var Drop = require('./drop.js');
-  var _Drop = Drop.createContext({
-    classPrefix: 'ezra'
-  });
-
-  this.create = function (link, bibleRef) {
-    var drop = new _Drop({
-      classes: 'ezra-theme-arrows',
-      target: link,
-      content: document.createTextNode(Resources.loading + '...' + bibleRef.refText),
-      openOn: 'hover',
-      constrainToScrollParent: false,
-      tetherOptions: {
-        constraints: [
-          {
-            to: 'window',
-            attachment: 'together',
-            pin: ['left', 'right']
-          }
-        ]
-      }
-    });
-    drop.on('open', function () {
-      var linkSize = window.getComputedStyle(this.target).fontSize;
-      this.content.style.fontSize = linkSize;
-
-      var displayText = function (resp) {
-        var text = resp.data || Resources[resp.errCode];
-        drop.content.innerText = text;
-        drop.position();
-      };
-      bibleService.getVerses(bibleRef, displayText);
-    });
-  };
-}
-
-function linkifyText(text, bibleRefs) {
-  var linkifiedNodes = [];
-  bibleRefs.sort(function (a, b) { return a.pos - b.pos; });
-  while (bibleRefs.length > 0) {
-    var bibleRef = bibleRefs.shift();
-    var items = splitFirst(text, bibleRef.text);
-    if (items[0]) {
-      linkifiedNodes.push(document.createTextNode(items[0]));
-    }
-    linkifiedNodes.push(createLink(bibleRef));
-    text = items[1];
-  }
-  if (text) {
-    linkifiedNodes.push(document.createTextNode(text));
-  }
-  return linkifiedNodes;
-}
-
-function createLink(bibleRef) {
-  var link = document.createElement('a');
-  link.innerText = bibleRef.text;
-  link.dataset.ezraRef = JSON.stringify(bibleRef);
-  return link;
-}
-
-function splitFirst(str, sep) {
-  var items = str.split(sep);
-  return [items.shift(), items.join(sep)];
-}
-
-/**
- * Gets all text nodes inside the DOM tree of a node.
- * @param {Node} node A DOM node.
- * @returns {Node[]} List of text nodes.
- */
-function getTextNodesIn(node) {
-  var textNodes = [];
-  /**
-   * Recursively collects all text nodes inside the DOM tree of a node.
-   * @param {Node} node A DOM node.
-   */
-  function getTextNodes(node) {
-    if (node.nodeType == 3) {
-      textNodes.push(node);
-    } else {
-      for (var i = 0; i < node.childNodes.length; i++) {
-        getTextNodes(node.childNodes[i]);
-      }
-    }
-  }
-  getTextNodes(node);
-  return textNodes;
-}
-
-/**
- * Replaces a old node with new nodes.
- * @param {Node} oldNode A node to be replaced.
- * @param {Node[]} newNodes New nodes to be inserted.
- */
-function replaceWithNodes(oldNode, newNodes) {
-  for (var i = newNodes.length - 1; i > 0; i--) {
-    oldNode.parentNode.insertBefore(newNodes[i], oldNode.nextSibling);
-  }
-  oldNode.parentNode.replaceChild(newNodes[0], oldNode);
-}
-
-},{"./bible-ref-detector":1,"./bibleService":2,"./drop.js":4,"./lang/resources":6}],6:[function(require,module,exports){
-module.exports = {
-  res: {},
-  set: function (res) {
-    for (var key in res) {
-      if (res.hasOwnProperty(key)) {
-        this[key] = res[key];
-      }
-    }
-    // traditional Chinese and simplified Chinese parser cannot exist at the same time,
-    // because words like '出', '利', '伯' can both be traditional or simplified Chinese
-    var books = Object.keys(this.abbr);
-    // remove /[一二三]/ to avoid mismatch with '約一', '約二', '約三'
-    var abbrs = Object.values(this.abbr).filter(function (abbr) { return !abbr.match(/[一二三]/); });
-    this.namesOfAllBooks = books.concat(abbrs).join('|');
-  },
-  add: function (lang, res) {
-    this.set(res);
-    this.res[lang] = res;
-  },
-  setLang: function (lang) {
-    var langRes = this.res[lang];
-    this.set(langRes);
-  }
-};
-},{}],7:[function(require,module,exports){
-module.exports = Object.freeze({
-  abbr: {
-    创世记: '创',
-    出埃及记: '出',
-    利未记: '利',
-    民数记: '民',
-    申命记: '申',
-    约书亚记: '书',
-    士师记: '士',
-    路得记: '得',
-    撒母耳记上: '撒上',
-    撒母耳记下: '撒下',
-    列王纪上: '王上',
-    列王纪下: '王下',
-    历代志上: '代上',
-    历代志下: '代下',
-    以斯拉记: '拉',
-    尼希米记: '尼',
-    以斯帖记: '斯',
-    约伯记: '伯',
-    诗篇: '诗',
-    箴言: '箴',
-    传道书: '传',
-    雅歌: '歌',
-    以赛亚书: '赛',
-    耶利米书: '耶',
-    耶利米哀歌: '哀',
-    以西结书: '结',
-    但以理书: '但',
-    何西阿书: '何',
-    约珥书: '珥',
-    阿摩司书: '摩',
-    俄巴底亚书: '俄',
-    约拿书: '拿',
-    弥迦书: '弥',
-    那鸿书: '鸿',
-    哈巴谷书: '哈',
-    西番雅书: '番',
-    哈该书: '该',
-    撒迦利亚书: '亚',
-    玛拉基书: '玛',
-    马太福音: '太',
-    马可福音: '可',
-    路加福音: '路',
-    约翰福音: '约',
-    使徒行传: '徒',
-    罗马书: '罗',
-    哥林多前书: '林前',
-    哥林多后书: '林后',
-    加拉太书: '加',
-    以弗所书: '弗',
-    腓立比书: '腓',
-    歌罗西书: '西',
-    帖撒罗尼迦前书: '帖前',
-    帖撒罗尼迦后书: '帖后',
-    提摩太前书: '提前',
-    提摩太后书: '提后',
-    提多书: '多',
-    腓利门书: '门',
-    希伯来书: '来',
-    雅各书: '雅',
-    彼得前书: '彼前',
-    彼得后书: '彼后',
-    约翰壹书: '约一',
-    约翰贰书: '约二',
-    约翰叁书: '约三',
-    犹大书: '犹',
-    启示录: '启',
-
-    哥前: '林前',
-    哥后: '林后',
-    歌前: '林前',
-    歌后: '林后',
-    希: '来',
-    约翰一书: '约一',
-    约翰二书: '约二',
-    约翰三书: '约三',
-    约翰参书: '约三',
-    约壹: '约一',
-    约贰: '约二',
-    约叁: '约三',
-    约参: '约三'
-  },
-  singleChapterBooks: '俄巴底亚书|俄|腓利门书|门|犹大书|犹|约翰二书|约翰三书|约翰贰书|约翰叁书|约翰参书|约贰|约叁|约参',
-  loading: '载入中',
-  connectFail: '无法连上伺服器。 ',
-  verseNotFound: '未能查訽经文。',
-  refInvalid: '找不到记录！圣经中没有这章节。',
-  fhl_gb: 1
-});
-},{}],8:[function(require,module,exports){
-module.exports = Object.freeze({
-  abbr: {
-    創世記: '創',
-    出埃及記: '出',
-    利未記: '利',
-    民數記: '民',
-    申命記: '申',
-    約書亞記: '書',
-    士師記: '士',
-    路得記: '得',
-    撒母耳記上: '撒上',
-    撒母耳記下: '撒下',
-    列王紀上: '王上',
-    列王紀下: '王下',
-    歷代志上: '代上',
-    歷代志下: '代下',
-    以斯拉記: '拉',
-    尼希米記: '尼',
-    以斯帖記: '斯',
-    約伯記: '伯',
-    詩篇: '詩',
-    箴言: '箴',
-    傳道書: '傳',
-    雅歌: '歌',
-    以賽亞書: '賽',
-    耶利米書: '耶',
-    耶利米哀歌: '哀',
-    以西結書: '結',
-    但以理書: '但',
-    何西阿書: '何',
-    約珥書: '珥',
-    阿摩司書: '摩',
-    俄巴底亞書: '俄',
-    約拿書: '拿',
-    彌迦書: '彌',
-    那鴻書: '鴻',
-    哈巴谷書: '哈',
-    西番雅書: '番',
-    哈該書: '該',
-    撒迦利亞書: '亞',
-    瑪拉基書: '瑪',
-    馬太福音: '太',
-    馬可福音: '可',
-    路加福音: '路',
-    約翰福音: '約',
-    使徒行傳: '徒',
-    羅馬書: '羅',
-    哥林多前書: '林前',
-    哥林多後書: '林後',
-    加拉太書: '加',
-    以弗所書: '弗',
-    腓立比書: '腓',
-    歌羅西書: '西',
-    帖撒羅尼迦前書: '帖前',
-    帖撒羅尼迦後書: '帖後',
-    提摩太前書: '提前',
-    提摩太後書: '提後',
-    提多書: '多',
-    腓利門書: '門',
-    希伯來書: '來',
-    雅各書: '雅',
-    彼得前書: '彼前',
-    彼得後書: '彼後',
-    約翰壹書: '約一',
-    約翰貳書: '約二',
-    約翰叁書: '約三',
-    猶大書: '猶',
-    啟示錄: '啟',
-
-    哥前: '林前',
-    哥後: '林後',
-    歌前: '林前',
-    歌後: '林後',
-    希: '來',
-    約翰一書: '約一',
-    約翰二書: '約二',
-    約翰三書: '約三',
-    約翰參書: '約三',
-    約壹: '約一',
-    約貳: '約二',
-    約叁: '約三',
-    約參: '約三',
-    啓示錄: '啟',
-    啓: '啟'
-  },
-  singleChapterBooks: '俄巴底亞書|俄|腓利門書|門|猶大書|猶|約翰二書|約翰三書|約翰貳書|約翰叁書|約翰參書|約貳|約叁|約參',
-  loading: '載入中',
-  connectFail: '無法連上伺服器。',
-  verseNotFound: '未能查訽經文。',
-  refInvalid: '找不到記錄！聖經中沒有這章節。',
-  fhl_gb: 0
-});
-},{}],9:[function(require,module,exports){
-/*! Ezra - Linkifiy Chinese Bible Reference <https://kenhung.github.io/Ezra/>
-    Copyright (C) 2016  Ken Hung
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-(function (ezraLinkifier, undefined) {
-  ezraLinkifier.linkify = require('./ezra');
-}(window.ezraLinkifier = window.ezraLinkifier || {}));
-
-},{"./ezra":5}],10:[function(require,module,exports){
-/*! tether 1.3.3 */
-// (c) HubSpot https://github.com/HubSpot/tether/blob/master/LICENSE
-
-module.exports = (function() {
+}(this, function() {
 
 'use strict';
 
@@ -1206,15 +598,19 @@ function getActualBoundingClientRect(node) {
     rect[k] = boundingRect[k];
   }
 
-  if (node.ownerDocument !== document) {
-    var _frameElement = node.ownerDocument.defaultView.frameElement;
-    if (_frameElement) {
-      var frameRect = getActualBoundingClientRect(_frameElement);
-      rect.top += frameRect.top;
-      rect.bottom += frameRect.top;
-      rect.left += frameRect.left;
-      rect.right += frameRect.left;
+  try {
+    if (node.ownerDocument !== document) {
+      var _frameElement = node.ownerDocument.defaultView.frameElement;
+      if (_frameElement) {
+        var frameRect = getActualBoundingClientRect(_frameElement);
+        rect.top += frameRect.top;
+        rect.bottom += frameRect.top;
+        rect.left += frameRect.left;
+        rect.right += frameRect.left;
+      }
     }
+  } catch (err) {
+    // Ignore "Access is denied" in IE11/Edge
   }
 
   return rect;
@@ -1248,7 +644,7 @@ function getScrollParents(el) {
     var overflowX = _style.overflowX;
     var overflowY = _style.overflowY;
 
-    if (/(auto|scroll)/.test(overflow + overflowY + overflowX)) {
+    if (/(auto|scroll|overlay)/.test(overflow + overflowY + overflowX)) {
       if (position !== 'absolute' || ['relative', 'absolute', 'fixed'].indexOf(style.position) >= 0) {
         parents.push(parent);
       }
@@ -1279,7 +675,7 @@ var getOrigin = function getOrigin() {
   // are equivilant or not.  We place an element at the top left of the page that will
   // get the same jitter, so we can cancel the two out.
   var node = zeroElement;
-  if (!node) {
+  if (!node || !document.body.contains(node)) {
     node = document.createElement('div');
     node.setAttribute('data-tether-id', uniqueId());
     extend(node.style, {
@@ -1350,7 +746,11 @@ function getOffsetParent(el) {
   return el.offsetParent || document.documentElement;
 }
 
+var _scrollBarSize = null;
 function getScrollBarSize() {
+  if (_scrollBarSize) {
+    return _scrollBarSize;
+  }
   var inner = document.createElement('div');
   inner.style.width = '100%';
   inner.style.height = '200px';
@@ -1383,7 +783,8 @@ function getScrollBarSize() {
 
   var width = widthContained - widthScroll;
 
-  return { width: width, height: width };
+  _scrollBarSize = { width: width, height: width };
+  return _scrollBarSize;
 }
 
 function extend() {
@@ -1642,7 +1043,7 @@ var position = function position() {
 };
 
 function now() {
-  if (typeof performance !== 'undefined' && typeof performance.now !== 'undefined') {
+  if (typeof performance === 'object' && typeof performance.now === 'function') {
     return performance.now();
   }
   return +new Date();
@@ -2226,12 +1627,12 @@ var TetherClass = (function (_Evented) {
       var win = doc.defaultView;
 
       var scrollbarSize = undefined;
-      if (doc.body.scrollWidth > win.innerWidth) {
+      if (win.innerHeight > doc.documentElement.clientHeight) {
         scrollbarSize = this.cache('scrollbar-size', getScrollBarSize);
         next.viewport.bottom -= scrollbarSize.height;
       }
 
-      if (doc.body.scrollHeight > win.innerHeight) {
+      if (win.innerWidth > doc.documentElement.clientWidth) {
         scrollbarSize = this.cache('scrollbar-size', getScrollBarSize);
         next.viewport.right -= scrollbarSize.width;
       }
@@ -2352,7 +1753,12 @@ var TetherClass = (function (_Evented) {
             xPos = -_pos.right;
           }
 
-          css[transformKey] = 'translateX(' + Math.round(xPos) + 'px) translateY(' + Math.round(yPos) + 'px)';
+          if (typeof window.devicePixelRatio === 'number' && devicePixelRatio % 1 === 0) {
+            xPos = Math.round(xPos * devicePixelRatio) / devicePixelRatio;
+            yPos = Math.round(yPos * devicePixelRatio) / devicePixelRatio;
+          }
+
+          css[transformKey] = 'translateX(' + xPos + 'px) translateY(' + yPos + 'px)';
 
           if (transformKey !== 'msTransform') {
             // The Z transform will keep this in the GPU (faster, and prevents artifacts),
@@ -2404,20 +1810,33 @@ var TetherClass = (function (_Evented) {
       }
 
       if (!moved) {
-        var offsetParentIsBody = true;
-        var currentNode = this.element.parentNode;
-        while (currentNode && currentNode.nodeType === 1 && currentNode.tagName !== 'BODY') {
-          if (getComputedStyle(currentNode).position !== 'static') {
-            offsetParentIsBody = false;
-            break;
+        if (this.options.bodyElement) {
+          if (this.element.parentNode !== this.options.bodyElement) {
+            this.options.bodyElement.appendChild(this.element);
+          }
+        } else {
+          var isFullscreenElement = function isFullscreenElement(e) {
+            var d = e.ownerDocument;
+            var fe = d.fullscreenElement || d.webkitFullscreenElement || d.mozFullScreenElement || d.msFullscreenElement;
+            return fe === e;
+          };
+
+          var offsetParentIsBody = true;
+
+          var currentNode = this.element.parentNode;
+          while (currentNode && currentNode.nodeType === 1 && currentNode.tagName !== 'BODY' && !isFullscreenElement(currentNode)) {
+            if (getComputedStyle(currentNode).position !== 'static') {
+              offsetParentIsBody = false;
+              break;
+            }
+
+            currentNode = currentNode.parentNode;
           }
 
-          currentNode = currentNode.parentNode;
-        }
-
-        if (!offsetParentIsBody) {
-          this.element.parentNode.removeChild(this.element);
-          this.element.ownerDocument.body.appendChild(this.element);
+          if (!offsetParentIsBody) {
+            this.element.parentNode.removeChild(this.element);
+            this.element.ownerDocument.body.appendChild(this.element);
+          }
         }
       }
 
@@ -2437,6 +1856,7 @@ var TetherClass = (function (_Evented) {
       if (write) {
         defer(function () {
           extend(_this8.element.style, writeCSS);
+          _this8.trigger('repositioned');
         });
       }
     }
@@ -2960,6 +2380,624 @@ TetherBase.modules.push({
 });
 return Tether;
 
-})();
+}));
 
-},{}]},{},[9]);
+},{}],3:[function(require,module,exports){
+var Resources = require('./lang/resources');
+Resources.add('zh-Hans', require('./lang/zh-Hans.js'));
+Resources.add('zh-Hant', require('./lang/zh-Hant.js'));
+
+var chiNumParser = require('./chinese-number-parser');
+var chapSep = '[:：︰篇章]';
+var versAnd = ',，、和及';
+var versTo = '\\-─–－—~～〜至';
+
+module.exports = function BibleRefDetector() {
+  var semiCol = ';；';
+
+  var booksPattern = '(' + Resources.namesOfAllBooks + ')';
+  var singleChapBooksPattern = '(' + Resources.singleChapterBooks + ')';
+  var chapPattern
+    = '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // separator is optional: 第四章21節 / 四21
+    + '|\\d+' + chapSep + ')'; // the separator is required for chapter digit (e.g. 4:)
+  var versPattern = '第?([' + versAnd + versTo + semiCol + '節节\\s\\d]*\\d)[節节]?';
+
+  var bibleRef = new RegExp(
+    booksPattern + '?' // books can be skipped for matching latter part of 約1:13;3:14
+    + '\\s?'
+    + chapPattern
+    + versPattern, 'g');
+
+  var singleChapBibleRef = new RegExp(
+    singleChapBooksPattern
+    + '\\s?'
+    + versPattern, 'g');
+
+  /**
+   * Converts text to text nodes with hyperlinks.
+   * @param {string} text Text to be linkified.
+   */
+  this.detect = function (text) {
+    var results = [];
+    var match;
+    var lastBook = '';
+    while ((match = bibleRef.exec(text)) !== null) {
+      var ref = match[0];
+      // check if verses accidentally matched the next Bible reference
+      // for references like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
+      var remaining = text.substring(bibleRef.lastIndex); // ":4" in the example
+      var verses = match[3].match(/\d+/g); // [2, 3] in the example
+      if (remaining.search(new RegExp('\\s?' + chapSep + versPattern)) === 0 && verses.length > 1) {
+        var redundantVers = new RegExp('[' + versAnd + semiCol + '\\s]+' + verses[verses.length - 1]); // ",3" in the example
+        var realRef = trimLast(ref, redundantVers);
+        bibleRef.lastIndex -= (ref.length - realRef.length);
+        ref = realRef;
+      }
+      var book = match[1] || lastBook;
+      if (book) {
+        results.push(new BibleRef(ref, match.index, book, match[2], match[3]));
+      }
+      else {
+        // if no book is provided (e.g. 4:11), there will be no link created
+      }
+      lastBook = book;
+    }
+    while ((match = singleChapBibleRef.exec(text)) !== null) {
+      results.push(new BibleRef(match[0], match.index, match[1], '1', match[2]));
+    }
+    return results;
+  };
+
+  function trimLast(ref, regex) {
+    var matches = ref.match(regex);
+    if (matches) {
+      var newIndex = ref.lastIndexOf(matches[matches.length - 1]);
+      return ref.substring(0, newIndex);
+    }
+    else {
+      return ref;
+    }
+  }
+};
+
+/**
+ * A Bible reference containing one or multiple verses.
+ */
+function BibleRef(text, pos, book, chap, vers) {
+  this.text = text;
+  this.pos = pos;
+
+  this.abbr = toAbbr(book);
+  this.chap = chiNumParser.parse(chap.replace(new RegExp(chapSep, 'g'), ''));
+  this.vers = readVers(vers);
+
+  this.refText = '(' + this.abbr + ' ' + this.chap + ':' + this.vers + ')';
+  this.lang = Resources.fhl_gb;
+
+  function toAbbr(book) {
+    return Resources.abbr[book] || book;
+  }
+
+  /**
+   * Converts or removes unsupported string for query. (e.g. '1，4' => '1,4' / '1及4節' => '1,4' / ...)
+   * @param {string} vers Verses string.
+   */
+  function readVers(vers) {
+    return vers
+      .replace(new RegExp('[' + versTo + ']', 'g'), '-')
+      .replace(new RegExp('[' + versAnd + ']', 'g'), ',')
+      .replace(/[節节\s]/g, '');
+  }
+}
+
+},{"./chinese-number-parser":5,"./lang/resources":7,"./lang/zh-Hans.js":8,"./lang/zh-Hant.js":9}],4:[function(require,module,exports){
+module.exports = new FHLBibleService();
+
+var BibleServiceError = Object.freeze({
+  'connectFail': 'connectFail',
+  'verseNotFound': 'verseNotFound',
+  'refInvalid': 'refInvalid',
+});
+
+/**
+ * Service for getting verses from FHL API (https://bible.fhl.net/json).
+ */
+function FHLBibleService() {
+  var versesCache = {};
+
+  /**
+   * Gets Bible text and attaches reference text at the end.
+   * @param {BibleRef} bibleRef Bible reference to query.
+   * @param {function(any): void} callback Callback for getting bible text.
+   */
+  this.getVerses = function (bibleRef, callback) {
+    var bibleRefStr = bibleRef.lang + bibleRef.refText;
+    if (versesCache.hasOwnProperty(bibleRefStr)) {
+      callback({ data: versesCache[bibleRefStr] + bibleRef.refText });
+    }
+    else {
+      var cacheSuccess = function (text) {
+        versesCache[bibleRefStr] = text;
+        callback({ data: text + bibleRef.refText });
+      };
+      var fail = function (errCode, errMsg) {
+        callback({ errCode: errCode, errMsg: errMsg });
+      };
+      getVersesFromFHL(bibleRef, cacheSuccess, fail);
+    }
+  };
+
+  /**
+   * Gets Bible text using FHL API and passes result to callback.
+   * @param {BibleRef} bibleRef Bible reference to query.
+   * @param {function(string): void} success Callback for successfully getting bible text.
+   * @param {function(string, any): void} fail Callback for failed query, error message will be passed as argument.
+   */
+  function getVersesFromFHL(bibleRef, success, fail) {
+    var xhr = new XMLHttpRequest();
+    xhr.onerror = function () {
+      fail(BibleServiceError.connectFail);
+    };
+    xhr.onload = function () {
+      if (xhr.status !== 200) {
+        fail(BibleServiceError.verseNotFound, 'XHR status = ' + xhr.status);
+        return;
+      }
+      try {
+        var resp = JSON.parse(xhr.responseText);
+        if (resp.status !== 'success') {
+          fail(BibleServiceError.verseNotFound, 'FHL response text = ' + xhr.responseText);
+          return;
+        } else if (resp.record.length === 0) {
+          fail(BibleServiceError.refInvalid);
+          return;
+        }
+        var versesText = '';
+        var lastSec = 0;
+        for (var i = 0; i < resp.record.length; i++) {
+          var record = resp.record[i];
+          // insert '⋯⋯' if verses are not continuous
+          if (i > 0 && record.sec > lastSec + 1) {
+            versesText += '⋯⋯';
+          }
+          lastSec = record.sec;
+          versesText += record.bible_text;
+        }
+        success(versesText);
+      } catch (err) {
+        fail(BibleServiceError.verseNotFound, err);
+      }
+    };
+    try {
+      var url = 'https://bible.fhl.net/json/qb.php?chineses=' + bibleRef.abbr
+        + '&chap=' + bibleRef.chap
+        + '&sec=' + bibleRef.vers
+        + '&gb=' + bibleRef.lang;
+      xhr.open('GET', url, true);
+      xhr.send();
+    }
+    catch (err) {
+      fail(BibleServiceError.verseNotFound, err);
+    }
+  }
+}
+},{}],5:[function(require,module,exports){
+var numVal = { '○': 0, 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+var expVal = { 十: 10, 廿: 20, 卅: 30, 卌: 40, 百: 100 };
+var nums = Object.keys(numVal);
+var exps = Object.keys(expVal);
+
+exports.supportedChars = nums.concat(exps).join('');
+
+/**
+ * Parses a Chinese number.
+ * @param {string} num A Chinese number.
+ */
+exports.parse = function (num) {
+  if (!isNaN(num)) {
+    return +num;
+  }
+  else {
+    if (containsExp(num)) {
+      var acc = [];
+      for (var i = 0; i < num.length; i++) {
+        var n = num[i];
+        if (isExp(n)) {
+          if (acc.length === 0) {
+            acc.push(1);
+          }
+          acc[acc.length - 1] *= expVal[n];
+        } else {
+          acc.push(numVal[n] || 0);
+        }
+      }
+      return sumOf(acc);
+    }
+    else {
+      var intStr = num.split('').map(function (n) { return numVal[n]; }).join('');
+      return parseInt(intStr, 10);
+    }
+  }
+};
+
+function containsExp(num) {
+  for (var i = 0; i < num.length; i++) {
+    if (expVal[num[i]]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isExp(num) { return expVal[num] ? true : false; }
+
+function sumOf(nums) {
+  var sum = 0;
+  for (var i = 0; i < nums.length; i++) {
+    sum += nums[i];
+  }
+  return sum;
+}
+
+},{}],6:[function(require,module,exports){
+var bibleService = require('./bibleService');
+var BibleRefReader = require('./bible-ref-detector');
+var Resources = require('./lang/resources');
+var Drop = require('tether-drop');
+
+/**
+ * Linkify all Bible references text within the DOM of the element.
+ * @param {Element} element HTML element to be linkified.
+ */
+module.exports = function (element) {
+  var bibleRefReader = new BibleRefReader();
+
+  var textNodes = getTextNodesIn(element);
+  for (var i = 0; i < textNodes.length; i++) {
+    if (textNodes[i].parentNode.nodeName !== 'A') {
+      var bibleRefs = bibleRefReader.detect(textNodes[i].nodeValue);
+      if (bibleRefs.length > 0) {
+        var linkifiedNodes = linkifyText(textNodes[i].nodeValue, bibleRefs);
+        replaceWithNodes(textNodes[i], linkifiedNodes);
+      }
+    }
+  }
+  var ezraLinks = element.querySelectorAll('a[data-ezra-ref]');
+  for (i = 0; i < ezraLinks.length; i++) {
+    var link = ezraLinks[i];
+    var bibleRef = JSON.parse(link.dataset.ezraRef);
+    createDrop(link, bibleRef);
+  }
+};
+
+var _Drop = Drop.createContext({
+  classPrefix: 'ezra'
+});
+
+function createDrop(link, bibleRef) {
+  var drop = new _Drop({
+    classes: 'ezra-theme-arrows',
+    target: link,
+    content: document.createTextNode(Resources.loading + '...' + bibleRef.refText),
+    openOn: 'hover',
+    constrainToScrollParent: false,
+    tetherOptions: {
+      constraints: [
+        {
+          to: 'window',
+          attachment: 'together',
+          pin: ['left', 'right']
+        }
+      ]
+    }
+  });
+  drop.on('open', function () {
+    var linkSize = window.getComputedStyle(this.target).fontSize;
+    this.content.style.fontSize = linkSize;
+
+    var displayText = function (resp) {
+      var text = resp.data || Resources[resp.errCode];
+      drop.content.innerText = text;
+      drop.position();
+    };
+    bibleService.getVerses(bibleRef, displayText);
+  });
+}
+
+function linkifyText(text, bibleRefs) {
+  var linkifiedNodes = [];
+  bibleRefs.sort(function (a, b) { return a.pos - b.pos; });
+  while (bibleRefs.length > 0) {
+    var bibleRef = bibleRefs.shift();
+    var items = splitFirst(text, bibleRef.text);
+    if (items[0]) {
+      linkifiedNodes.push(document.createTextNode(items[0]));
+    }
+    linkifiedNodes.push(createLink(bibleRef));
+    text = items[1];
+  }
+  if (text) {
+    linkifiedNodes.push(document.createTextNode(text));
+  }
+  return linkifiedNodes;
+}
+
+function createLink(bibleRef) {
+  var link = document.createElement('a');
+  link.innerText = bibleRef.text;
+  link.dataset.ezraRef = JSON.stringify(bibleRef);
+  return link;
+}
+
+function splitFirst(str, sep) {
+  var items = str.split(sep);
+  return [items.shift(), items.join(sep)];
+}
+
+/**
+ * Gets all text nodes inside the DOM tree of a node.
+ * @param {Node} node A DOM node.
+ * @returns {Node[]} List of text nodes.
+ */
+function getTextNodesIn(node) {
+  var textNodes = [];
+  /**
+   * Recursively collects all text nodes inside the DOM tree of a node.
+   * @param {Node} node A DOM node.
+   */
+  function getTextNodes(node) {
+    if (node.nodeType == 3) {
+      textNodes.push(node);
+    } else {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        getTextNodes(node.childNodes[i]);
+      }
+    }
+  }
+  getTextNodes(node);
+  return textNodes;
+}
+
+/**
+ * Replaces a old node with new nodes.
+ * @param {Node} oldNode A node to be replaced.
+ * @param {Node[]} newNodes New nodes to be inserted.
+ */
+function replaceWithNodes(oldNode, newNodes) {
+  for (var i = newNodes.length - 1; i > 0; i--) {
+    oldNode.parentNode.insertBefore(newNodes[i], oldNode.nextSibling);
+  }
+  oldNode.parentNode.replaceChild(newNodes[0], oldNode);
+}
+
+},{"./bible-ref-detector":3,"./bibleService":4,"./lang/resources":7,"tether-drop":1}],7:[function(require,module,exports){
+module.exports = {
+  res: {},
+  set: function (res) {
+    for (var key in res) {
+      if (res.hasOwnProperty(key)) {
+        this[key] = res[key];
+      }
+    }
+    // traditional Chinese and simplified Chinese parser cannot exist at the same time,
+    // because words like '出', '利', '伯' can both be traditional or simplified Chinese
+    var books = Object.keys(this.abbr);
+    // remove /[一二三]/ to avoid mismatch with '約一', '約二', '約三'
+    var abbrs = Object.values(this.abbr).filter(function (abbr) { return !abbr.match(/[一二三]/); });
+    this.namesOfAllBooks = books.concat(abbrs).join('|');
+  },
+  add: function (lang, res) {
+    this.set(res);
+    this.res[lang] = res;
+  },
+  setLang: function (lang) {
+    var langRes = this.res[lang];
+    this.set(langRes);
+  }
+};
+},{}],8:[function(require,module,exports){
+module.exports = Object.freeze({
+  abbr: {
+    创世记: '创',
+    出埃及记: '出',
+    利未记: '利',
+    民数记: '民',
+    申命记: '申',
+    约书亚记: '书',
+    士师记: '士',
+    路得记: '得',
+    撒母耳记上: '撒上',
+    撒母耳记下: '撒下',
+    列王纪上: '王上',
+    列王纪下: '王下',
+    历代志上: '代上',
+    历代志下: '代下',
+    以斯拉记: '拉',
+    尼希米记: '尼',
+    以斯帖记: '斯',
+    约伯记: '伯',
+    诗篇: '诗',
+    箴言: '箴',
+    传道书: '传',
+    雅歌: '歌',
+    以赛亚书: '赛',
+    耶利米书: '耶',
+    耶利米哀歌: '哀',
+    以西结书: '结',
+    但以理书: '但',
+    何西阿书: '何',
+    约珥书: '珥',
+    阿摩司书: '摩',
+    俄巴底亚书: '俄',
+    约拿书: '拿',
+    弥迦书: '弥',
+    那鸿书: '鸿',
+    哈巴谷书: '哈',
+    西番雅书: '番',
+    哈该书: '该',
+    撒迦利亚书: '亚',
+    玛拉基书: '玛',
+    马太福音: '太',
+    马可福音: '可',
+    路加福音: '路',
+    约翰福音: '约',
+    使徒行传: '徒',
+    罗马书: '罗',
+    哥林多前书: '林前',
+    哥林多后书: '林后',
+    加拉太书: '加',
+    以弗所书: '弗',
+    腓立比书: '腓',
+    歌罗西书: '西',
+    帖撒罗尼迦前书: '帖前',
+    帖撒罗尼迦后书: '帖后',
+    提摩太前书: '提前',
+    提摩太后书: '提后',
+    提多书: '多',
+    腓利门书: '门',
+    希伯来书: '来',
+    雅各书: '雅',
+    彼得前书: '彼前',
+    彼得后书: '彼后',
+    约翰壹书: '约一',
+    约翰贰书: '约二',
+    约翰叁书: '约三',
+    犹大书: '犹',
+    启示录: '启',
+
+    哥前: '林前',
+    哥后: '林后',
+    歌前: '林前',
+    歌后: '林后',
+    希: '来',
+    约翰一书: '约一',
+    约翰二书: '约二',
+    约翰三书: '约三',
+    约翰参书: '约三',
+    约壹: '约一',
+    约贰: '约二',
+    约叁: '约三',
+    约参: '约三'
+  },
+  singleChapterBooks: '俄巴底亚书|俄|腓利门书|门|犹大书|犹|约翰二书|约翰三书|约翰贰书|约翰叁书|约翰参书|约贰|约叁|约参',
+  loading: '载入中',
+  connectFail: '无法连上伺服器。 ',
+  verseNotFound: '未能查訽经文。',
+  refInvalid: '找不到记录！圣经中没有这章节。',
+  fhl_gb: 1
+});
+},{}],9:[function(require,module,exports){
+module.exports = Object.freeze({
+  abbr: {
+    創世記: '創',
+    出埃及記: '出',
+    利未記: '利',
+    民數記: '民',
+    申命記: '申',
+    約書亞記: '書',
+    士師記: '士',
+    路得記: '得',
+    撒母耳記上: '撒上',
+    撒母耳記下: '撒下',
+    列王紀上: '王上',
+    列王紀下: '王下',
+    歷代志上: '代上',
+    歷代志下: '代下',
+    以斯拉記: '拉',
+    尼希米記: '尼',
+    以斯帖記: '斯',
+    約伯記: '伯',
+    詩篇: '詩',
+    箴言: '箴',
+    傳道書: '傳',
+    雅歌: '歌',
+    以賽亞書: '賽',
+    耶利米書: '耶',
+    耶利米哀歌: '哀',
+    以西結書: '結',
+    但以理書: '但',
+    何西阿書: '何',
+    約珥書: '珥',
+    阿摩司書: '摩',
+    俄巴底亞書: '俄',
+    約拿書: '拿',
+    彌迦書: '彌',
+    那鴻書: '鴻',
+    哈巴谷書: '哈',
+    西番雅書: '番',
+    哈該書: '該',
+    撒迦利亞書: '亞',
+    瑪拉基書: '瑪',
+    馬太福音: '太',
+    馬可福音: '可',
+    路加福音: '路',
+    約翰福音: '約',
+    使徒行傳: '徒',
+    羅馬書: '羅',
+    哥林多前書: '林前',
+    哥林多後書: '林後',
+    加拉太書: '加',
+    以弗所書: '弗',
+    腓立比書: '腓',
+    歌羅西書: '西',
+    帖撒羅尼迦前書: '帖前',
+    帖撒羅尼迦後書: '帖後',
+    提摩太前書: '提前',
+    提摩太後書: '提後',
+    提多書: '多',
+    腓利門書: '門',
+    希伯來書: '來',
+    雅各書: '雅',
+    彼得前書: '彼前',
+    彼得後書: '彼後',
+    約翰壹書: '約一',
+    約翰貳書: '約二',
+    約翰叁書: '約三',
+    猶大書: '猶',
+    啟示錄: '啟',
+
+    哥前: '林前',
+    哥後: '林後',
+    歌前: '林前',
+    歌後: '林後',
+    希: '來',
+    約翰一書: '約一',
+    約翰二書: '約二',
+    約翰三書: '約三',
+    約翰參書: '約三',
+    約壹: '約一',
+    約貳: '約二',
+    約叁: '約三',
+    約參: '約三',
+    啓示錄: '啟',
+    啓: '啟'
+  },
+  singleChapterBooks: '俄巴底亞書|俄|腓利門書|門|猶大書|猶|約翰二書|約翰三書|約翰貳書|約翰叁書|約翰參書|約貳|約叁|約參',
+  loading: '載入中',
+  connectFail: '無法連上伺服器。',
+  verseNotFound: '未能查訽經文。',
+  refInvalid: '找不到記錄！聖經中沒有這章節。',
+  fhl_gb: 0
+});
+},{}],10:[function(require,module,exports){
+/*! Ezra - Linkifiy Chinese Bible Reference <https://kenhung.github.io/Ezra/>
+    Copyright (C) 2016  Ken Hung
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+(function (ezraLinkifier, undefined) {
+  ezraLinkifier.linkify = require('./ezra');
+}(window.ezraLinkifier = window.ezraLinkifier || {}));
+
+},{"./ezra":6}]},{},[10]);
