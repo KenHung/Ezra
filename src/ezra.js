@@ -33,10 +33,11 @@ var _Drop = Drop.createContext({
 });
 
 function createDrop(link, bibleRef) {
+  var initText = Resources.loading + '...' + bibleRef.refText;
   var drop = new _Drop({
     classes: 'ezra-theme-arrows',
     target: link,
-    content: document.createTextNode(Resources.loading + '...' + bibleRef.refText),
+    content: document.createTextNode(initText),
     openOn: 'hover',
     constrainToScrollParent: false,
     tetherOptions: {
@@ -52,7 +53,8 @@ function createDrop(link, bibleRef) {
   drop.on('open', function () {
     var linkSize = window.getComputedStyle(this.target).fontSize;
     this.content.style.fontSize = linkSize;
-
+    
+    this.content.innerText = initText;
     var displayText = function (resp) {
       var text = resp.data || Resources[resp.errCode];
       drop.content.innerText = text;
