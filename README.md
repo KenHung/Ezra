@@ -24,27 +24,32 @@ This is the Ezra code base, there are two parts:
 | chromeExt | Chrome Extension specific code  |
 | docs      | GitHub Pages files              |
 | src       | Ezra core code base             |
+| test      | Unit and integration tests      |
+
+The code is organized in CommonJS modules, and browserify is used to bundle the files.
+The source files are written in ES5 except tests and chrome extension related code.
 
 ### Setup
 
 This project needs `npm` which comes with Node.js. 
-Although this project is purely frontend code 
-and Node.js is not required in runtime, 
-`npm` is needed to install dependencies and bundler 
-to create final output.
+Although this project is purely frontend code and Node.js is not required in runtime, 
+`npm` is needed to install dependencies and bundler to create final output.
 
 Once `npm` is installed, run `npm install` to install dependencies, 
-and `npm run build` to bundle all the scripts.
+some `npm` commands are available:
+* `npm run build` - build web widget
+* `npm run build-chrome-ext` - build Chrome Extension
+* `npm test` - run unit tests
 
 ### Deploying/Testing Chrome Extension
 
-* run `./build.sh` to create Chrome Extension
-* load `dist/unpacked` for testing
-* upload `dist/ext.zip` for release
+* run `npm run build-chrome-ext` to create Chrome Extension
+* load `chromeExt/dist/unpacked` for testing
+* upload `chromeExt/dist/ext.zip` for release
 
 ### Deploying Web Widget
 
-1. make sure ezra.js and ezra.sc.js are updated by gulp
+1. make sure ezra.js are updated by browserify
 2. `git tag -a <tag_name>` and `git push origin <tag_name>`
 3. update release page by `docs/index.md` if necessary
 4. update Ezra version and integrity by `update_config.sh`
