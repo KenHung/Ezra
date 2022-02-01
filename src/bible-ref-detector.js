@@ -73,7 +73,7 @@ module.exports = function BibleRefDetector() {
       return ref;
     }
   }
-}
+};
 
 /**
  * A Bible reference containing one or multiple verses.
@@ -102,5 +102,5 @@ function BibleRef(text, pos, book, chap, vers) {
       .replace(new RegExp('[' + versTo + ']', 'g'), '-')
       .replace(new RegExp('[' + versAnd + ']', 'g'), ',')
       .replace(/[節节\s]/g, '');
-  };
+  }
 }
