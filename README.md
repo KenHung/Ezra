@@ -37,6 +37,7 @@ Although this project is purely frontend code and Node.js is not required in run
 
 Once `npm` is installed, run `npm install` to install dependencies, 
 some `npm` commands are available:
+* `npm run watch` - create development version with sourcemap which can be used in debugging
 * `npm run build` - build web widget
 * `npm run build-chrome-ext` - build Chrome Extension
 * `npm test` - run unit tests

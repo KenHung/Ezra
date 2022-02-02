@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Chrome against localhost, with sourcemaps",
+            "name": "Launch with debugging",
             "type": "chrome",
             "request": "launch",
-            "url": "file:///Users/Ken/Desktop/Ezra/demo.html",
+            "file": "${workspaceFolder}/test/integration.html",
             "sourceMaps": true,
             "webRoot": "${workspaceRoot}"
         },
