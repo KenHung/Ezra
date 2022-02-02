@@ -1,13 +1,10 @@
 var resources = {
   res: {},
-  set: function (res) {
-    for (var key in res) {
-      this[key] = res[key];
-    }
-  },
   setLang: function (lang) {
     var langRes = this.res[lang];
-    this.set(langRes);
+    for (var key in langRes) {
+      this[key] = langRes[key];
+    }
   },
   getLocalAbbr: function (abbr) {
     return this.localAbbr[abbr] || abbr;
@@ -19,10 +16,10 @@ var resources = {
 
 addRes('zh-Hant', require('./resources/zh-Hant.json'));
 addRes('zh-Hans', require('./resources/zh-Hans.json'));
+resources.setLang('zh-Hant');
 
 module.exports = resources;
 
 function addRes(lang, res) {
-  resources.set(res);
   resources.res[lang] = res;
 }
