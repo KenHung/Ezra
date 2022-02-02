@@ -1,18 +1,19 @@
-var BibleRefDetector = require('../src/bible-ref-detector');
-var detector = new BibleRefDetector();
+var detectBibleRef = require('../src/bible-ref-detector');
 
 QUnit.test('single Bible reference', function (assert) {
   function test(ref, abbr, chap, vers) {
-    var bibleRef = detector.detect(ref)[0];
-    var actual = bibleRef.abbr + ' ' + bibleRef.chap + ':' + bibleRef.vers;
+    var bibleRef = detectBibleRef(ref)[0];
+    var actual = bibleRef ? (bibleRef.abbr + ' ' + bibleRef.chap + ':' + bibleRef.vers) : undefined;
     var expected = abbr + ' ' + chap + ':' + vers;
-    assert.strictEqual(actual, expected);
+    assert.strictEqual(actual, expected, `ref: ${ref}`);
   }
   test('出七16', '出', 7, '16');
   test('利未記 7:14', '利', 7, '14');
   test('猶3, 6', '猶', 1, '3,6');
+  test('Jude 3, 6', '猶', 1, '3,6');
   test('約壹一14', '約一', 1, '14');
   test('約一14', '約', 1, '14');
+  test('John 1:14', '約', 1, '14');
   test('創24：7，12，27，52', '創', 24, '7,12,27,52');
   test('創24：7、12、27、52', '創', 24, '7,12,27,52');
   test('約1: 1', '約', 1, '1');
@@ -25,13 +26,15 @@ QUnit.test('single Bible reference', function (assert) {
   test('希伯來書第四章8節', '來', 4, '8');
   test('詩篇一百一十八篇8至9節', '詩', 118, '8-9');
   test('詩一百○六篇25', '詩', 106, '25');
+  test('Ps 106:25', '詩', 106, '25');
+  test('Ps. 106:25', '詩', 106, '25');
   test('約叁1', '約三', 1, 1);
   test('約叁 5', '約三', 1, 5);
   test('阿摩司書5：21〜24', '摩', 5, '21-24');
 });
 
 QUnit.test('trim last comma', function (assert) {
-  var bibleRef = detector.detect('約四24，')[0];
+  var bibleRef = detectBibleRef('約四24，')[0];
   assert.strictEqual(bibleRef.text, '約四24');
   assert.strictEqual(bibleRef.abbr, '約');
   assert.strictEqual(bibleRef.chap, 4);
@@ -40,7 +43,7 @@ QUnit.test('trim last comma', function (assert) {
 
 QUnit.test('multiple Bible references in John', function (assert) {
   function test(text, expected, checkRef = false) {
-    var bibleRefs = detector.detect(text);
+    var bibleRefs = detectBibleRef(text);
     var actual = bibleRefs.map(b => b.text);
     assert.deepEqual(actual, expected);
     if (checkRef) {
@@ -66,7 +69,7 @@ QUnit.test('multiple Bible references in John', function (assert) {
 
 QUnit.test('multiple Bible references embedded', function (assert) {
   function test(text, expected) {
-    var bibleRefs = detector.detect(text);
+    var bibleRefs = detectBibleRef(text);
     var actual = bibleRefs.map(b => b.pos);
     assert.deepEqual(actual, expected);
   }
@@ -81,11 +84,12 @@ QUnit.test('multiple Bible references embedded', function (assert) {
 
 QUnit.test('no Bible reference', function (assert) {
   function test(text) {
-    var actual = detector.detect(text);
+    var actual = detectBibleRef(text);
     assert.deepEqual(actual, []);
   }
   test('約四，');
   test('李約 2013.11.17');
   test('四章8節');
   test('07:00-08:00');
+  test('Jba 1:1');
 });

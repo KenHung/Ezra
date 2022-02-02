@@ -21,7 +21,7 @@ function FHLBibleService() {
    */
   this.getVerses = function (bibleRef, callback) {
     var bibleRefStr = resources.fhl.gb + resources.refText(bibleRef);
-    if (versesCache.hasOwnProperty(bibleRefStr)) {
+    if (Object.hasOwnProperty.call(versesCache, bibleRefStr)) {
       callback({ data: versesCache[bibleRefStr] + resources.refText(bibleRef) });
     }
     else {

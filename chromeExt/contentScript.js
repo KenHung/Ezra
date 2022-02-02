@@ -1,7 +1,7 @@
 /* global chrome */
 const resources = require('../src/resources');
 const linkify = require('../src/ezra');
-const BibleRefDetector = require('../src/bible-ref-detector');
+const detectBibleRef = require('../src/bible-ref-detector');
 
 /**
  * Created for Chrome 73, since cross-origin requests are not allowed in content scripts.
@@ -25,8 +25,7 @@ chrome.runtime.onMessage.addListener(function (request) {
     var selection = window.getSelection();
     if (selection.rangeCount > 0) {
       var msg = attachMsg('querying', selection.getRangeAt(0));
-      var detector = new BibleRefDetector();
-      var bibleRefs = detector.detect(selection.toString());
+      var bibleRefs = detectBibleRef(selection.toString());
       if (bibleRefs.length > 0) {
         bibleService.getVerses(bibleRefs[0],
           resp => {

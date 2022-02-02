@@ -1,5 +1,5 @@
 var bibleService = require('./bible-service');
-var BibleRefReader = require('./bible-ref-detector');
+var detectBibleRef = require('./bible-ref-detector');
 var resources = require('./resources');
 var Drop = require('tether-drop');
 
@@ -8,12 +8,10 @@ var Drop = require('tether-drop');
  * @param {Element} element HTML element to be linkified.
  */
 module.exports = function (element) {
-  var bibleRefReader = new BibleRefReader();
-
   var textNodes = getTextNodesIn(element);
   for (var i = 0; i < textNodes.length; i++) {
     if (textNodes[i].parentNode.nodeName !== 'A') {
-      var bibleRefs = bibleRefReader.detect(textNodes[i].nodeValue);
+      var bibleRefs = detectBibleRef(textNodes[i].nodeValue);
       if (bibleRefs.length > 0) {
         var linkifiedNodes = linkifyText(textNodes[i].nodeValue, bibleRefs);
         replaceWithNodes(textNodes[i], linkifiedNodes);
