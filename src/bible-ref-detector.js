@@ -1,6 +1,4 @@
-var Resources = require('./lang/resources');
-Resources.add('zh-Hans', require('./lang/zh-Hans'));
-Resources.add('zh-Hant', require('./lang/zh-Hant'));
+var abbr = require('./resources/abbr-zh.json');
 
 var chiNumParser = require('./chinese-number-parser');
 var chapSep = '[:：︰篇章]';
@@ -10,28 +8,30 @@ var versTo = '\\-─–－—~～〜至';
 module.exports = function BibleRefDetector() {
   var semiCol = ';；';
 
-  var booksPattern = '(' + Resources.namesOfAllBooks + ')';
-  var singleChapBooksPattern = '(' + Resources.singleChapterBooks + ')';
   var chapPattern
     = '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // separator is optional: 第四章21節 / 四21
     + '|\\d+' + chapSep + ')'; // the separator is required for chapter digit (e.g. 4:)
   var versPattern = '第?([' + versAnd + versTo + semiCol + '節节\\s\\d]*\\d)[節节]?';
 
   var bibleRef = new RegExp(
-    booksPattern + '?' // books can be skipped for matching latter part of 約1:13;3:14
+    pattern(Object.keys(abbr)) + '?' // books can be skipped for matching latter part of 約1:13;3:14
     + '\\s?'
     + chapPattern
     + versPattern, 'g');
 
   var singleChapBibleRef = new RegExp(
-    singleChapBooksPattern
+    pattern(['俄', '門', '猶', '約二', '約三'])
     + '\\s?'
     + versPattern, 'g');
 
+  function pattern(books) {
+    return '(' + books.map(function (book) { return abbr[book].join('|'); }).join('|') + ')';
+  }
+
   /**
-   * Converts text to text nodes with hyperlinks.
-   * @param {string} text Text to be linkified.
-   */
+  * Converts text to text nodes with hyperlinks.
+  * @param {string} text Text to be linkified.
+  */
   this.detect = function (text) {
     var results = [];
     var match;
@@ -84,15 +84,18 @@ function BibleRef(text, pos, book, chap, vers) {
   this.text = text;
   this.pos = pos;
 
-  this.abbr = toAbbr(book);
+  this.abbr = toStdAbbr(book);
   this.chap = chiNumParser.parse(chap.replace(new RegExp(chapSep, 'g'), ''));
   this.vers = readVers(vers);
 
   this.refText = '(' + this.abbr + ' ' + this.chap + ':' + this.vers + ')';
-  this.lang = Resources.fhl_gb;
 
-  function toAbbr(book) {
-    return Resources.abbr[book] || book;
+  function toStdAbbr(book) {
+    for (var stdAbbr in abbr) {
+      if (abbr[stdAbbr].indexOf(book) >= 0) {
+        return stdAbbr;
+      }
+    }
   }
 
   /**
