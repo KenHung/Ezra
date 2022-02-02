@@ -8,6 +8,7 @@ npx browserify background.js > dist/tmp/background.js
 zip -j dist/ext.zip \
     manifest.json \
     *.html \
+    options.js \
     dist/tmp/*.js \
     ../dist/ezra-style.css \
     images/icon.png

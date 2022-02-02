@@ -1,5 +1,5 @@
 /* global chrome */
-const Resources = require('../src/lang/resources');
+const resources = require('../src/resources');
 const linkify = require('../src/ezra');
 const BibleRefDetector = require('../src/bible-ref-detector');
 
@@ -16,7 +16,7 @@ var bibleService = {
 
 chrome.storage.sync.get({ lang: 'zh-Hant' }, 
   items => {
-    Resources.setLang(items.lang);
+    resources.setLang(items.lang);
     linkify(document.body);
   });
 
@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener(function (request) {
               detachMsg(msg, 'copied');
             }
             else {
-              detachMsg(msg, Resources[resp.errCode]);
+              detachMsg(msg, resources[resp.errCode]);
             }
           });
       }
