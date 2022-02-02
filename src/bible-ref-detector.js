@@ -88,8 +88,6 @@ function BibleRef(text, pos, book, chap, vers) {
   this.chap = chiNumParser.parse(chap.replace(new RegExp(chapSep, 'g'), ''));
   this.vers = readVers(vers);
 
-  this.refText = '(' + this.abbr + ' ' + this.chap + ':' + this.vers + ')';
-
   function toStdAbbr(book) {
     for (var stdAbbr in abbr) {
       if (abbr[stdAbbr].indexOf(book) >= 0) {

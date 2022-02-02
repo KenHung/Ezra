@@ -33,7 +33,7 @@ var _Drop = Drop.createContext({
 });
 
 function createDrop(link, bibleRef) {
-  var initText = resources.loading + '...' + bibleRef.refText;
+  var initText = resources.loading + '...' + resources.refText(bibleRef);
   var drop = new _Drop({
     classes: 'ezra-theme-arrows',
     target: link,

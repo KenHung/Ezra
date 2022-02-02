@@ -8,6 +8,12 @@ var resources = {
   setLang: function (lang) {
     var langRes = this.res[lang];
     this.set(langRes);
+  },
+  getLocalAbbr: function (abbr) {
+    return this.localAbbr[abbr] || abbr;
+  },
+  refText: function (bibleRef) {
+    return '(' + this.getLocalAbbr(bibleRef.abbr) + ' ' + bibleRef.chap + ':' + bibleRef.vers + ')';
   }
 };
 

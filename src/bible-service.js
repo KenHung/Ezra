@@ -20,14 +20,14 @@ function FHLBibleService() {
    * @param {function(any): void} callback Callback for getting bible text.
    */
   this.getVerses = function (bibleRef, callback) {
-    var bibleRefStr = resources.fhl.gb + bibleRef.refText;
+    var bibleRefStr = resources.fhl.gb + resources.refText(bibleRef);
     if (versesCache.hasOwnProperty(bibleRefStr)) {
-      callback({ data: versesCache[bibleRefStr] + bibleRef.refText });
+      callback({ data: versesCache[bibleRefStr] + resources.refText(bibleRef) });
     }
     else {
       var cacheSuccess = function (text) {
         versesCache[bibleRefStr] = text;
-        callback({ data: text + bibleRef.refText });
+        callback({ data: text + resources.refText(bibleRef) });
       };
       var fail = function (errCode, errMsg) {
         callback({ errCode: errCode, errMsg: errMsg });
@@ -78,8 +78,7 @@ function FHLBibleService() {
       }
     };
     try {
-      var chineseAbbr = resources.fhl.chineses[bibleRef.abbr] || bibleRef.abbr;
-      var url = 'https://bible.fhl.net/json/qb.php?chineses=' + chineseAbbr
+      var url = 'https://bible.fhl.net/json/qb.php?chineses=' + resources.getLocalAbbr(bibleRef.abbr)
         + '&chap=' + bibleRef.chap
         + '&sec=' + bibleRef.vers
         + '&gb=' + resources.fhl.gb;
