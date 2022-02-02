@@ -1,6 +1,6 @@
 var bibleService = require('./bible-service');
 var BibleRefReader = require('./bible-ref-detector');
-var Resources = require('./lang/resources');
+var resources = require('./resources');
 var Drop = require('tether-drop');
 
 /**
@@ -33,7 +33,7 @@ var _Drop = Drop.createContext({
 });
 
 function createDrop(link, bibleRef) {
-  var initText = Resources.loading + '...' + bibleRef.refText;
+  var initText = resources.loading + '...' + bibleRef.refText;
   var drop = new _Drop({
     classes: 'ezra-theme-arrows',
     target: link,
@@ -56,7 +56,7 @@ function createDrop(link, bibleRef) {
     
     this.content.innerText = initText;
     var displayText = function (resp) {
-      var text = resp.data || Resources[resp.errCode];
+      var text = resp.data || resources[resp.errCode];
       drop.content.innerText = text;
       drop.position();
     };

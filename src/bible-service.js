@@ -1,3 +1,5 @@
+var resources = require('./resources');
+
 module.exports = new FHLBibleService();
 
 var BibleServiceError = Object.freeze({
@@ -18,7 +20,7 @@ function FHLBibleService() {
    * @param {function(any): void} callback Callback for getting bible text.
    */
   this.getVerses = function (bibleRef, callback) {
-    var bibleRefStr = bibleRef.lang + bibleRef.refText;
+    var bibleRefStr = resources.fhl.gb + bibleRef.refText;
     if (versesCache.hasOwnProperty(bibleRefStr)) {
       callback({ data: versesCache[bibleRefStr] + bibleRef.refText });
     }
@@ -76,10 +78,11 @@ function FHLBibleService() {
       }
     };
     try {
-      var url = 'https://bible.fhl.net/json/qb.php?chineses=' + bibleRef.abbr
+      var chineseAbbr = resources.fhl.chineses[bibleRef.abbr] || bibleRef.abbr;
+      var url = 'https://bible.fhl.net/json/qb.php?chineses=' + chineseAbbr
         + '&chap=' + bibleRef.chap
         + '&sec=' + bibleRef.vers
-        + '&gb=' + bibleRef.lang;
+        + '&gb=' + resources.fhl.gb;
       xhr.open('GET', url, true);
       xhr.send();
     }
