@@ -6,13 +6,13 @@ layout: index
 
 Ezra 能把聖經依據轉換成超連結，當鼠標在上時浮現經文，如：約 3:16；弗 2:1-3,5。
 
-* 標示網頁上的聖經依據
+* 同時標示網頁上的中、英文聖經依據
 * 可在Chrome上安裝
 * 設有網頁部件(Web Widget)，可自定義顏色/風格(需更改CSS)
 * 簡潔風格、無廣告/水印、獨立開發
 * [開放源代碼(GPLv3授權)](https://github.com/KenHung/Ezra)
 
-### 支援格式
+### 主要支援格式
 
 <table class="unchanged rich-diff-level-one">
 	<thead>
@@ -47,6 +47,12 @@ Ezra 能把聖經依據轉換成超連結，當鼠標在上時浮現經文，如
 			<td>以弗所書 2:1-3,5</td>
 			<td>以弗所書二章1至3及5節</td>
 			<td>Ephesians 2:1-3,5</td>
+		</tr>
+		<tr>
+			<td>简体</td>
+      <td>以弗所书 2:1-3,5</td>
+			<td>以弗所书二章1至3及5节</td>
+			<td></td>
 		</tr>
 		<tr>
 			<td>多章</td>
