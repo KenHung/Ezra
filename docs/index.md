@@ -4,7 +4,7 @@ layout: index
 
 ### 簡介
 
-Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5。試試把鼠標移到經文依據，你就會看到經文。
+Ezra 能把聖經依據轉換成超連結，當鼠標在上時浮現經文，如：約 3:16；弗 2:1-3,5。
 
 * 標示網頁上的聖經依據
 * 可在Chrome上安裝
@@ -15,40 +15,46 @@ Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5。試試把
 ### 支援格式
 
 <table class="unchanged rich-diff-level-one">
-  <thead>
-    <tr>
-      <th></th>
-      <th>[書卷][章]:[節]</th>
-      <th>[書卷][中文章][節]</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>單節</td>
-      <td>約 1:1</td>
-      <td>約一1</td>
-    </tr>
-    <tr>
-      <td>多節</td>
-      <td>約 1:1-5,7</td>
-      <td>約一1-5,7</td>
-    </tr>
-    <tr>
-      <td>不同標點</td>
-      <td>約 1：1–5，7</td>
-      <td>約一1～5、7</td>
-    </tr>
-    <tr>
-      <td>全寫</td>
-      <td>約翰福音 1:1-5,7</td>
-      <td>約翰福音一章1至5及7節</td>
-    </tr>
-    <tr>
-      <td>多章</td>
-      <td>約 1:1;2:1</td>
-      <td>約一1；二1</td>
-    </tr>
-  </tbody>
+	<thead>
+		<tr>
+			<th></th>
+			<th>[書卷][章]:[節]</th>
+			<th>[書卷][中文章][節]</th>
+			<th>[英文書卷][章]:[節]</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>單節</td>
+			<td>約 3:16</td>
+			<td>約三16</td>
+			<td>John 3:16</td>
+		</tr>
+		<tr>
+			<td>多節</td>
+			<td>弗 2:1-3,5</td>
+			<td>弗二1-3,5</td>
+			<td>Eph. 2:1-3,5</td>
+		</tr>
+		<tr>
+			<td>不同標點</td>
+			<td>弗 2：1–3，5</td>
+			<td>弗二1～3、5</td>
+			<td>Eph. 2:1~3,5</td>
+		</tr>
+		<tr>
+			<td>全寫</td>
+			<td>以弗所書 2:1-3,5</td>
+			<td>以弗所書二章1至3及5節</td>
+			<td>Ephesians 2:1-3,5</td>
+		</tr>
+		<tr>
+			<td>多章</td>
+			<td>約 1:29;3:16</td>
+			<td>約一29；三16</td>
+			<td>John 1:29;3:16</td>
+		</tr>
+	</tbody>
 </table>
 
 ### Chrome擴充功能
@@ -61,7 +67,7 @@ Ezra能標示網頁上的聖經依據，如：約 3:16；弗 2:1-2,5。試試把
 Ezra設有網頁部件，可供基督教網頁/部落格(blog)使用。這樣，網站的所有經文依據就會被標示，像本網頁一樣。
 
 * 支援繁體中文和簡體中文和合本
-* 支援一般網頁瀏覧器，最低支援IE9
+* 支援一般網頁瀏覧器
 * 網頁部件不會收集資料，所以沒有用戶統計
 * **安裝方法**：把以下代碼加入到網頁HTML的底部，```</body>```之前
 
@@ -77,11 +83,12 @@ Ezra設有網頁部件，可供基督教網頁/部落格(blog)使用。這樣，
 
 簡体中文和合本：
 
-    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.sc.js" 
-            integrity="sha384-{{ site.ezra.integrity_sc }}" 
+    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.js" 
+            integrity="sha384-{{ site.ezra.integrity }}" 
             crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
     <script>
+      ezraLinkifier.setLang('zh-Hans');
       ezraLinkifier.linkify(document.body);
     </script>
 
@@ -89,7 +96,6 @@ Ezra設有網頁部件，可供基督教網頁/部落格(blog)使用。這樣，
 
 ### 發表意見/問題
 
-* [GitHub留言](https://github.com/KenHung/Ezra/issues/new)
 * 電郵：<eiekenhung@gmail.com>
 
 ### 為什麼叫Ezra？
