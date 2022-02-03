@@ -6,20 +6,20 @@ chrome.contextMenus.create({
   contexts: ['selection']
 });
 
-chrome.contextMenus.onClicked.addListener(function (info) {
+chrome.contextMenus.onClicked.addListener((info) => {
   if (info.menuItemId === 'ezraMenu') {
     requestCopyVerse();
   }
 });
 
-chrome.commands.onCommand.addListener(function (command) {
+chrome.commands.onCommand.addListener((command) => {
   if (command === 'copy-verse') {
     requestCopyVerse();
   }
 });
 
 function requestCopyVerse() {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, 'copy-verse');
   });
 }

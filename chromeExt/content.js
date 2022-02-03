@@ -4,13 +4,13 @@ const linkify = require('../src/ezra');
 const detectBibleRef = require('../src/bible-ref-detector');
 const bibleService = require('../src/bible-service');
 
-chrome.storage.sync.get({ lang: 'zh-Hant' }, 
+chrome.storage.sync.get({ lang: 'zh-Hant' },
   items => {
     resources.setLang(items.lang);
     linkify(document.body);
   });
 
-chrome.runtime.onMessage.addListener(function (request) {
+chrome.runtime.onMessage.addListener((request) => {
   if (request === 'copy-verse') {
     var selection = window.getSelection();
     if (selection.rangeCount > 0) {

@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "__MSG_appName__",
   "description": "__MSG_appDesc__",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "default_locale": "zh_TW",
   "content_scripts": [
     {
@@ -10,7 +10,7 @@
         "<all_urls>"
       ],
       "js": [
-        "contentScript.js"
+        "content.js"
       ],
       "css": [
         "ezra-style.css"

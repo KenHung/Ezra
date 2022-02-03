@@ -3,11 +3,11 @@
 # to test locally, unzip bin/dist.zip and load bin/dist/
 rm -r dist
 mkdir -p dist/tmp
-npx browserify contentScript.js > dist/tmp/contentScript.js
-npx browserify background.js > dist/tmp/background.js
+npx browserify content.js --debug > dist/tmp/content.js
 zip -j dist/ext.zip \
     manifest.json \
     *.html \
+    background.js \
     options.js \
     dist/tmp/*.js \
     ../dist/ezra-style.css \
