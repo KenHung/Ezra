@@ -1,5 +1,4 @@
 /* global chrome */
-const bibleService = require('../src/bible-service');
 
 chrome.contextMenus.create({
   id: 'ezraMenu',
@@ -18,14 +17,6 @@ chrome.commands.onCommand.addListener(function (command) {
     requestCopyVerse();
   }
 });
-
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.contentScriptQuery === 'queryVers') {
-      bibleService.getVerses(request.bibleRef, sendResponse);
-      return true;
-    }
-  });
 
 function requestCopyVerse() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {

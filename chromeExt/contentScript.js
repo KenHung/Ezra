@@ -2,17 +2,7 @@
 const resources = require('../src/resources');
 const linkify = require('../src/ezra');
 const detectBibleRef = require('../src/bible-ref-detector');
-
-/**
- * Created for Chrome 73, since cross-origin requests are not allowed in content scripts.
- * So a message is sent to background page for cross-origin request.
- * https://www.chromium.org/Home/chromium-security/extension-content-script-fetches
- */
-var bibleService = {
-  getVerses: function (bibleRef, callback) {
-    chrome.runtime.sendMessage({ contentScriptQuery: 'queryVers', bibleRef: bibleRef }, callback);
-  }
-};
+const bibleService = require('../src/bible-service');
 
 chrome.storage.sync.get({ lang: 'zh-Hant' }, 
   items => {
