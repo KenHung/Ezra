@@ -45,7 +45,7 @@ module.exports = function detectBibleRef(text) {
     var remaining = text.substring(bibleRef.lastIndex); // ":4" in the example
     var verses = vers.match(/\d+/g); // [2, 3] in the example
     if (remaining.search(new RegExp('\\s?' + chapSep + versPattern)) === 0 && verses.length > 1) {
-      var redundantVers = new RegExp('[' + versAnd + semiCol + '\\s]+' + verses[verses.length - 1]); // ",3" in the example
+      var redundantVers = new RegExp('[' + versAnd + semiCol + '-\\s]+' + verses[verses.length - 1]); // ",3" in the example
       vers = trimLast(vers, redundantVers);
       var realRef = trimLast(ref, redundantVers);
       bibleRef.lastIndex -= (ref.length - realRef.length);
