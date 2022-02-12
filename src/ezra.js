@@ -64,7 +64,6 @@ function createDrop(link, bibleRef) {
 
 function linkifyText(text, bibleRefs) {
   var linkifiedNodes = [];
-  bibleRefs.sort(function (a, b) { return a.pos - b.pos; });
   while (bibleRefs.length > 0) {
     var bibleRef = bibleRefs.shift();
     var items = splitFirst(text, bibleRef.text);

@@ -12,33 +12,38 @@ var chapSep = '[:：︰篇章]';
 var versAnd = ',，、和及';
 var versTo = '\\-─–－—~～〜至';
 
-var chapPattern = '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // match chapter in Chinese  (e.g. 第四章 / 四)
-                + '|\\d+' + chapSep + ')'; // match chapter in Arabic numbers, separator is required (e.g. 4: / 4章)
+var pattern = {
+  book: function (books) {
+    return '(' + books.map(function (book) { return abbr[book].join('|'); }).join('|') + ')';
+  },
 
-var versPattern = '第?([\\s\\d' + versAnd + versTo + ';；節节]*\\d)[節节]?' // match verses (e.g. 第1節 / 1節至7節 / 1-5,6 / 1;3-5)
-                + '(?!\\s?' + chapSep + ')'; // prevent "約1:2,3" being matched for references like "約1:2,3:4"
+  chap: '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // match chapter in Chinese  (e.g. 第四章 / 四)
+      + '|\\d+' + chapSep + ')', // match chapter in Arabic numbers, separator is required (e.g. 4: / 4章)
 
-var bibleRef = new RegExp(
-  pattern(Object.keys(abbr)) + '?' // match books, which can be skipped like 約1:13;3:14
-  + '\\s?' + chapPattern + versPattern
-  + '(?:[' + versTo + ']' + chapPattern + versPattern + ')?', 'g'); // match verses across multiple chapters (e.g. John 3:16-4:1)
+  vers: '第?([\\s\\d' + versAnd + versTo + ';；節节]*\\d)[節节]?' // match verses (e.g. 第1節 / 1節至7節 / 1-5,6 / 1;3-5)
+      + '(?!\\s?' + chapSep + ')' // prevent "約1:2,3" being matched for references like "約1:2,3:4"
+};
 
-var singleChapBibleRef = new RegExp(
-  pattern(['俄', '門', '猶', '約二', '約三']) + '\\s?' + versPattern, 'g'); // match references without chapter (e.g. 2 John 5)
+var bibleRegex = {
+  full: new RegExp(
+    pattern.book(Object.keys(abbr)) + '?' // match books, which can be skipped like 約1:13;3:14
+    + '\\s?' + pattern.chap + pattern.vers
+    + '(?:[' + versTo + ']' + pattern.chap + pattern.vers + ')?', // match verses across multiple chapters (e.g. John 3:16-4:1))
+    'g'),
 
-function pattern(books) {
-  return '(' + books.map(function (book) { return abbr[book].join('|'); }).join('|') + ')';
-}
+  // match references without chapter (e.g. 2 John 5)
+  skipChap: new RegExp(pattern.book(['俄', '門', '猶', '約二', '約三']) + '\\s?' + pattern.vers, 'g')
+};
 
 /**
-* Converts text to text nodes with hyperlinks.
-* @param {string} text Text to be linkified.
-*/
+ * Converts text to text nodes with hyperlinks.
+ * @param {string} text Text to be linkified.
+ */
 module.exports = function detectBibleRef(text) {
   var results = [];
   var match;
   var lastBook = '';
-  while ((match = bibleRef.exec(text)) !== null) {
+  while ((match = bibleRegex.full.exec(text)) !== null) {
     var book = match[1] || lastBook;
     if (book) {
       results.push(new BibleRef(match[0], match.index, book, match[2], match[3]));
@@ -48,10 +53,10 @@ module.exports = function detectBibleRef(text) {
     }
     lastBook = book;
   }
-  while ((match = singleChapBibleRef.exec(text)) !== null) {
+  while ((match = bibleRegex.skipChap.exec(text)) !== null) {
     results.push(new BibleRef(match[0], match.index, match[1], '1', match[2]));
   }
-  return results;
+  return results.sort(function (a, b) { return a.pos - b.pos; });
 };
 
 /**
@@ -72,7 +77,7 @@ function BibleRef(text, pos, book, chap, vers) {
       }
     }
     for (stdAbbr in abbr) {
-      if (book.search(pattern([stdAbbr])) >= 0) {
+      if (book.search(pattern.book([stdAbbr])) >= 0) {
         return stdAbbr;
       }
     }
