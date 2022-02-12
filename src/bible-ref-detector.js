@@ -11,19 +11,20 @@ for (var book in abbr) {
 var chapSep = '[:：︰篇章]';
 var versAnd = ',，、和及';
 var versTo = '\\-─–－—~～〜至';
-var semiCol = ';；';
 
-var versPattern = '第?([\\s\\d' + versAnd + versTo + semiCol + '節节]*\\d)[節节]?';
+var chapPattern = '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // match chapter in Chinese  (e.g. 第四章 / 四)
+                + '|\\d+' + chapSep + ')'; // match chapter in Arabic numbers, separator is required (e.g. 4: / 4章)
+
+var versPattern = '第?([\\s\\d' + versAnd + versTo + ';；節节]*\\d)[節节]?' // match verses (e.g. 第1節 / 1節至7節 / 1-5,6 / 1;3-5)
+                + '(?!\\s?' + chapSep + ')'; // prevent "約1:2,3" being matched for references like "約1:2,3:4"
 
 var bibleRef = new RegExp(
-  pattern(Object.keys(abbr)) + '?' // books can be skipped for matching latter part of 約1:13;3:14
-  + '\\s?'
-  + '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // separator is optional: 第四章21節 / 四21
-  + '|\\d+' + chapSep + ')' // the separator is required for chapter digit (e.g. 4:)
-  + versPattern, 'g');
+  pattern(Object.keys(abbr)) + '?' // match books, which can be skipped like 約1:13;3:14
+  + '\\s?' + chapPattern + versPattern
+  + '(?:[' + versTo + ']' + chapPattern + versPattern + ')?', 'g'); // match verses across multiple chapters (e.g. John 3:16-4:1)
 
 var singleChapBibleRef = new RegExp(
-  pattern(['俄', '門', '猶', '約二', '約三']) + '\\s?' + versPattern, 'g');
+  pattern(['俄', '門', '猶', '約二', '約三']) + '\\s?' + versPattern, 'g'); // match references without chapter (e.g. 2 John 5)
 
 function pattern(books) {
   return '(' + books.map(function (book) { return abbr[book].join('|'); }).join('|') + ')';
@@ -38,22 +39,9 @@ module.exports = function detectBibleRef(text) {
   var match;
   var lastBook = '';
   while ((match = bibleRef.exec(text)) !== null) {
-    var ref = match[0];
-    var vers = match[3];
-    // check if verses accidentally matched the next Bible reference
-    // for references like "約1:2,3:4", the match is "約1:2,3", the ",3" should not be counted as match  
-    var remaining = text.substring(bibleRef.lastIndex); // ":4" in the example
-    var verses = vers.match(/\d+/g); // [2, 3] in the example
-    if (remaining.search(new RegExp('\\s?' + chapSep + versPattern)) === 0 && verses.length > 1) {
-      var redundantVers = new RegExp('[' + versAnd + semiCol + '-\\s]+' + verses[verses.length - 1]); // ",3" in the example
-      vers = trimLast(vers, redundantVers);
-      var realRef = trimLast(ref, redundantVers);
-      bibleRef.lastIndex -= (ref.length - realRef.length);
-      ref = realRef;
-    }
     var book = match[1] || lastBook;
     if (book) {
-      results.push(new BibleRef(ref, match.index, book, match[2], vers));
+      results.push(new BibleRef(match[0], match.index, book, match[2], match[3]));
     }
     else {
       // if no book is provided (e.g. 4:11), there will be no link created
@@ -65,17 +53,6 @@ module.exports = function detectBibleRef(text) {
   }
   return results;
 };
-
-function trimLast(ref, regex) {
-  var matches = ref.match(regex);
-  if (matches) {
-    var newIndex = ref.lastIndexOf(matches[matches.length - 1]);
-    return ref.substring(0, newIndex);
-  }
-  else {
-    return ref;
-  }
-}
 
 /**
  * A Bible reference containing one or multiple verses.
