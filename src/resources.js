@@ -10,7 +10,7 @@ var resources = {
     return this.localAbbr[abbr] || abbr;
   },
   refText: function (bibleRef) {
-    return '(' + this.getLocalAbbr(bibleRef.abbr) + ' ' + bibleRef.chap + ':' + bibleRef.vers + ')';
+    return '(' + this.getLocalAbbr(bibleRef.abbr) + ' ' + bibleRef.refsStr + ')';
   }
 };
 

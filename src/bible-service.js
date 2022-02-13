@@ -21,32 +21,49 @@ function FHLBibleService() {
    */
   this.getVerses = function (bibleRef, callback) {
     var bibleRefStr = resources.fhl.gb + resources.refText(bibleRef);
-    if (Object.hasOwnProperty.call(versesCache, bibleRefStr)) {
+    var cached = Object.hasOwnProperty.call(versesCache, bibleRefStr);
+    if (cached) {
       callback({ data: versesCache[bibleRefStr] + resources.refText(bibleRef) });
     }
     else {
-      var cacheSuccess = function (text) {
-        versesCache[bibleRefStr] = text;
-        callback({ data: text + resources.refText(bibleRef) });
+      var bibleText = [];
+      var success = function (chap, text) {
+        bibleText.push({ chap: chap, text: text });
+        if (bibleText.length == Object.keys(bibleRef.refs).length) {
+          bibleText.sort(function (a, b) { return a.chap - b.chap; });
+          versesCache[bibleRefStr] = bibleText.map(function (b) { return b.text; }).join('');
+          callback({ data: versesCache[bibleRefStr] + resources.refText(bibleRef) });
+        }
       };
       var fail = function (errCode, errMsg) {
         callback({ errCode: errCode, errMsg: errMsg });
       };
-      getVersesFromFHL(bibleRef, cacheSuccess, fail);
+      for (var chap in bibleRef.refs) {
+        var queryParams = {
+          chineses: resources.getLocalAbbr(bibleRef.abbr),
+          chap: chap,
+          sec: bibleRef.refs[chap],
+          gb: resources.fhl.gb
+        };
+        getVersesFromFHL(queryParams, success, fail);
+      }
     }
   };
 
   /**
    * Gets Bible text using FHL API and passes result to callback.
-   * @param {BibleRef} bibleRef Bible reference to query.
-   * @param {function(string): void} success Callback for successfully getting bible text.
+   * @param {Object} queryParams Bible reference to query.
+   * @param {function(int, string): void} success Callback for successfully getting bible text.
    * @param {function(string, any): void} fail Callback for failed query, error message will be passed as argument.
    */
-  function getVersesFromFHL(bibleRef, success, fail) {
+  function getVersesFromFHL(queryParams, success, fail) {
     var xhr = new XMLHttpRequest();
-    xhr.onerror = function () {
-      fail(BibleServiceError.connectFail);
-    };
+    var url = 'https://bible.fhl.net/json/qb.php?'
+      + 'chineses=' + queryParams.chineses
+      + '&chap=' + queryParams.chap
+      + '&sec=' + queryParams.sec
+      + '&gb=' + queryParams.gb;
+    xhr.open('GET', url, true);
     xhr.onload = function () {
       if (xhr.status !== 200) {
         fail(BibleServiceError.verseNotFound, 'XHR status = ' + xhr.status);
@@ -54,39 +71,34 @@ function FHLBibleService() {
       }
       try {
         var resp = JSON.parse(xhr.responseText);
-        if (resp.status !== 'success') {
-          fail(BibleServiceError.verseNotFound, 'FHL response text = ' + xhr.responseText);
-          return;
-        } else if (resp.record.length === 0) {
+        if (resp.record.length === 0) {
           fail(BibleServiceError.refInvalid);
           return;
         }
-        var versesText = '';
-        var lastSec = 0;
-        for (var i = 0; i < resp.record.length; i++) {
-          var record = resp.record[i];
-          // insert '⋯⋯' if verses are not continuous
-          if (i > 0 && record.sec > lastSec + 1) {
-            versesText += '⋯⋯';
-          }
-          lastSec = record.sec;
-          versesText += record.bible_text;
-        }
-        success(versesText);
+        var bibleText = concatBibleText(resp.record);
+        success(resp.record[0].chap, bibleText);
       } catch (err) {
         fail(BibleServiceError.verseNotFound, err);
       }
     };
-    try {
-      var url = 'https://bible.fhl.net/json/qb.php?chineses=' + resources.getLocalAbbr(bibleRef.abbr)
-        + '&chap=' + bibleRef.chap
-        + '&sec=' + bibleRef.vers
-        + '&gb=' + resources.fhl.gb;
-      xhr.open('GET', url, true);
-      xhr.send();
-    }
-    catch (err) {
-      fail(BibleServiceError.verseNotFound, err);
-    }
+    xhr.onerror = function () {
+      fail(BibleServiceError.connectFail);
+    };
+    xhr.send();
   }
+}
+
+function concatBibleText(records) {
+  var versesText = '';
+  var lastSec = 0;
+  for (var i = 0; i < records.length; i++) {
+    var record = records[i];
+    // insert '⋯⋯' if verses are not continuous
+    if (i > 0 && record.sec > lastSec + 1) {
+      versesText += '⋯⋯';
+    }
+    lastSec = record.sec;
+    versesText += record.bible_text;
+  }
+  return versesText;
 }
