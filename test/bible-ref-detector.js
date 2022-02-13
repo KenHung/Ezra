@@ -3,7 +3,7 @@ var detectBibleRef = require('../src/bible-ref-detector');
 QUnit.test('single Bible reference', function (assert) {
   function test(ref, abbr, chap, vers) {
     var bibleRef = detectBibleRef(ref)[0];
-    var actual = bibleRef ? (bibleRef.abbr + ' ' + bibleRef.chap + ':' + bibleRef.vers) : undefined;
+    var actual = bibleRef ? (bibleRef.abbr + ' ' + bibleRef.refsStr    ) : undefined;
     var expected = abbr + ' ' + chap + ':' + vers;
     assert.strictEqual(actual, expected, `ref: ${ref}`);
   }
@@ -37,28 +37,23 @@ QUnit.test('trim last comma', function (assert) {
   var bibleRef = detectBibleRef('約四24，')[0];
   assert.strictEqual(bibleRef.text, '約四24');
   assert.strictEqual(bibleRef.abbr, '約');
-  assert.strictEqual(bibleRef.chap, 4);
-  assert.strictEqual(bibleRef.vers, '24');
+  assert.deepEqual(bibleRef.refs, { 4: '24' });
 });
 
 QUnit.test('multiple Bible references in John', function (assert) {
-  function test(text, expected, checkRef = false) {
+  function test(text, expected, ...refs) {
     var bibleRefs = detectBibleRef(text);
     var actual = bibleRefs.map(b => b.text);
     assert.deepEqual(actual, expected);
-    if (checkRef) {
-      for (const b of bibleRefs) {
-        assert.ok(
-          `${b.abbr}${b.chap}:${b.vers}`.endsWith(b.text),
-          `verse of ${b.text} is wrong: ${b.vers}`);
-      }
+    if (refs.length > 0) {
+      var actualRefs = bibleRefs.map(b => b.refs);
+      assert.deepEqual(actualRefs, refs);
     }
   }
-  test('約1:1;2:1', ['約1:1', '2:1'], true);
-  test('約1:1,2:1', ['約1:1', '2:1'], true);
-  test('約1:2,2:1', ['約1:2', '2:1'], true);
-  test('約1:2-2:1', ['約1:2-2:1']);
-  test('約1:1;2', ['約1:1;2'], true);
+  test('約1:1;2:1', ['約1:1', '2:1'], { 1: '1' }, { 2: '1' });
+  test('約1:1,2:1', ['約1:1', '2:1'], { 1: '1' }, { 2: '1' });
+  test('約1:2,2:1', ['約1:2', '2:1'], { 1: '2' }, { 2: '1' });
+  test('約1:2-2:5', ['約1:2-2:5'], { 1: '2-200', 2: '1-5' });
   test('約一:1', ['約一:1']);
   test('約一:1－2', ['約一:1－2']);
   test('約一:1—2', ['約一:1—2']);

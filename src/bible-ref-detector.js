@@ -18,10 +18,10 @@ var pattern = {
   },
 
   chap: '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // match chapter in Chinese  (e.g. 第四章 / 四)
-      + '|\\d+' + chapSep + ')', // match chapter in Arabic numbers, separator is required (e.g. 4: / 4章)
+    + '|\\d+' + chapSep + ')', // match chapter in Arabic numbers, separator is required (e.g. 4: / 4章)
 
   vers: '第?([\\s\\d' + versAnd + versTo + ';；節节]*\\d)[節节]?' // match verses (e.g. 第1節 / 1節至7節 / 1-5,6 / 1;3-5)
-      + '(?!\\s?' + chapSep + ')' // prevent "約1:2,3" being matched for references like "約1:2,3:4"
+    + '(?!\\s?' + chapSep + ')' // prevent "約1:2,3" being matched for references like "約1:2,3:4"
 };
 
 var bibleRegex = {
@@ -46,7 +46,15 @@ module.exports = function detectBibleRef(text) {
   while ((match = bibleRegex.full.exec(text)) !== null) {
     var book = match[1] || lastBook;
     if (book) {
-      results.push(new BibleRef(match[0], match.index, book, match[2], match[3]));
+      var multiChap = match.length == 6;
+      var bibleRef;
+      if (multiChap) {
+        bibleRef = new BibleRef(match[0], match.index, book, match[2], match[3], match[4], match[5]);
+      }
+      else {
+        bibleRef = new BibleRef(match[0], match.index, book, match[2], match[3]);
+      }
+      results.push(bibleRef);
     }
     else {
       // if no book is provided (e.g. 4:11), there will be no link created
@@ -62,13 +70,31 @@ module.exports = function detectBibleRef(text) {
 /**
  * A Bible reference containing one or multiple verses.
  */
-function BibleRef(text, pos, book, chap, vers) {
+function BibleRef(text, pos, book, chap, vers, endChap, endVers) {
   this.text = text;
   this.pos = pos;
 
   this.abbr = toStdAbbr(book);
-  this.chap = chiNumParser.parse(chap.replace(new RegExp(chapSep, 'g'), ''));
-  this.vers = readVers(vers);
+
+  chap = toStdChap(chap);
+  vers = toStdVers(vers);
+  this.refs = {};
+  if (endChap && endVers) {
+    endChap = toStdChap(endChap);
+    endVers = toStdVers(endVers);
+
+    this.refs[chap] = vers + '-200';
+    for (var c = chap + 1; c < endChap; c++) {
+      this.refs[c] = '1-200';
+    }
+    this.refs[endChap] = '1-' + endVers;
+
+    this.refsStr = chap + ':' + vers + '-' + endChap + ':' + endVers;
+  }
+  else {
+    this.refs[chap] = vers;
+    this.refsStr = chap + ':' + vers;
+  }
 
   function toStdAbbr(book) {
     for (var stdAbbr in abbr) {
@@ -83,11 +109,15 @@ function BibleRef(text, pos, book, chap, vers) {
     }
   }
 
+  function toStdChap(chap) {
+    return chiNumParser.parse(chap.replace(new RegExp(chapSep, 'g'), ''));
+  }
+
   /**
    * Converts or removes unsupported string for query. (e.g. '1，4' => '1,4' / '1及4節' => '1,4' / ...)
    * @param {string} vers Verses string.
    */
-  function readVers(vers) {
+  function toStdVers(vers) {
     return vers
       .replace(new RegExp('[' + versTo + ']', 'g'), '-')
       .replace(new RegExp('[' + versAnd + ']', 'g'), ',')
