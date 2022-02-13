@@ -25,11 +25,14 @@ var pattern = {
 };
 
 var bibleRegex = {
-  full: new RegExp(
-    pattern.book(Object.keys(abbr)) + '?' // match books, which can be skipped like 約1:13;3:14
-    + '\\s?' + pattern.chap + pattern.vers
-    + '(?:[' + versTo + ']' + pattern.chap + pattern.vers + ')?', // match verses across multiple chapters (e.g. John 3:16-4:1))
-    'g'),
+  // match standard Bible references, and chapter can be skipped (e.g. 約1:13;3:14)
+  standard: new RegExp(
+    pattern.book(Object.keys(abbr)) + '?' + '\\s?' + pattern.chap + pattern.vers, 'g'),
+
+  // match verses across multiple chapters (e.g. John 3:16-4:1))
+  multiChap: new RegExp(
+    pattern.book(Object.keys(abbr)) + '\\s?' + pattern.chap + pattern.vers
+    + '[' + versTo + ']' + pattern.chap + pattern.vers, 'g'),
 
   // match references without chapter (e.g. 2 John 5)
   skipChap: new RegExp(pattern.book(['俄', '門', '猶', '約二', '約三']) + '\\s?' + pattern.vers, 'g')
@@ -43,18 +46,16 @@ module.exports = function detectBibleRef(text) {
   var results = [];
   var match;
   var lastBook = '';
-  while ((match = bibleRegex.full.exec(text)) !== null) {
+  while ((match = bibleRegex.multiChap.exec(text)) !== null) {
+    results.push(new BibleRef(match[0], match.index, match[1], match[2], match[3], match[4], match[5]));
+  }
+  while ((match = bibleRegex.standard.exec(text)) !== null) {
     var book = match[1] || lastBook;
-    if (book) {
-      var multiChap = match.length == 6;
-      var bibleRef;
-      if (multiChap) {
-        bibleRef = new BibleRef(match[0], match.index, book, match[2], match[3], match[4], match[5]);
-      }
-      else {
-        bibleRef = new BibleRef(match[0], match.index, book, match[2], match[3]);
-      }
-      results.push(bibleRef);
+    var notMatched = results.every(function (r) {
+      return match.index < r.pos || match.index >= r.pos + r.text.length;
+    });
+    if (book && notMatched) {
+      results.push(new BibleRef(match[0], match.index, book, match[2], match[3]));
     }
     else {
       // if no book is provided (e.g. 4:11), there will be no link created
