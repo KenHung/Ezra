@@ -88,11 +88,11 @@ Ezra設有網頁部件，可供基督教網頁/部落格(blog)使用。這樣，
 
 ```javascript
 <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.js" 
-		integrity="sha384-{{ site.ezra.integrity }}" 
-		crossorigin="anonymous"></script>
+        integrity="sha384-{{ site.ezra.integrity }}" 
+        crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
 <script>
-	ezraLinkifier.linkify(document.body);
+  ezraLinkifier.linkify(document.body);
 </script>
 ```
 
@@ -100,12 +100,12 @@ Ezra設有網頁部件，可供基督教網頁/部落格(blog)使用。這樣，
 
 ```javascript
 <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.js" 
-		integrity="sha384-{{ site.ezra.integrity }}" 
-		crossorigin="anonymous"></script>
+        integrity="sha384-{{ site.ezra.integrity }}" 
+        crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
 <script>
-	ezraLinkifier.setLang('zh-Hans');
-	ezraLinkifier.linkify(document.body);
+  ezraLinkifier.setLang('zh-Hans');
+  ezraLinkifier.linkify(document.body);
 </script>
 ```
 
