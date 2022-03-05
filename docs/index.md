@@ -86,24 +86,28 @@ Ezra設有網頁部件，可供基督教網頁/部落格(blog)使用。這樣，
 
 繁體中文和合本：
 
-    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.js" 
-            integrity="sha384-{{ site.ezra.integrity }}" 
-            crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
-    <script>
-      ezraLinkifier.linkify(document.body);
-    </script>
+```javascript
+<script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.js" 
+		integrity="sha384-{{ site.ezra.integrity }}" 
+		crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
+<script>
+	ezraLinkifier.linkify(document.body);
+</script>
+```
 
 簡体中文和合本：
 
-    <script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.js" 
-            integrity="sha384-{{ site.ezra.integrity }}" 
-            crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
-    <script>
-      ezraLinkifier.setLang('zh-Hans');
-      ezraLinkifier.linkify(document.body);
-    </script>
+```javascript
+<script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra.js" 
+		integrity="sha384-{{ site.ezra.integrity }}" 
+		crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.ezra.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
+<script>
+	ezraLinkifier.setLang('zh-Hans');
+	ezraLinkifier.linkify(document.body);
+</script>
+```
 
 另有[詳細安裝說明](https://github.com/KenHung/Ezra/wiki/%E8%A9%B3%E7%B4%B0%E5%AE%89%E8%A3%9D%E8%AA%AA%E6%98%8E)，您也可以[自訂版本](https://github.com/KenHung/Ezra/releases)。
 

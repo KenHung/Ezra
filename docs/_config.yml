@@ -1,11 +1,11 @@
 title: Ezra
-url: https://kenhung.github.io/
+url: https://kenhung.github.io
 lang: zh-HK
 google_site_verification: PYhdEOtL1ABCcNG2brki3l9SDQVpbO5QeUipWJb28U8
 github:
   is_project_page: true
-  repository_url: https://github.com/KenHung/Ezra/
-  owner_url: https://github.com/KenHung/
+  repository_url: https://github.com/KenHung/Ezra
+  owner_url: https://github.com/KenHung
   owner_name: Ken Hung
 ezra:
   version: 3.2
