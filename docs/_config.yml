@@ -1,10 +1,12 @@
-title: Ezra 自動聖經標示
+title: Ezra
+tagline: 中文聖經查詢工具
+url: https://kenhung.github.io/Ezra
 lang: zh-HK
-google-site-verification: PYhdEOtL1ABCcNG2brki3l9SDQVpbO5QeUipWJb28U8
+google_site_verification: PYhdEOtL1ABCcNG2brki3l9SDQVpbO5QeUipWJb28U8
 github:
   is_project_page: true
-  repository_url: https://kenhung.github.io/Ezra
-  owner_url: https://github.com/KenHung/Ezra
+  repository_url: https://github.com/KenHung/Ezra
+  owner_url: https://github.com/KenHung/
   owner_name: Ken Hung
 ezra:
   version: 3.2
