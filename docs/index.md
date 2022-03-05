@@ -1,5 +1,6 @@
 ---
 layout: index
+title: 中文聖經查詢工具
 ---
 
 ### 簡介
