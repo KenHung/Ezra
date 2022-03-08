@@ -1,14 +1,81 @@
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.myvariable }}.
 title: Ezra
-url: https://kenhung.github.io
-lang: zh-HK
+subtitle: 經文查詢工具
+description: >- # this means to ignore newlines until "baseurl:"
+  免費的中文聖經經文查詢工具：
+  把網頁上的中、英文聖經依據轉換成超連結，當鼠標在上時浮現經文；
+  通過關鍵字的意思搜尋聖經中含有近義詞的經文。
+github_username: kenhung
+minimal_mistakes_skin: default
+search: false
+locale: zh-HK
 google_site_verification: PYhdEOtL1ABCcNG2brki3l9SDQVpbO5QeUipWJb28U8
-github:
-  is_project_page: true
-  repository_url: https://github.com/KenHung/Ezra
-  owner_url: https://github.com/KenHung
-  owner_name: Ken Hung
-ezra:
-  version: 3.2
-  integrity: kVFpui/QIbzb/ptM/MkYo+MNKX24PUVJwldqzR7LKCwn2j7bi1zfiIt6PKy1F9Ku
 
-theme: jekyll-theme-cayman
+# Build settings
+markdown: kramdown
+remote_theme: mmistakes/minimal-mistakes@4.24.0
+# Outputting
+permalink: /:categories/:title/
+paginate: 5 # amount of posts to show
+paginate_path: /page:num/
+timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+include:
+  - _pages
+
+# Plugins (previously gems:)
+plugins:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jemoji
+  - jekyll-include-cache
+
+author:
+  name: Ken
+  bio: 如果有任何意見/問題，歡迎聯絡！
+  links:
+    - label: 電郵
+      icon: "fas fa-fw fa-envelope-square"
+      url: mailto:eiekenhung@gmail.com
+    - label: GitHub
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/KenHung/"
+
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/KenHung/Ezra/"
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+  # _pages
+  - scope:
+      path: "_pages"
+      type: pages
+    values:
+      layout: single
+      author_profile: false
+
+category_archive:
+  type: liquid
+  path: /categories/
+tag_archive:
+  type: liquid
+  path: /tags/

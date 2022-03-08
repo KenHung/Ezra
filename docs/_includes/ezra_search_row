@@ -1,0 +1,53 @@
+{% if include.id %}
+  {% assign ezra_search_row = page[include.id] %}
+{% else %}
+  {% assign ezra_search_row = page.ezra_search_row %}
+{% endif %}
+
+<div class="feature__wrapper">
+
+  {% for f in ezra_search_row %}
+    <div class="feature__item{% if include.type %}--{{ include.type }}{% endif %}">
+      <div class="archive__item">
+        {% if f.image_path %}
+          <div class="archive__item-teaser">
+            <img src="{{ f.image_path | relative_url }}"
+                 alt="{% if f.alt %}{{ f.alt }}{% endif %}">
+            {% if f.image_caption %}
+              <span class="archive__item-caption">{{ f.image_caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <div class="archive__item-body ezra-search-demo">
+          {% if f.title %}
+            <h2 class="archive__item-title">{{ f.title }}</h2>
+          {% endif %}
+
+          <div class="archive__item-excerpt">
+            {% if f.excerpt %}
+              {{ f.excerpt | markdownify }}
+            {% endif %}
+            <form action="{{ f.url }}" target="_blank">
+              <div id="ezra-search-bar">
+                <input id="search-box" name="q" ref="keyword" type="search" role="textbox"
+                      inputmode="search" aria-label="Search" value="喜樂 事奉" autocomplete="off">
+                <span style="position: absolute; top: 5px; left: 10px; z-index: 10; color: grey;">
+                  <i class="fas fa-search"></i>
+                </span>
+              </div>
+            </form>
+            <p>以上搜尋包含以下結果：</p>
+          </div>
+
+          <p class="notice">⋯因為你富有的時候，不<span style="color: #ea4335;">歡心</span>樂意地<span style="color: #ea4335;">事奉</span>耶和華─你的神⋯</p>
+          <p class="notice">希該<span style="color: #ea4335;">喜悅</span>以斯帖，就恩待她，急忙給她需用的香品和她所當得的分，又派所當得的七個宮女<span style="color: #ea4335;">服事</span>她⋯</p>
+          {% if f.url %}
+            <p><a href="{{ f.url | relative_url }}" target="_blank" class="btn {{ f.btn_class }}">{{ f.btn_label | default: site.data.ui-text[site.locale].more_label | default: "Learn More" }}</a></p>
+          {% endif %}
+      </div>
+      </div>
+    </div>
+  {% endfor %}
+
+</div>

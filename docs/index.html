@@ -1,0 +1,36 @@
+---
+layout: splash
+title: 中文聖經經文查詢
+header:
+  overlay_color: "#000"
+  overlay_filter: "0.5"
+  overlay_image: /assets/images/splash.jpg
+  caption: Photo by [Aaron Burden](https://unsplash.com/@aaronburden?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/bible-study?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+excerpt: Ezra 是免費的中文聖經經文查詢工具，功能包括網頁經文標示，和關聯經文搜尋。
+description: >-
+  免費的中文聖經經文查詢工具：
+  把網頁上的中、英文聖經依據轉換成超連結，當鼠標在上時浮現經文；
+  通過關鍵字的意思搜尋聖經中含有近義詞的經文。
+feature_row:
+  - image_path: /assets/images/lookup.jpg
+    title: 網頁經文標示
+    excerpt: |
+      把網頁上的聖經依據轉換成超連結，當鼠標在上時浮現經文，如：約 3:16；弗 2:1-3,5。
+      * 同時標示網頁上的中、英文聖經依據
+      * 設有網頁部件(Web Widget)，以及 Chrome Extension
+    url: /linkifier
+    btn_label: 更多
+    btn_class: btn--primary
+ezra_search_row:
+  - image_path: /assets/images/search.jpg
+    title: 關聯經文搜尋
+    excerpt: 有別於一般經文搜尋，通過關鍵字的意思搜尋聖經中含有近義詞的經文。
+    url: https://ezra-bible-search.df.r.appspot.com/search?q=%E5%96%9C%E6%A8%82+%E4%BA%8B%E5%A5%89
+    btn_label: 所有搜尋結果
+    btn_class: btn--primary
+verse:
+  - excerpt: 以斯拉定志考究遵行耶和華的律法，又將律例典章教訓以色列人。<br>（以斯拉記七章10節）
+---
+{% include feature_row type="left" %}
+{% include ezra_search_row type="left" %}
+{% include feature_row id="verse" type="center" %}

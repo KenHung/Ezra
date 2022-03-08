@@ -1,0 +1,9 @@
+main:
+  - title: 首頁
+    url: /
+  - title: 網頁經文標示
+    url: /linkifier/
+  - title: 關聯經文搜尋
+    url: https://ezra-bible-search.df.r.appspot.com/
+  - title: 關於
+    url: /about/

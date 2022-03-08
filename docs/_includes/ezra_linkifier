@@ -1,0 +1,8 @@
+<script src="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.data.ezra.main.version }}/dist/ezra.js" 
+        integrity="sha384-{{ site.data.ezra.main.integrity }}" 
+        crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/gh/KenHung/Ezra@{{ site.data.ezra.main.version }}/dist/ezra-style.css" rel="stylesheet" type="text/css" />
+<script>
+  {% if include.zh %}ezraLinkifier.setLang('zh-Hans');
+  {% endif %}ezraLinkifier.linkify(document.body);
+</script>
