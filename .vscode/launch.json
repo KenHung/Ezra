@@ -2,6 +2,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "command": "npm test",
+            "name": "Debug npm test",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
             "name": "Launch with debugging",
             "type": "chrome",
             "request": "launch",

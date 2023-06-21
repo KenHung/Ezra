@@ -20,7 +20,7 @@ var pattern = {
   chap: '(第?[' + chiNumParser.supportedChars + ']+' + chapSep + '?' // match chapter in Chinese  (e.g. 第四章 / 四)
     + '|\\d+' + chapSep + ')', // match chapter in Arabic numbers, separator is required (e.g. 4: / 4章)
 
-  vers: '第?([\\s\\d' + versAnd + versTo + ';；節节]*\\d)[節节]?' // match verses (e.g. 第1節 / 1節至7節 / 1-5,6 / 1;3-5)
+  vers: '第?([\\s\\d' + versAnd + versTo + '節节]*\\d)[節节]?' // match verses (e.g. 第1節 / 1節至7節 / 1-5,6 / 1;3-5)
     + '(?!\\s?' + chapSep + ')' // prevent "約1:2,3" being matched for references like "約1:2,3:4"
 };
 

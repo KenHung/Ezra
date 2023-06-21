@@ -61,6 +61,7 @@ QUnit.test('multiple Bible references in John', function (assert) {
   test('約一1、6', ['約一1、6']);
   test('約一1～5，6', ['約一1～5，6']);
   test('約七：1–5，6', ['約七：1–5，6']);
+  test('Romans 5:9-10; 1 Corinthians 1:4-8', ['Romans 5:9-10', '1 Corinthians 1:4-8'], { 5: '9-10' }, { 1: '4-8' });
 });
 
 QUnit.test('multiple Bible references embedded', function (assert) {
