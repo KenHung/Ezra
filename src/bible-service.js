@@ -57,34 +57,31 @@ function FHLBibleService() {
    * @param {function(string, any): void} fail Callback for failed query, error message will be passed as argument.
    */
   function getVersesFromFHL(queryParams, success, fail) {
-    var xhr = new XMLHttpRequest();
     var url = 'https://bible.fhl.net/json/qb.php?'
       + 'chineses=' + queryParams.chineses
       + '&chap=' + queryParams.chap
       + '&sec=' + queryParams.sec
       + '&gb=' + queryParams.gb;
-    xhr.open('GET', url, true);
-    xhr.onload = function () {
-      if (xhr.status !== 200) {
-        fail(BibleServiceError.verseNotFound, 'XHR status = ' + xhr.status);
-        return;
-      }
-      try {
-        var resp = JSON.parse(xhr.responseText);
-        if (resp.record.length === 0) {
+
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          fail(BibleServiceError.verseNotFound, 'Fetch status = ' + response.status);
+          return;
+        }
+        return response.json();
+      })
+      .then(resp => {
+        if (!resp || resp.record.length === 0) {
           fail(BibleServiceError.refInvalid);
           return;
         }
         var bibleText = concatBibleText(resp.record);
         success(resp.record[0].chap, bibleText);
-      } catch (err) {
+      })
+      .catch(err => {
         fail(BibleServiceError.verseNotFound, err);
-      }
-    };
-    xhr.onerror = function () {
-      fail(BibleServiceError.connectFail);
-    };
-    xhr.send();
+      });
   }
 }
 

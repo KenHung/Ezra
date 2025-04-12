@@ -7,7 +7,7 @@ npx browserify content.js --debug > dist/tmp/content.js
 zip -j dist/ext.zip \
     manifest.json \
     *.html \
-    background.js \
+    service_worker.js \
     options.js \
     dist/tmp/*.js \
     ../dist/ezra-style.css \
