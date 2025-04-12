@@ -1,9 +1,11 @@
 /* global chrome */
 
-chrome.contextMenus.create({
-  id: 'ezraMenu',
-  title: chrome.i18n.getMessage('copyVerse') + '「%s」',
-  contexts: ['selection']
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'ezraMenu',
+    title: chrome.i18n.getMessage('copyVerse') + '「%s」',
+    contexts: ['selection']
+  });
 });
 
 chrome.contextMenus.onClicked.addListener((info) => {
