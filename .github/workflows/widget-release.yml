@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - '[0-9]*.[0-9]*'
+  workflow_dispatch:
+    inputs:
+      widget_version:
+        description: Widget tag version to publish (for example, 3.5)
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -31,7 +37,7 @@ jobs:
       - run: npm run build
       - name: Update widget version and integrity
         env:
-          WIDGET_VERSION: ${{ github.ref_name }}
+          WIDGET_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.widget_version || github.ref_name }}
         run: |
           if [[ ! "$WIDGET_VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
             echo "Widget tags must use major.minor format (for example, 3.5)." >&2

@@ -49,6 +49,7 @@ GitHub Actions runs unit tests and builds the widget and Chrome extension on pus
 
 * Create an `ext-vX.Y.Z` tag matching `chromeExt/manifest.json` to build the extension and attach its ZIP to a GitHub Release.
 * Create a major.minor tag such as `3.5` to build and deploy the web widget. The workflow updates the version and integrity used by the site.
+* To redeploy a widget tag without moving it, manually run **Web Widget Release** from `master` and enter the tag as `widget_version`. Allow both the `master` branch and widget tags in the `github-pages` environment.
 * The npm package is not published by these workflows.
 
 For web-widget deployment, set the repository's GitHub Pages source to **GitHub Actions**.
@@ -64,5 +65,5 @@ For web-widget deployment, set the repository's GitHub Pages source to **GitHub 
 1. make sure ezra.js are updated by browserify
 2. `git tag -a <tag_name>` and `git push origin <tag_name>`
 3. update release page by `docs/index.md` if necessary
-4. update Ezra version and integrity by `update_config.sh`
+4. update Ezra version and integrity by running `WIDGET_VERSION=<widget_tag> ./update_config.sh`
 5. publish on Github
