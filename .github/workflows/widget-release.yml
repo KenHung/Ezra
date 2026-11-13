@@ -1,0 +1,63 @@
+name: Web Widget Release
+
+on:
+  push:
+    tags:
+      - '[0-9]*.[0-9]*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Update widget version and integrity
+        env:
+          WIDGET_VERSION: ${{ github.ref_name }}
+        run: |
+          if [[ ! "$WIDGET_VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "Widget tags must use major.minor format (for example, 3.5)." >&2
+            exit 1
+          fi
+          ./update_config.sh
+          cat docs/_data/ezra.yml
+      - uses: actions/configure-pages@v5
+      - uses: actions/jekyll-build-pages@v1
+        with:
+          source: docs/
+          destination: ./_site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

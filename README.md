@@ -43,6 +43,16 @@ some `npm` commands are available:
 * `npm test` - run unit tests
 * `npm run test:integration` - check connectivity to the FHL Bible API (requires internet access)
 
+### Automated checks and releases
+
+GitHub Actions runs unit tests and builds the widget and Chrome extension on pushes and pull requests. The live FHL API check runs daily and can also be started manually.
+
+* Create an `ext-vX.Y.Z` tag matching `chromeExt/manifest.json` to build the extension and attach its ZIP to a GitHub Release.
+* Create a major.minor tag such as `3.5` to build and deploy the web widget. The workflow updates the version and integrity used by the site.
+* The npm package is not published by these workflows.
+
+For web-widget deployment, set the repository's GitHub Pages source to **GitHub Actions**.
+
 ### Deploying/Testing Chrome Extension
 
 * run `npm run build-chrome-ext` to create Chrome Extension

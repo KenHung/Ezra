@@ -1,0 +1,33 @@
+name: Chrome Extension Release
+
+on:
+  push:
+    tags:
+      - 'ext-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Validate release tag
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          node -e "const version = require('./chromeExt/manifest.json').version; if (process.env.RELEASE_TAG !== 'ext-v' + version) { console.error('Tag must be ext-v' + version); process.exit(1); }"
+      - run: npm test
+      - run: npm run build
+      - run: npm run build-chrome-ext
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" chromeExt/dist/ext.zip --title "Ezra Chrome Extension $RELEASE_TAG" --generate-notes
