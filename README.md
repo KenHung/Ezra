@@ -41,6 +41,7 @@ some `npm` commands are available:
 * `npm run build` - build web widget
 * `npm run build-chrome-ext` - build Chrome Extension
 * `npm test` - run unit tests
+* `npm run test:integration` - check connectivity to the FHL Bible API (requires internet access)
 
 ### Deploying/Testing Chrome Extension
 

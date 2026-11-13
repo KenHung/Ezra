@@ -43,6 +43,7 @@ function FHLBibleService() {
           chineses: resources.getLocalAbbr(bibleRef.abbr),
           chap: chap,
           sec: bibleRef.refs[chap],
+          version: 'unv',
           gb: resources.fhl.gb
         };
         getVersesFromFHL(queryParams, success, fail);
@@ -61,6 +62,7 @@ function FHLBibleService() {
       + 'chineses=' + queryParams.chineses
       + '&chap=' + queryParams.chap
       + '&sec=' + queryParams.sec
+      + '&version=' + queryParams.version
       + '&gb=' + queryParams.gb;
 
     fetch(url)

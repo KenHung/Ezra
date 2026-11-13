@@ -7,7 +7,8 @@
     "watch": "watchify src/main.js -o dist/ezra.js --debug --verbose",
     "build": "cp src/copyright.js dist/ezra.js & browserify -p tinyify src/main.js >> dist/ezra.js",
     "build-chrome-ext": "cd chromeExt && ./build.sh",
-    "test": "qunit"
+    "test": "qunit",
+    "test:integration": "node test/integration-health-check.js"
   },
   "repository": {
     "type": "git",
